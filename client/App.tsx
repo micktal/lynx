@@ -28,6 +28,9 @@ import AuditMobileEquipment from "./pages/AuditMobileEquipment";
 import Referentiels from "./pages/Referentiels";
 import ReferentielsPreview from "./pages/ReferentielsPreview";
 import Supervision from "./pages/Supervision";
+import ClientsPage from "./pages/Clients";
+import ClientDetail from "./pages/ClientDetail";
+import ClientPortal from "./pages/ClientPortal";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +62,9 @@ const App = () => (
           <Route path="/referentiels" element={<Referentiels />} />
           <Route path="/referentiels/preview/:templateId" element={<ReferentielsPreview />} />
           <Route path="/supervision" element={<Supervision />} />
+          <Route path="/clients" element={<ClientsPage />} />
+          <Route path="/clients/:id" element={<ClientDetail />} />
+          <Route path="/client-portal" element={<ClientPortal />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
