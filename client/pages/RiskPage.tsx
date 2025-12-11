@@ -67,6 +67,9 @@ export default function RiskPage() {
       setActions(acts);
       const atts = (await builder.fetchAttachments()).filter((a) => a.auditId === r.auditId || a.riskId === r.id || a.equipmentId === r.equipmentId);
       setAttachments(atts);
+
+      const logs = await builder.fetchActivityLogsForEntity('risk', r.id);
+      setLogs(logs);
     })();
   }, [riskId]);
 
