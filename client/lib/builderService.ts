@@ -1085,3 +1085,137 @@ export async function fetchDataLakeForEntity(entityType: string, entityId: strin
 }
 
 // end of added Data Lake APIs
+
+// Security / RBAC mocks
+let MOCK_ROLES: Role[] = [
+  { id: 'role_admin', name: 'ADMIN', description: 'Platform administrator', level: 100, isSystem: true },
+  { id: 'role_manager', name: 'MANAGER', description: 'Manager', level: 80, isSystem: true },
+  { id: 'role_auditeur', name: 'AUDITEUR', description: 'Auditor', level: 50, isSystem: true },
+  { id: 'role_agent', name: 'AGENT', description: 'Field agent', level: 10, isSystem: true },
+  { id: 'role_client_view', name: 'CLIENT_VIEW', description: 'Client viewer', level: 5, isSystem: true },
+];
+
+let MOCK_PERMISSIONS: Permission[] = [
+  // default admin full access
+  { id: 'perm_admin_all', roleId: 'role_admin', resource: '*', action: 'MANAGE', allowed: true },
+  // client_view limited
+  { id: 'perm_client_view_risks', roleId: 'role_client_view', resource: 'risk', action: 'VIEW', allowed: true, condition: JSON.stringify({ field: 'clientId', operator: '==', value: 'currentUser.clientId' }) },
+];
+
+let MOCK_USER_EXTENDED: UserExtended[] = [
+  { id: 'ue_1', userId: 'u_1', roleId: 'role_auditeur', clientId: 'client_1', restrictedTo: JSON.stringify({ sites: ['site_1'] }) },
+  { id: 'ue_admin', userId: 'u_admin', roleId: 'role_admin' },
+];
+
+let MOCK_SECURITY_LOGS: SecurityAuditLog[] = [];
+let MOCK_RULES: RuleEngineRule[] = [
+  { id: 'rule_critical_action_close', resource: 'action', action: 'UPDATE', condition: JSON.stringify({ field: 'risk.level', operator: '==', value: 'CRITIQUE' }), onlyRoles: ['MANAGER','ADMIN'], description: 'Only managers/admin can update actions for critical risks', active: true }
+];
+
+// Roles CRUD
+export async function fetchRoles(): Promise<Role[]> { return structuredClone(MOCK_ROLES); }
+export async function createRole(r: Partial<Role>): Promise<Role> { const newR: Role = { id: `role_${Date.now()}`, name: r.name || 'NEW_ROLE', description: r.description, level: r.level || 1, isSystem: !!r.isSystem }; MOCK_ROLES.unshift(newR); return structuredClone(newR); }
+export async function updateRole(id: string, patch: Partial<Role>): Promise<Role | null> { const idx = MOCK_ROLES.findIndex(x=>x.id===id); if(idx===-1) return null; MOCK_ROLES[idx] = { ...MOCK_ROLES[idx], ...patch }; return structuredClone(MOCK_ROLES[idx]); }
+export async function deleteRole(id: string): Promise<boolean> { const idx = MOCK_ROLES.findIndex(x=>x.id===id); if(idx===-1) return false; if(MOCK_ROLES[idx].isSystem) return false; MOCK_ROLES.splice(idx,1); return true; }
+
+// Permissions CRUD
+export async function fetchPermissions(roleId?: string): Promise<Permission[]> { return structuredClone(roleId ? MOCK_PERMISSIONS.filter(p=>p.roleId===roleId) : MOCK_PERMISSIONS); }
+export async function createPermission(p: Partial<Permission>): Promise<Permission> { const newP: Permission = { id: `perm_${Date.now()}`, roleId: p.roleId || '', resource: p.resource || '*', action: (p.action as any) || 'VIEW', condition: p.condition, allowed: typeof p.allowed==='boolean'?p.allowed:true }; MOCK_PERMISSIONS.unshift(newP); return structuredClone(newP); }
+export async function updatePermission(id: string, patch: Partial<Permission>): Promise<Permission | null> { const idx = MOCK_PERMISSIONS.findIndex(x=>x.id===id); if(idx===-1) return null; MOCK_PERMISSIONS[idx] = { ...MOCK_PERMISSIONS[idx], ...patch }; return structuredClone(MOCK_PERMISSIONS[idx]); }
+export async function deletePermission(id: string): Promise<boolean> { const idx = MOCK_PERMISSIONS.findIndex(x=>x.id===id); if(idx===-1) return false; MOCK_PERMISSIONS.splice(idx,1); return true; }
+
+// UserExtended
+export async function fetchUserExtended(userId?: string): Promise<UserExtended[]> { return structuredClone(userId ? MOCK_USER_EXTENDED.filter(u=>u.userId===userId) : MOCK_USER_EXTENDED); }
+export async function upsertUserExtended(u: Partial<UserExtended>): Promise<UserExtended> { const existing = MOCK_USER_EXTENDED.find(x=>x.userId===u.userId); if(existing){ existing.roleId = u.roleId || existing.roleId; existing.clientId = u.clientId || existing.clientId; existing.siteId = u.siteId || existing.siteId; existing.restrictedTo = u.restrictedTo || existing.restrictedTo; return structuredClone(existing); } const newU: UserExtended = { id: `ue_${Date.now()}`, userId: u.userId || '', roleId: u.roleId || '', clientId: u.clientId, siteId: u.siteId, restrictedTo: u.restrictedTo }; MOCK_USER_EXTENDED.unshift(newU); return structuredClone(newU); }
+
+// Security logs
+export async function writeSecurityLog(entry: Partial<SecurityAuditLog>): Promise<SecurityAuditLog> {
+  const newE: SecurityAuditLog = { id: `sec_${Date.now()}`, userId: entry.userId, action: entry.action || '', entityType: entry.entityType, entityId: entry.entityId, timestamp: entry.timestamp || new Date().toISOString(), ipAddress: entry.ipAddress, userAgent: entry.userAgent, details: entry.details };
+  MOCK_SECURITY_LOGS.unshift(newE);
+  return structuredClone(newE);
+}
+
+export async function fetchSecurityLogs(filters: { userId?: string; action?: string; entityType?: string; from?: string; to?: string } = {}): Promise<SecurityAuditLog[]> {
+  return structuredClone(MOCK_SECURITY_LOGS.filter(l=>{
+    if(filters.userId && l.userId!==filters.userId) return false;
+    if(filters.action && l.action!==filters.action) return false;
+    if(filters.entityType && l.entityType!==filters.entityType) return false;
+    if(filters.from && l.timestamp<filters.from) return false;
+    if(filters.to && l.timestamp>filters.to) return false;
+    return true;
+  }));
+}
+
+// Rules engine CRUD
+export async function fetchRules(): Promise<RuleEngineRule[]> { return structuredClone(MOCK_RULES); }
+export async function createRule(r: Partial<RuleEngineRule>): Promise<RuleEngineRule> { const newR: RuleEngineRule = { id: `rule_${Date.now()}`, resource: r.resource || '', action: r.action || '', condition: r.condition, onlyRoles: r.onlyRoles, description: r.description, active: typeof r.active==='boolean'?r.active:true }; MOCK_RULES.unshift(newR); return structuredClone(newR); }
+export async function updateRule(id: string, patch: Partial<RuleEngineRule>): Promise<RuleEngineRule | null> { const idx = MOCK_RULES.findIndex(x=>x.id===id); if(idx===-1) return null; MOCK_RULES[idx] = { ...MOCK_RULES[idx], ...patch }; return structuredClone(MOCK_RULES[idx]); }
+export async function deleteRule(id: string): Promise<boolean> { const idx = MOCK_RULES.findIndex(x=>x.id===id); if(idx===-1) return false; MOCK_RULES.splice(idx,1); return true; }
+
+// Permission evaluation helper
+function resolveValueToken(token: string | undefined, currentUser: any, userExt?: UserExtended, entity?: any) {
+  if (!token) return undefined;
+  if (token.startsWith('currentUser.')) {
+    const key = token.replace('currentUser.','');
+    return (currentUser && (currentUser as any)[key]) || undefined;
+  }
+  if (token.startsWith('userExt.')) {
+    const key = token.replace('userExt.','');
+    try{ return userExt ? JSON.parse(userExt.restrictedTo || '{}')[key] : undefined; }catch(e){ return undefined; }
+  }
+  // support nested entity fields like 'risk.level'
+  if (token.indexOf('.')!==-1 && entity) {
+    const parts = token.split('.');
+    let cur: any = entity;
+    for(const p of parts){ if(cur && p in cur) cur = cur[p]; else { cur = undefined; break; } }
+    return cur;
+  }
+  return token;
+}
+
+function evaluateCondition(condStr: string | undefined, entity: any, currentUser: any, userExt?: UserExtended): boolean {
+  if(!condStr) return true;
+  try{
+    const cond = typeof condStr === 'string' ? JSON.parse(condStr) : condStr;
+    const left = cond.field ? (entity ? (cond.field.indexOf('.')!==-1 ? (()=>{ const parts = cond.field.split('.'); let cur:any=entity; for(const p of parts){ cur = cur?p in cur?cur[p]:undefined:undefined } return cur })() : entity[cond.field]) : undefined) : undefined;
+    const rightToken = cond.value;
+    const right = (typeof rightToken === 'string' && (rightToken.startsWith('currentUser.')|| rightToken.startsWith('userExt.')|| rightToken.indexOf('.')!==-1)) ? resolveValueToken(rightToken as string, currentUser, userExt, entity) : rightToken;
+    const op = cond.operator || '==';
+    if(op === '==') return left == right;
+    if(op === '!=') return left != right;
+    if(op === 'in') return Array.isArray(right) ? right.includes(left) : (typeof right==='string' ? right.split(',').includes(left) : false);
+    if(op === 'contains') return Array.isArray(left) ? left.includes(right) : (typeof left==='string' ? left.indexOf(right)!==-1 : false);
+    return false;
+  }catch(e){ return false; }
+}
+
+export async function hasPermission(currentUser: any, action: PermissionAction, resource: string, entity?: any): Promise<boolean> {
+  if(!currentUser) return false;
+  // get extended user
+  const uexts = await fetchUserExtended(currentUser.id);
+  const uext = uexts.length? uexts[0] : undefined;
+  const role = uext ? MOCK_ROLES.find(r=>r.id===uext.roleId) : undefined;
+  // admin shortcut
+  if(role && role.name==='ADMIN') return true;
+  // gather permissions for role
+  const perms = role ? MOCK_PERMISSIONS.filter(p=>p.roleId===role.id) : [];
+  // wildcard resource permissions
+  const wildcardPerms = MOCK_PERMISSIONS.filter(p=>p.resource==='*' && p.roleId===role?.id);
+  const allPerms = [...perms, ...wildcardPerms];
+  // check explicit denies first
+  for(const p of allPerms){ if(p.action===action && p.allowed===false && evaluateCondition(p.condition, entity, currentUser, uext)) return false; }
+  // check allows
+  for(const p of allPerms){ if(p.action===action && p.allowed===true && evaluateCondition(p.condition, entity, currentUser, uext)) return true; }
+  // check rules engine
+  const rules = MOCK_RULES.filter(r=> r.resource===resource && (r.action===action || r.action==='*') && r.active);
+  for(const rule of rules){
+    if(rule.onlyRoles && rule.onlyRoles.length>0){
+      if(!role || !rule.onlyRoles.includes(role.name)) return false;
+    }
+    if(rule.condition && !evaluateCondition(rule.condition, entity, currentUser, uext)) return false;
+  }
+  // default: deny
+  return false;
+}
+
+// end of security APIs
