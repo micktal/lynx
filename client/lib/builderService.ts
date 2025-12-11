@@ -6,9 +6,9 @@ let MOCK_CLIENTS: any[] = [
 ];
 
 const MOCK_SITES: Site[] = [
-  { id: "site_1", organisationId: "org_1", clientId: 'client_1', name: "Siège Social - Paris", address: "12 Rue de la Paix", city: "Paris", country: "France", contactName: "Alice Dupont", contactEmail: "alice@ex.com" },
-  { id: "site_2", organisationId: "org_1", clientId: undefined, name: "Entrepôt - Lyon", address: "45 Av. Industrielle", city: "Lyon", country: "France", contactName: "Marc Legrand", contactEmail: "marc@ex.com" },
-  { id: "site_3", organisationId: "org_2", clientId: 'client_1', name: "Centre de Données - Bordeaux", address: "Parc Tech", city: "Bordeaux", country: "France", contactName: "Sophie Martin", contactEmail: "sophie@ex.com" },
+  { id: "site_1", organisationId: "org_1", clientId: 'client_1', name: "Siège Social - Paris", address: "12 Rue de la Paix", city: "Paris", country: "France", contactName: "Alice Dupont", contactEmail: "alice@ex.com", lat: 48.8566, lng: 2.3522, status: 'IN_PROGRESS', scoreCriticite: 0, progressionTravaux: 72 },
+  { id: "site_2", organisationId: "org_1", clientId: undefined, name: "Entrepôt - Lyon", address: "45 Av. Industrielle", city: "Lyon", country: "France", contactName: "Marc Legrand", contactEmail: "marc@ex.com", lat: 45.7640, lng: 4.8357, status: 'NOT_STARTED', scoreCriticite: 0, progressionTravaux: 10 },
+  { id: "site_3", organisationId: "org_2", clientId: 'client_1', name: "Centre de Données - Bordeaux", address: "Parc Tech", city: "Bordeaux", country: "France", contactName: "Sophie Martin", contactEmail: "sophie@ex.com", lat: 44.8378, lng: -0.5792, status: 'FINISHED', scoreCriticite: 0, progressionTravaux: 100 },
 ];
 
 let MOCK_BUILDINGS: Building[] = [
