@@ -14,6 +14,7 @@ import SpacePage from "./pages/SpacePage";
 import AuditPage from "./pages/AuditPage";
 import EquipmentPage from "./pages/EquipmentPage";
 import RiskPage from "./pages/RiskPage";
+import ActionPage from "./pages/ActionPage";
 
 const queryClient = new QueryClient();
 
