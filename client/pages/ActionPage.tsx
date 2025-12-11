@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import * as builder from "../lib/builderService";
-import type { ActionItem, Risk, Space, Building, Attachment } from "@shared/api";
+import type { ActionItem, Risk, Space, Building, Attachment, ActivityLog } from "@shared/api";
 import ActionForm from "../components/ActionForm";
 import Gallery from "../components/Gallery";
 import ConfirmModal from "../components/ConfirmModal";
