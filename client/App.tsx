@@ -15,6 +15,7 @@ import AuditPage from "./pages/AuditPage";
 import EquipmentPage from "./pages/EquipmentPage";
 import RiskPage from "./pages/RiskPage";
 import ActionPage from "./pages/ActionPage";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
