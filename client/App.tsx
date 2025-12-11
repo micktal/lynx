@@ -42,6 +42,7 @@ import AdminRulesPage from "./pages/admin-rules";
 import UnauthorizedPage from "./pages/unauthorized";
 import HomePage from "./pages/home";
 import LoginPage from "./pages/login";
+import MapPage from "./pages/map";
 
 const queryClient = new QueryClient();
 
@@ -87,6 +88,7 @@ const App = () => (
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/map" element={<MapPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
