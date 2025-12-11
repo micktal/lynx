@@ -42,6 +42,11 @@ export interface Site {
   contactName?: string;
   contactEmail?: string;
   createdAt?: string;
+  lat?: number;
+  lng?: number;
+  status?: 'IN_PROGRESS' | 'FINISHED' | 'NOT_STARTED';
+  scoreCriticite?: number;
+  progressionTravaux?: number; // 0-100
 }
 
 export interface Building {
