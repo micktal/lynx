@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import * as builder from "../lib/builderService";
-import type { Equipment, Space, Building, Risk, Attachment, ActionItem } from "@shared/api";
+import type { Equipment, Space, Building, Risk, Attachment, ActionItem, ActivityLog } from "@shared/api";
 import EquipmentForm from "../components/EquipmentForm";
 import RiskTable from "../components/RiskTable";
 import ActionList from "../components/ActionList";
