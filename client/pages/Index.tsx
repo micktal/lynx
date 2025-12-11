@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import Layout from "../components/Layout";
 import SiteCard from "../components/SiteCard";
-import type { Site } from "@/../shared/api";
+import type { Site } from "@shared/api";
 
 const MOCK_SITES: Site[] = [
   {

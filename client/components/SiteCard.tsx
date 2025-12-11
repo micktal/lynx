@@ -1,5 +1,5 @@
 import React from "react";
-import type { Site } from "@/../shared/api";
+import type { Site } from "@shared/api";
 
 export default function SiteCard({ site }: { site: Site }) {
   return (
