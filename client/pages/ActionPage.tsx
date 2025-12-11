@@ -16,6 +16,7 @@ export default function ActionPage() {
   const [space, setSpace] = useState<Space | null>(null);
   const [building, setBuilding] = useState<Building | null>(null);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
 
   const [editOpen, setEditOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
