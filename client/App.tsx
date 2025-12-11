@@ -40,6 +40,8 @@ import DataLakeReplayPage from "./pages/datalake-replay";
 import AdminSecurityLogPage from "./pages/admin-security-log";
 import AdminRulesPage from "./pages/admin-rules";
 import UnauthorizedPage from "./pages/unauthorized";
+import HomePage from "./pages/home";
+import LoginPage from "./pages/login";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +85,8 @@ const App = () => (
           <Route path="/admin/security-log" element={<AdminSecurityLogPage />} />
           <Route path="/admin/rules" element={<AdminRulesPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
