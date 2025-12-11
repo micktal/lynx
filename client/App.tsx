@@ -37,4 +37,10 @@ const App = () => (
   </QueryClientProvider>
 );
 
-createRoot(document.getElementById("root")!).render(<App />);
+const container = document.getElementById("root")!;
+const g = globalThis as any;
+if (!g.__root) {
+  g.__root = createRoot(container);
+}
+
+g.__root.render(<App />);
