@@ -68,6 +68,8 @@ let MOCK_ACTIONS: ActionItem[] = [
 
 // Client APIs
 export async function fetchClients(): Promise<any[]> { return structuredClone(MOCK_CLIENTS); }
+export async function fetchRegions(): Promise<Region[]> { return structuredClone(MOCK_REGIONS); }
+export async function fetchDepartments(): Promise<Department[]> { return structuredClone(MOCK_DEPARTMENTS); }
 export async function createClient(c: Partial<any>): Promise<any> { const newC = { id: `client_${Date.now()}`, name: c.name || 'Nouveau client', logoUrl: c.logoUrl, industry: c.industry, contactName: c.contactName, contactEmail: c.contactEmail, contactPhone: c.contactPhone, active: typeof c.active === 'boolean' ? c.active : true, notes: c.notes }; MOCK_CLIENTS.unshift(newC); return structuredClone(newC); }
 export async function updateClient(id: string, patch: Partial<any>): Promise<any | null> { const idx = MOCK_CLIENTS.findIndex(x=>x.id===id); if (idx===-1) return null; MOCK_CLIENTS[idx] = { ...MOCK_CLIENTS[idx], ...patch }; return structuredClone(MOCK_CLIENTS[idx]); }
 export async function deleteClient(id: string): Promise<boolean> { const idx = MOCK_CLIENTS.findIndex(x=>x.id===id); if (idx===-1) return false; MOCK_CLIENTS.splice(idx,1); // optionally cleanup related sites
