@@ -20,6 +20,7 @@ export default function EquipmentPage() {
   const [risks, setRisks] = useState<Risk[]>([]);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [actions, setActions] = useState<ActionItem[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
 
   const [editOpen, setEditOpen] = useState(false);
   const [riskFormOpen, setRiskFormOpen] = useState(false);
