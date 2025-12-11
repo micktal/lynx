@@ -288,6 +288,16 @@ export async function createRisk(r: Partial<Risk>): Promise<Risk> {
     recommendation: r.recommendation || "",
   };
   MOCK_RISKS.unshift(newR);
+  // create activity log
+  await createActivityLog({
+    timestamp: new Date().toISOString(),
+    entityType: "risk",
+    entityId: newR.id,
+    operation: "created",
+    userId: r?.auditId || "u_system",
+    description: `Risque créé: ${newR.title}`,
+    metadata: JSON.stringify({ risk: newR }),
+  });
   return structuredClone(newR);
 }
 
