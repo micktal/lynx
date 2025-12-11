@@ -20,6 +20,8 @@ import WorkflowPage from "./pages/Workflow";
 import NotificationsPage from "./pages/Notifications";
 import WorkflowDashboard from "./pages/WorkflowDashboard";
 import JournalPage from "./pages/journal";
+import BuildingPage from "./pages/BuildingPage";
+import BuildingPlansAdmin from "./pages/BuildingPlansAdmin";
 
 const queryClient = new QueryClient();
 
