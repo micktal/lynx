@@ -960,6 +960,29 @@ let MOCK_DATA_LAKE: DataLakeRecord[] = [];
 let MOCK_TIME_SERIES: TimeSeriesMetric[] = [];
 let MOCK_MATERIALIZED_VIEWS: MaterializedView[] = [];
 
+// compute site criticity score based on risks/actions/incidents
+export async function recalcSiteScores(): Promise<void> {
+  for (const site of MOCK_SITES) {
+    const siteRisks = MOCK_RISKS.filter(r => r.siteId === site.id);
+    const nbCrit = siteRisks.filter(r => r.level === 'CRITIQUE').length;
+    const nbImportant = siteRisks.filter(r => r.level === 'IMPORTANT').length;
+    const actionsForSite = MOCK_ACTIONS.filter(a => {
+      const risk = MOCK_RISKS.find(r => r.id === a.riskId);
+      return risk && risk.siteId === site.id;
+    });
+    const now = new Date();
+    const nbActionsLate = actionsForSite.filter(a => a.dueDate && new Date(a.dueDate) < now && a.status !== 'CLOTUREE').length;
+    const nbIncidentsOpen = MOCK_INCIDENTS.filter(i => i.siteId === site.id && i.status === 'OPEN').length;
+    const heatValue = (nbCrit * 5) + (nbImportant * 3) + (nbActionsLate * 4) + (nbIncidentsOpen * 2);
+    site.scoreCriticite = heatValue;
+  }
+}
+
+export async function fetchSitesWithScores(): Promise<Site[]> {
+  await recalcSiteScores();
+  return structuredClone(MOCK_SITES);
+}
+
 export async function writeDataLakeRecord(r: Partial<DataLakeRecord>): Promise<DataLakeRecord> {
   const newR: DataLakeRecord = {
     id: `dl_${Date.now()}`,
