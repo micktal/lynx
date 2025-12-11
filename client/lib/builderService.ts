@@ -1,4 +1,4 @@
-import type { Site, Building, Space, Equipment, Risk, Audit } from "@shared/api";
+import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem } from "@shared/api";
 
 // Mocked in-memory data. In production, replace with real Builder SDK calls.
 const MOCK_SITES: Site[] = [
@@ -15,11 +15,11 @@ let MOCK_BUILDINGS: Building[] = [
 ];
 
 let MOCK_SPACES: Space[] = [
-  { id: "s_1", buildingId: "b_1", name: "Open Space 1", floor: 2, importance: 4 },
-  { id: "s_2", buildingId: "b_1", name: "Salle Réunion", floor: 3, importance: 3 },
-  { id: "s_3", buildingId: "b_2", name: "Stockage 1", floor: 1, importance: 2 },
-  { id: "s_4", buildingId: "b_3", name: "Atelier", floor: 1, importance: 3 },
-  { id: "s_5", buildingId: "b_4", name: "Salle Serveurs", floor: 1, importance: 5 },
+  { id: "s_1", buildingId: "b_1", name: "Open Space 1", code: "OS1", description: "Espace principal", floor: 2, importance: 4, accessLevel: "Public" },
+  { id: "s_2", buildingId: "b_1", name: "Salle Réunion", code: "SR1", description: "Salle visio", floor: 3, importance: 3, accessLevel: "Restreint" },
+  { id: "s_3", buildingId: "b_2", name: "Stockage 1", code: "ST1", description: "Stock pièces", floor: 1, importance: 2, accessLevel: "Restreint" },
+  { id: "s_4", buildingId: "b_3", name: "Atelier", code: "AT1", description: "Atelier technique", floor: 1, importance: 3, accessLevel: "Restreint" },
+  { id: "s_5", buildingId: "b_4", name: "Salle Serveurs", code: "SS1", description: "Salle serveurs critique", floor: 1, importance: 5, accessLevel: "Très restreint" },
 ];
 
 let MOCK_EQUIP: Equipment[] = [
@@ -37,6 +37,15 @@ let MOCK_RISKS: Risk[] = [
 let MOCK_AUDITS: Audit[] = [
   { id: "a_1", siteId: "site_1", buildingId: "b_1", templateId: "t_1", status: "completed", title: "Audit annuel 2024", auditorId: "u_1", scheduledAt: "2024-03-01", completedAt: "2024-03-02" },
   { id: "a_2", siteId: "site_3", buildingId: "b_4", templateId: "t_2", status: "in_progress", title: "Audit sécurité infra", auditorId: "u_2", scheduledAt: "2024-10-01" },
+];
+
+let MOCK_ATTACHMENTS: Attachment[] = [
+  { id: "att_1", fileUrl: "/placeholder.svg", fileType: "image/svg", auditId: undefined, siteId: "site_1", buildingId: "b_1", spaceId: "s_1", equipmentId: undefined, uploadedBy: "u_1", uploadedAt: new Date().toISOString() },
+];
+
+let MOCK_ACTIONS: ActionItem[] = [
+  { id: "act_1", riskId: "r_1", title: "Protéger câbles", description: "Passer sous goulotte", ownerId: "u_2", dueDate: "2024-12-01", status: "OUVERTE" },
+  { id: "act_2", riskId: "r_2", title: "Remplacer caméra", description: "Commander et remplacer", ownerId: "u_3", dueDate: "2024-08-15", status: "EN_COURS" },
 ];
 
 export async function fetchSites(): Promise<Site[]> {
@@ -63,6 +72,15 @@ export async function fetchAudits(): Promise<Audit[]> {
   return structuredClone(MOCK_AUDITS);
 }
 
+export async function fetchAttachments(): Promise<Attachment[]> {
+  return structuredClone(MOCK_ATTACHMENTS);
+}
+
+export async function fetchActions(): Promise<ActionItem[]> {
+  return structuredClone(MOCK_ACTIONS);
+}
+
+// Site CRUD
 export async function createSite(site: Partial<Site>): Promise<Site> {
   const newSite: Site = {
     id: `site_${Date.now()}`,
@@ -92,6 +110,7 @@ export async function deleteSite(id: string): Promise<boolean> {
   return true;
 }
 
+// Building CRUD
 export async function createBuilding(building: Partial<Building>): Promise<Building> {
   const newBuilding: Building = {
     id: `b_${Date.now()}`,
@@ -119,10 +138,133 @@ export async function deleteBuilding(id: string): Promise<boolean> {
   MOCK_BUILDINGS.splice(idx, 1);
   // also remove spaces and equipments related (simple cleanup)
   MOCK_SPACES = MOCK_SPACES.filter((sp) => sp.buildingId !== id);
-  MOCK_EQUIP = MOCK_EQUIP.filter((eq) => eq.spaceId && MOCK_SPACES.some((sp) => sp.id === eq.spaceId));
+  MOCK_EQUIP = MOCK_EQUIP.filter((eq) => MOCK_SPACES.some((sp) => sp.id === eq.spaceId));
   return true;
 }
 
+// Equipment CRUD
+export async function createEquipment(e: Partial<Equipment>): Promise<Equipment> {
+  const newE: Equipment = {
+    id: `e_${Date.now()}`,
+    spaceId: e.spaceId || "",
+    category: e.category || "autre",
+    name: e.name || "Nouvel équipement",
+    reference: e.reference || "",
+    management: e.management || "",
+    state: e.state || "OK",
+    comment: e.comment || "",
+  };
+  MOCK_EQUIP.unshift(newE);
+  return structuredClone(newE);
+}
+
+export async function updateEquipment(id: string, patch: Partial<Equipment>): Promise<Equipment | null> {
+  const idx = MOCK_EQUIP.findIndex((eq) => eq.id === id);
+  if (idx === -1) return null;
+  MOCK_EQUIP[idx] = { ...MOCK_EQUIP[idx], ...patch };
+  return structuredClone(MOCK_EQUIP[idx]);
+}
+
+export async function deleteEquipment(id: string): Promise<boolean> {
+  const idx = MOCK_EQUIP.findIndex((eq) => eq.id === id);
+  if (idx === -1) return false;
+  MOCK_EQUIP.splice(idx, 1);
+  return true;
+}
+
+// Risk CRUD
+export async function createRisk(r: Partial<Risk>): Promise<Risk> {
+  const newR: Risk = {
+    id: `r_${Date.now()}`,
+    auditId: r.auditId,
+    siteId: r.siteId,
+    buildingId: r.buildingId,
+    spaceId: r.spaceId,
+    equipmentId: r.equipmentId,
+    title: r.title || "Nouveau risque",
+    description: r.description || "",
+    probability: (r.probability as any) || 1,
+    impact: (r.impact as any) || 1,
+    level: r.level || "FAIBLE",
+    recommendation: r.recommendation || "",
+  };
+  MOCK_RISKS.unshift(newR);
+  return structuredClone(newR);
+}
+
+export async function updateRisk(id: string, patch: Partial<Risk>): Promise<Risk | null> {
+  const idx = MOCK_RISKS.findIndex((r) => r.id === id);
+  if (idx === -1) return null;
+  MOCK_RISKS[idx] = { ...MOCK_RISKS[idx], ...patch };
+  return structuredClone(MOCK_RISKS[idx]);
+}
+
+export async function deleteRisk(id: string): Promise<boolean> {
+  const idx = MOCK_RISKS.findIndex((r) => r.id === id);
+  if (idx === -1) return false;
+  MOCK_RISKS.splice(idx, 1);
+  // also remove actions linked
+  for (let i = MOCK_ACTIONS.length - 1; i >= 0; i--) {
+    if (MOCK_ACTIONS[i].riskId === id) MOCK_ACTIONS.splice(i, 1);
+  }
+  return true;
+}
+
+// Attachment CRUD
+export async function createAttachment(a: Partial<Attachment>): Promise<Attachment> {
+  const newA: Attachment = {
+    id: `att_${Date.now()}`,
+    fileUrl: a.fileUrl || "/placeholder.svg",
+    fileType: a.fileType || "image/png",
+    auditId: a.auditId,
+    siteId: a.siteId,
+    buildingId: a.buildingId,
+    spaceId: a.spaceId,
+    equipmentId: a.equipmentId,
+    uploadedBy: a.uploadedBy,
+    uploadedAt: new Date().toISOString(),
+  };
+  MOCK_ATTACHMENTS.unshift(newA);
+  return structuredClone(newA);
+}
+
+export async function deleteAttachment(id: string): Promise<boolean> {
+  const idx = MOCK_ATTACHMENTS.findIndex((a) => a.id === id);
+  if (idx === -1) return false;
+  MOCK_ATTACHMENTS.splice(idx, 1);
+  return true;
+}
+
+// Action CRUD
+export async function createAction(action: Partial<ActionItem>): Promise<ActionItem> {
+  const newAct: ActionItem = {
+    id: `act_${Date.now()}`,
+    riskId: action.riskId || "",
+    title: action.title || "Nouvelle action",
+    description: action.description || "",
+    ownerId: action.ownerId,
+    dueDate: action.dueDate,
+    status: action.status || "OUVERTE",
+  };
+  MOCK_ACTIONS.unshift(newAct);
+  return structuredClone(newAct);
+}
+
+export async function updateAction(id: string, patch: Partial<ActionItem>): Promise<ActionItem | null> {
+  const idx = MOCK_ACTIONS.findIndex((a) => a.id === id);
+  if (idx === -1) return null;
+  MOCK_ACTIONS[idx] = { ...MOCK_ACTIONS[idx], ...patch };
+  return structuredClone(MOCK_ACTIONS[idx]);
+}
+
+export async function deleteAction(id: string): Promise<boolean> {
+  const idx = MOCK_ACTIONS.findIndex((a) => a.id === id);
+  if (idx === -1) return false;
+  MOCK_ACTIONS.splice(idx, 1);
+  return true;
+}
+
+// Counts and stats
 export async function countBySite() {
   const sites = await fetchSites();
   const buildings = await fetchBuildings();
@@ -183,4 +325,30 @@ export async function countStatsForSite(siteId: string) {
   });
 
   return { total, perBuilding };
+}
+
+export async function countStatsForSpace(spaceId: string) {
+  const space = MOCK_SPACES.find((s) => s.id === spaceId);
+  if (!space) return { total: { equipments: 0, risks: 0, actionsOpen: 0 } };
+  const equipments = MOCK_EQUIP.filter((eq) => eq.spaceId === spaceId);
+  const risks = MOCK_RISKS.filter((r) => r.spaceId === spaceId);
+  const actions = MOCK_ACTIONS.filter((a) => risks.some((r) => r.id === a.riskId));
+  const open = actions.filter((a) => a.status === "OUVERTE").length;
+  return { total: { equipments: equipments.length, risks: risks.length, actionsOpen: open }, perRisk: risks.map((r) => ({ riskId: r.id, actions: MOCK_ACTIONS.filter((a) => a.riskId === r.id) })) };
+}
+
+export async function fetchAttachmentsForSpace(spaceId: string): Promise<Attachment[]> {
+  return structuredClone(MOCK_ATTACHMENTS.filter((a) => a.spaceId === spaceId));
+}
+
+export async function fetchEquipmentsForSpace(spaceId: string): Promise<Equipment[]> {
+  return structuredClone(MOCK_EQUIP.filter((e) => e.spaceId === spaceId));
+}
+
+export async function fetchRisksForSpace(spaceId: string): Promise<Risk[]> {
+  return structuredClone(MOCK_RISKS.filter((r) => r.spaceId === spaceId));
+}
+
+export async function fetchActionsForRisks(riskIds: string[]): Promise<ActionItem[]> {
+  return structuredClone(MOCK_ACTIONS.filter((a) => riskIds.includes(a.riskId)));
 }
