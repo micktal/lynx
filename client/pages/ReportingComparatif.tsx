@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Layout from "@/components/Layout";
-import * as builder from "@/lib/builderService";
+import Layout from "../components/Layout";
+import * as builder from "../lib/builderService";
 import type { Site } from "@shared/api";
 
 export default function ReportingComparatifPage(){
