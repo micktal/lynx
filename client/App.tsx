@@ -45,6 +45,8 @@ const App = () => (
           <Route path="/workflow-dashboard" element={<WorkflowDashboard />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/journal" element={<JournalPage />} />
+          <Route path="/building/:id" element={<BuildingPage />} />
+          <Route path="/building/:id/plans" element={<BuildingPlansAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
