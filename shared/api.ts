@@ -11,6 +11,7 @@ export interface Organisation {
 export interface Site {
   id: ID;
   organisationId: ID;
+  clientId?: ID;
   name: string;
   address?: string;
   city?: string;
