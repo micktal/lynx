@@ -348,6 +348,37 @@ export async function fetchWorkflowRules(): Promise<WorkflowRule[]> {
   return structuredClone(MOCK_WORKFLOW_RULES);
 }
 
+// Supervision mocks
+let MOCK_INCIDENTS: Incident[] = [
+  { id: 'inc_1', type: 'incendie', status: 'OPEN', priority: 'CRITICAL', siteId: 'site_1', buildingId: 'b_4', spaceId: 's_5', description: 'Fumée détectée salle serveurs', reportedBy: 'u_2', createdAt: new Date().toISOString() }
+];
+let MOCK_AGENTS: Agent[] = [
+  { id: 'ag_1', name: 'Dupont', role: 'agent', status: 'ON_PATROL', lastKnownPosition: { lat: 48.8566, lng: 2.3522 }, lastCheckIn: new Date().toISOString(), siteId: 'site_1', battery: 82 },
+  { id: 'ag_2', name: 'Karim', role: 'agent', status: 'AVAILABLE', lastKnownPosition: { lat: 44.8378, lng: -0.5792 }, lastCheckIn: new Date().toISOString(), siteId: 'site_3', battery: 56 },
+];
+let MOCK_AGENT_EVENTS: AgentEvent[] = [];
+let MOCK_LOCATION_PINGS: LocationPing[] = [];
+let MOCK_SUPERVISION_EVENTS: SupervisionEvent[] = [];
+
+export async function fetchIncidents(): Promise<Incident[]> { return structuredClone(MOCK_INCIDENTS); }
+export async function fetchIncidentsForSite(siteId: string): Promise<Incident[]> { return structuredClone(MOCK_INCIDENTS.filter(i=>i.siteId===siteId)); }
+export async function createIncident(i: Partial<Incident>): Promise<Incident> { const newI: Incident = { id: `inc_${Date.now()}`, type: (i.type as any) || 'autre', status: i.status || 'OPEN', priority: i.priority || 'MEDIUM', siteId: i.siteId, buildingId: i.buildingId, spaceId: i.spaceId, description: i.description, reportedBy: i.reportedBy, assignedTo: i.assignedTo, createdAt: new Date().toISOString() }; MOCK_INCIDENTS.unshift(newI); await createSupervisionEvent({ eventType: 'ALERT', entityType: 'incident', entityId: newI.id, description: `Incident ${newI.type} créé`, timestamp: new Date().toISOString() }); return structuredClone(newI); }
+export async function updateIncident(id:string, patch: Partial<Incident>): Promise<Incident | null> { const idx = MOCK_INCIDENTS.findIndex(x=>x.id===id); if (idx===-1) return null; MOCK_INCIDENTS[idx] = { ...MOCK_INCIDENTS[idx], ...patch, updatedAt: new Date().toISOString() }; return structuredClone(MOCK_INCIDENTS[idx]); }
+
+export async function fetchAgents(): Promise<Agent[]> { return structuredClone(MOCK_AGENTS); }
+export async function updateAgent(id:string, patch: Partial<Agent>): Promise<Agent | null> { const idx = MOCK_AGENTS.findIndex(x=>x.id===id); if (idx===-1) return null; MOCK_AGENTS[idx] = { ...MOCK_AGENTS[idx], ...patch }; return structuredClone(MOCK_AGENTS[idx]); }
+export async function createAgentEvent(e: Partial<AgentEvent>): Promise<AgentEvent> { const newE: AgentEvent = { id: `ae_${Date.now()}`, agentId: e.agentId||'', eventType: (e.eventType as any) || 'CHECK_IN', timestamp: e.timestamp || new Date().toISOString(), data: e.data }; MOCK_AGENT_EVENTS.unshift(newE); await createSupervisionEvent({ eventType: 'INFO', entityType: 'agent', entityId: newE.agentId, description: `Agent event ${newE.eventType}`, timestamp: newE.timestamp }); return structuredClone(newE); }
+export async function fetchAgentEvents(agentId?: string): Promise<AgentEvent[]> { return structuredClone(agentId ? MOCK_AGENT_EVENTS.filter(a=>a.agentId===agentId) : MOCK_AGENT_EVENTS); }
+
+export async function addLocationPing(p: Partial<LocationPing>): Promise<LocationPing> { const newP: LocationPing = { id: `lp_${Date.now()}`, agentId: p.agentId||'', lat: p.lat||0, lng: p.lng||0, timestamp: p.timestamp||new Date().toISOString() }; MOCK_LOCATION_PINGS.unshift(newP); // update agent position
+const agentIdx = MOCK_AGENTS.findIndex(a=>a.id===newP.agentId); if (agentIdx!==-1) { MOCK_AGENTS[agentIdx].lastKnownPosition = { lat: newP.lat, lng: newP.lng }; MOCK_AGENTS[agentIdx].lastCheckIn = newP.timestamp; }
+return structuredClone(newP); }
+export async function fetchLocationPings(agentId?: string): Promise<LocationPing[]> { return structuredClone(agentId ? MOCK_LOCATION_PINGS.filter(p=>p.agentId===agentId) : MOCK_LOCATION_PINGS); }
+
+export async function createSupervisionEvent(ev: Partial<SupervisionEvent>): Promise<SupervisionEvent> { const newEv: SupervisionEvent = { id: `sev_${Date.now()}`, eventType: (ev.eventType as any) || 'SYSTEM', entityType: ev.entityType, entityId: ev.entityId, description: ev.description, status: ev.status, timestamp: ev.timestamp || new Date().toISOString() }; MOCK_SUPERVISION_EVENTS.unshift(newEv); return structuredClone(newEv); }
+export async function fetchSupervisionEvents(): Promise<SupervisionEvent[]> { return structuredClone(MOCK_SUPERVISION_EVENTS); }
+
+
 // Audit templates & checklist mocks
 let MOCK_AUDIT_TEMPLATES: AuditTemplate[] = [
   { id: 'at_1', name: 'Template Sécurité Incendie', description: 'Checklist incendie standard', auditType: 'incendie', active: true, createdAt: new Date().toISOString() }
