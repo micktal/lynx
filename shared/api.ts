@@ -181,6 +181,64 @@ export interface PlanMarker {
   tooltip?: string;
 }
 
+export interface AuditTemplate {
+  id: ID;
+  name: string;
+  description?: string;
+  auditType?: string;
+  active?: boolean;
+  createdAt?: string;
+}
+
+export interface AuditCategory {
+  id: ID;
+  templateId: ID;
+  name: string;
+  order?: number;
+}
+
+export interface AuditSubcategory {
+  id: ID;
+  categoryId: ID;
+  name: string;
+  order?: number;
+}
+
+export type AuditQuestionType = "yesno" | "choice" | "text" | "photo_required" | "numeric";
+
+export interface AuditQuestion {
+  id: ID;
+  subcategoryId: ID;
+  label: string;
+  helpText?: string;
+  type: AuditQuestionType;
+  critical?: boolean;
+  defaultRiskLevel?: "FAIBLE" | "MOYEN" | "IMPORTANT" | "CRITIQUE";
+  defaultActionRequired?: boolean;
+  order?: number;
+}
+
+export interface ComplianceOption {
+  id: ID;
+  questionId: ID;
+  label: string;
+  riskLevel?: "FAIBLE" | "MOYEN" | "IMPORTANT" | "CRITIQUE";
+  createsAction?: boolean;
+  createsRisk?: boolean;
+}
+
+export interface GeneratedAuditQuestion {
+  id: ID;
+  auditId: ID;
+  questionId: ID;
+  spaceId?: ID;
+  value?: string;
+  comment?: string;
+  photoId?: ID;
+  autoRiskId?: ID;
+  autoActionId?: ID;
+}
+
 export type WorkflowTrigger =
   | "onRiskCreated"
   | "onRiskUpdated"
