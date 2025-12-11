@@ -57,9 +57,13 @@ export default function SpacePage() {
         setActions(actionsForRisks);
         const c = await builder.countStatsForSpace(spaceId);
         setStats(c.total);
+
+        const logs = await builder.fetchActivityLogsForEntity('space', spaceId);
+        setLogs(logs);
       }
     })();
   }, [spaceId]);
+
 
   const handleAddEquipment = () => {
     setEditingEquip(null);
