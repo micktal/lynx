@@ -108,6 +108,47 @@ let MOCK_WORKFLOW_RULES: WorkflowRule[] = [
 
 let MOCK_NOTIFICATIONS: Notification[] = [];
 
+// Activity logs
+let MOCK_ACTIVITY_LOGS: ActivityLog[] = [];
+
+export async function createActivityLog(log: Partial<ActivityLog>): Promise<ActivityLog> {
+  const newLog: ActivityLog = {
+    id: `log_${Date.now()}`,
+    timestamp: log.timestamp || new Date().toISOString(),
+    entityType: log.entityType || "system",
+    entityId: log.entityId || "",
+    operation: (log.operation as any) || "updated",
+    userId: log.userId,
+    description: log.description,
+    oldValue: log.oldValue,
+    newValue: log.newValue,
+    metadata: log.metadata,
+  };
+  MOCK_ACTIVITY_LOGS.unshift(newLog);
+  return structuredClone(newLog);
+}
+
+export async function fetchActivityLogs(): Promise<ActivityLog[]> {
+  return structuredClone(MOCK_ACTIVITY_LOGS.sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
+}
+
+export async function fetchActivityLogsForEntity(entityType: string, entityId: string): Promise<ActivityLog[]> {
+  return structuredClone(MOCK_ACTIVITY_LOGS.filter((l) => l.entityType === entityType && l.entityId === entityId).sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
+}
+
+export async function fetchActivityLogsWithFilters(filters: { from?: string; to?: string; entityType?: string; operation?: string; userId?: string }): Promise<ActivityLog[]> {
+  return structuredClone(
+    MOCK_ACTIVITY_LOGS.filter((l) => {
+      if (filters.entityType && l.entityType !== filters.entityType) return false;
+      if (filters.operation && l.operation !== (filters.operation as any)) return false;
+      if (filters.userId && l.userId !== filters.userId) return false;
+      if (filters.from && l.timestamp < filters.from) return false;
+      if (filters.to && l.timestamp > filters.to) return false;
+      return true;
+    }).sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+  );
+}
+
 export async function fetchWorkflowRules(): Promise<WorkflowRule[]> {
   return structuredClone(MOCK_WORKFLOW_RULES);
 }
