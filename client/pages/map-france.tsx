@@ -162,6 +162,36 @@ export default function MapFrancePage(): JSX.Element {
 
     const points = filteredSites.map((s) => s);
 
+    const zoom = mapRef.current.getZoom();
+
+    // If zoomed out enough, show region summary markers instead of individual clusters
+    if (zoom <= 6 && regions && regions.length) {
+      try { if (regionLayerRef.current) { mapRef.current.removeLayer(regionLayerRef.current); regionLayerRef.current = null; } } catch(e){}
+      const rg = L.layerGroup();
+      for (const r of regions) {
+        const sitesInRegion = points.filter(p => p.regionCode === r.code);
+        if (!sitesInRegion.length) continue;
+        const count = sitesInRegion.length;
+        const avg = Math.round((sitesInRegion.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10;
+        const color = colorForCluster(avg);
+        const size = Math.min(84, 40 + Math.round(Math.log(count + 1) * 8));
+        const html = `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(0,0,0,0.05)), ${color}; box-shadow: 0 10px 30px rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.06); color: white; font-weight:600; font-size:14px;">${r.name.split(' ')[0]}<br/>${count}</div>`;
+        const icon = L.divIcon({ html, className: 'region-marker', iconSize: [size, size] });
+        const marker = L.marker([r.lat || 46.5, r.lng || 2.5], { icon });
+        marker.on('click', () => {
+          try {
+            mapRef.current.setView([r.lat || 46.5, r.lng || 2.5], (r.zoomLevel || 7) + 1);
+          } catch (e) {}
+        });
+        marker.bindTooltip(`<strong>${r.name}</strong><br/>Sites: ${count}<br/>Criticité moyenne: ${avg}`);
+        rg.addLayer(marker);
+      }
+      regionLayerRef.current = rg;
+      mapRef.current.addLayer(regionLayerRef.current);
+      // don't add further markers at this zoom
+      return;
+    }
+
     // create cluster group
     // @ts-ignore
     const markerCluster = (L as any).markerClusterGroup({
