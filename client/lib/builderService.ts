@@ -348,6 +348,91 @@ export async function fetchWorkflowRules(): Promise<WorkflowRule[]> {
   return structuredClone(MOCK_WORKFLOW_RULES);
 }
 
+// Audit templates & checklist mocks
+let MOCK_AUDIT_TEMPLATES: AuditTemplate[] = [
+  { id: 'at_1', name: 'Template Sécurité Incendie', description: 'Checklist incendie standard', auditType: 'incendie', active: true, createdAt: new Date().toISOString() }
+];
+let MOCK_AUDIT_CATEGORIES: AuditCategory[] = [
+  { id: 'ac_1', templateId: 'at_1', name: 'Extincteurs', order: 1 },
+  { id: 'ac_2', templateId: 'at_1', name: 'Alarme & Détection', order: 2 },
+];
+let MOCK_AUDIT_SUBCATS: AuditSubcategory[] = [
+  { id: 'asc_1', categoryId: 'ac_1', name: 'Extincteurs portatifs', order: 1 },
+  { id: 'asc_2', categoryId: 'ac_2', name: 'Détecteurs', order: 1 },
+];
+let MOCK_AUDIT_QUESTIONS: AuditQuestion[] = [
+  { id: 'q_1', subcategoryId: 'asc_1', label: 'Extincteurs accessibles ?', helpText: 'Vérifier que l\'extincteur est accessible et visible.', type: 'yesno', critical: true, defaultRiskLevel: 'IMPORTANT', defaultActionRequired: true, order: 1 },
+  { id: 'q_2', subcategoryId: 'asc_2', label: 'Détecteur opérationnel ?', helpText: 'Vérifier le témoin et les tests.', type: 'yesno', critical: true, defaultRiskLevel: 'CRITIQUE', defaultActionRequired: true, order: 1 },
+];
+let MOCK_COMPLIANCE_OPTIONS: ComplianceOption[] = [
+  { id: 'co_1', questionId: 'q_1', label: 'OK', riskLevel: 'FAIBLE', createsAction: false, createsRisk: false },
+  { id: 'co_2', questionId: 'q_1', label: 'NON CONFORME', riskLevel: 'IMPORTANT', createsAction: true, createsRisk: true },
+  { id: 'co_3', questionId: 'q_2', label: 'OK', riskLevel: 'FAIBLE', createsAction: false, createsRisk: false },
+  { id: 'co_4', questionId: 'q_2', label: 'NON CONFORME', riskLevel: 'CRITIQUE', createsAction: true, createsRisk: true },
+];
+
+let MOCK_GENERATED_QUESTIONS: GeneratedAuditQuestion[] = [];
+
+export async function fetchAuditTemplates(): Promise<AuditTemplate[]> { return structuredClone(MOCK_AUDIT_TEMPLATES); }
+export async function createAuditTemplate(t: Partial<AuditTemplate>): Promise<AuditTemplate> { const newT: AuditTemplate = { id: `at_${Date.now()}`, name: t.name || 'Nouveau template', description: t.description, auditType: t.auditType, active: typeof t.active === 'boolean' ? t.active : true, createdAt: new Date().toISOString() }; MOCK_AUDIT_TEMPLATES.unshift(newT); return structuredClone(newT); }
+export async function updateAuditTemplate(id: string, patch: Partial<AuditTemplate>): Promise<AuditTemplate | null> { const idx = MOCK_AUDIT_TEMPLATES.findIndex(x=>x.id===id); if (idx===-1) return null; MOCK_AUDIT_TEMPLATES[idx] = {...MOCK_AUDIT_TEMPLATES[idx], ...patch}; return structuredClone(MOCK_AUDIT_TEMPLATES[idx]); }
+export async function deleteAuditTemplate(id: string): Promise<boolean> { const idx = MOCK_AUDIT_TEMPLATES.findIndex(x=>x.id===id); if (idx===-1) return false; MOCK_AUDIT_TEMPLATES.splice(idx,1); return true; }
+
+export async function fetchCategoriesForTemplate(templateId: string): Promise<AuditCategory[]> { return structuredClone(MOCK_AUDIT_CATEGORIES.filter(c=>c.templateId===templateId)); }
+export async function createCategory(c: Partial<AuditCategory>): Promise<AuditCategory> { const newC: AuditCategory = { id: `ac_${Date.now()}`, templateId: c.templateId||'', name: c.name||'Nouvelle catégorie', order: c.order }; MOCK_AUDIT_CATEGORIES.unshift(newC); return structuredClone(newC); }
+export async function fetchSubcategoriesForCategory(categoryId: string): Promise<AuditSubcategory[]> { return structuredClone(MOCK_AUDIT_SUBCATS.filter(s=>s.categoryId===categoryId)); }
+export async function createSubcategory(s: Partial<AuditSubcategory>): Promise<AuditSubcategory> { const newS: AuditSubcategory = { id: `asc_${Date.now()}`, categoryId: s.categoryId||'', name: s.name||'Nouvelle sous-catégorie', order: s.order }; MOCK_AUDIT_SUBCATS.unshift(newS); return structuredClone(newS); }
+
+export async function fetchQuestionsForSubcategory(subcategoryId: string): Promise<AuditQuestion[]> { return structuredClone(MOCK_AUDIT_QUESTIONS.filter(q=>q.subcategoryId===subcategoryId)); }
+export async function createQuestion(q: Partial<AuditQuestion>): Promise<AuditQuestion> { const newQ: AuditQuestion = { id: `q_${Date.now()}`, subcategoryId: q.subcategoryId||'', label: q.label||'Nouvelle question', helpText: q.helpText, type: (q.type as any) || 'text', critical: !!q.critical, defaultRiskLevel: q.defaultRiskLevel, defaultActionRequired: !!q.defaultActionRequired, order: q.order }; MOCK_AUDIT_QUESTIONS.unshift(newQ); return structuredClone(newQ); }
+
+export async function fetchComplianceOptionsForQuestion(questionId: string): Promise<ComplianceOption[]> { return structuredClone(MOCK_COMPLIANCE_OPTIONS.filter(o=>o.questionId===questionId)); }
+export async function createComplianceOption(o: Partial<ComplianceOption>): Promise<ComplianceOption> { const newO: ComplianceOption = { id: `co_${Date.now()}`, questionId: o.questionId||'', label: o.label||'Option', riskLevel: o.riskLevel, createsAction: !!o.createsAction, createsRisk: !!o.createsRisk }; MOCK_COMPLIANCE_OPTIONS.unshift(newO); return structuredClone(newO); }
+
+export async function fetchGeneratedQuestionsForAudit(auditId: string): Promise<GeneratedAuditQuestion[]> { return structuredClone(MOCK_GENERATED_QUESTIONS.filter(g=>g.auditId===auditId)); }
+
+// createAudit: generates audit and creates generated questions per space based on template
+export async function createAudit(a: Partial<Audit> & { templateId?: string; spaces?: string[] }): Promise<Audit> {
+  const newA: Audit = { id: `a_${Date.now()}`, siteId: a.siteId||'', buildingId: a.buildingId, templateId: a.templateId, status: 'in_progress', title: a.title||'Nouvel audit', auditorId: a.auditorId, scheduledAt: a.scheduledAt } as any;
+  MOCK_AUDITS.unshift(newA);
+  // generate questions
+  if (a.templateId && a.spaces && a.spaces.length>0) {
+    // gather questions for template
+    const cats = MOCK_AUDIT_CATEGORIES.filter(c=>c.templateId===a.templateId).map(c=>c.id);
+    const subcats = MOCK_AUDIT_SUBCATS.filter(s=>cats.includes(s.categoryId)).map(s=>s.id);
+    const qs = MOCK_AUDIT_QUESTIONS.filter(q=>subcats.includes(q.subcategoryId));
+    for (const spaceId of a.spaces) {
+      for (const q of qs) {
+        const gq: GeneratedAuditQuestion = { id: `gq_${Date.now()}_${Math.random().toString(36).substring(2,7)}`, auditId: newA.id, questionId: q.id, spaceId, value: undefined };
+        MOCK_GENERATED_QUESTIONS.unshift(gq);
+      }
+    }
+  }
+  return structuredClone(newA);
+}
+
+export async function answerGeneratedQuestion(gqId: string, payload: Partial<GeneratedAuditQuestion>): Promise<GeneratedAuditQuestion | null> {
+  const idx = MOCK_GENERATED_QUESTIONS.findIndex(g=>g.id===gqId);
+  if (idx===-1) return null;
+  MOCK_GENERATED_QUESTIONS[idx] = { ...MOCK_GENERATED_QUESTIONS[idx], ...payload };
+  // if value corresponds to a compliance option that creates risk/action, create them automatically
+  const gq = MOCK_GENERATED_QUESTIONS[idx];
+  const q = MOCK_AUDIT_QUESTIONS.find(qq=>qq.id===gq.questionId);
+  // find option matching label
+  const opt = MOCK_COMPLIANCE_OPTIONS.find(o=>o.questionId===gq.questionId && o.label===payload.value);
+  if (opt) {
+    if (opt.createsRisk) {
+      const risk = await createRisk({ title: q?.label || 'Auto risk', description: q?.helpText, level: opt.riskLevel || 'MOYEN', siteId: undefined, buildingId: undefined, spaceId: gq.spaceId });
+      MOCK_GENERATED_QUESTIONS[idx].autoRiskId = risk.id;
+    }
+    if (opt.createsAction) {
+      const action = await createAction({ riskId: MOCK_GENERATED_QUESTIONS[idx].autoRiskId || '', title: `Action auto: ${q?.label || ''}`, status: 'OUVERTE' });
+      MOCK_GENERATED_QUESTIONS[idx].autoActionId = action.id;
+    }
+  }
+  return structuredClone(MOCK_GENERATED_QUESTIONS[idx]);
+}
+
 export async function createWorkflowRule(rule: Partial<WorkflowRule>): Promise<WorkflowRule> {
   const newRule: WorkflowRule = {
     id: `wr_${Date.now()}`,
