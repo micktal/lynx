@@ -47,6 +47,34 @@ export interface Site {
   status?: 'IN_PROGRESS' | 'FINISHED' | 'NOT_STARTED';
   scoreCriticite?: number;
   progressionTravaux?: number; // 0-100
+  // geo / admin codes
+  regionCode?: string; // ex: 'IDF', 'PACA'
+  departmentCode?: string | number; // ex: '75' or 75
+  // aggregates
+  nbRisquesCritiques?: number;
+  nbActionsEnRetard?: number;
+  nbIncidentsOuverts?: number;
+}
+
+export interface Region {
+  id: ID;
+  name: string;
+  code: string; // short code like 'IDF'
+  lat?: number;
+  lng?: number;
+  zoomLevel?: number;
+  bounds?: any; // GeoJSON polygon or bbox
+}
+
+export interface Department {
+  id: ID;
+  name: string;
+  code: string | number; // ex '75' or 92
+  regionCode?: string; // reference to Region.code
+  lat?: number;
+  lng?: number;
+  zoomLevel?: number;
+  bounds?: any;
 }
 
 export interface Building {
