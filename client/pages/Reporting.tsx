@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Layout from "@/components/Layout";
-import * as builder from "@/lib/builderService";
+import Layout from "../components/Layout";
+import * as builder from "../lib/builderService";
 import type { Risk, ActionItem, Equipment, Incident, Site, Building, Space } from "@shared/api";
 
 function Kpi({ title, value, color = "bg-white" }: { title: string; value: string | number; color?: string }) {
