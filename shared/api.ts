@@ -143,6 +143,44 @@ export interface ActivityLog {
   metadata?: string; // JSON string
 }
 
+export interface BuildingPlan {
+  id: ID;
+  buildingId: ID;
+  name: string;
+  floor?: string | number;
+  svgContent: string;
+  width?: number;
+  height?: number;
+  isDefault?: boolean;
+  createdAt?: string;
+}
+
+export interface PlanArea {
+  id: ID;
+  buildingPlanId: ID;
+  spaceId: ID;
+  label?: string;
+  shapeType: "polygon" | "rect" | "circle";
+  shapeData: string; // JSON string representing coordinates
+  fillColor?: string;
+  strokeColor?: string;
+  opacity?: number;
+}
+
+export interface PlanMarker {
+  id: ID;
+  buildingPlanId: ID;
+  spaceId?: ID;
+  equipmentId?: ID;
+  riskId?: ID;
+  type: "equipment" | "risk";
+  x: number;
+  y: number;
+  iconType?: string;
+  color?: string;
+  tooltip?: string;
+}
+
 export type WorkflowTrigger =
   | "onRiskCreated"
   | "onRiskUpdated"
