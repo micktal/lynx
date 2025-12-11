@@ -180,6 +180,170 @@ export async function fetchActivityLogsWithFilters(filters: { from?: string; to?
   );
 }
 
+// Building plans / areas / markers
+let MOCK_BUILDING_PLANS: BuildingPlan[] = [
+  {
+    id: "bp_1",
+    buildingId: "b_1",
+    name: "RDC",
+    floor: "RDC",
+    svgContent: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="#f8fafc"/><text x="20" y="40" font-size="20">Plan RDC - Bâtiment A</text></svg>`,
+    width: 800,
+    height: 600,
+    isDefault: true,
+    createdAt: new Date().toISOString(),
+  },
+];
+
+let MOCK_PLAN_AREAS: PlanArea[] = [
+  {
+    id: "pa_1",
+    buildingPlanId: "bp_1",
+    spaceId: "s_1",
+    label: "Open Space 1",
+    shapeType: "polygon",
+    shapeData: JSON.stringify([{ x: 50, y: 80 }, { x: 300, y: 80 }, { x: 300, y: 200 }, { x: 50, y: 200 }]),
+    fillColor: "#dbeafe",
+    strokeColor: "#60a5fa",
+    opacity: 0.5,
+  },
+];
+
+let MOCK_PLAN_MARKERS: PlanMarker[] = [
+  {
+    id: "pm_1",
+    buildingPlanId: "bp_1",
+    spaceId: "s_1",
+    equipmentId: "e_1",
+    type: "equipment",
+    x: 120,
+    y: 140,
+    iconType: "alarm",
+    color: "#16a34a",
+    tooltip: "Alarme Zone 1",
+  },
+  {
+    id: "pm_2",
+    buildingPlanId: "bp_1",
+    spaceId: "s_5",
+    riskId: "r_3",
+    type: "risk",
+    x: 600,
+    y: 120,
+    iconType: "fire",
+    color: "#dc2626",
+    tooltip: "Risque critique détecté",
+  },
+];
+
+export async function fetchBuildingPlans(buildingId?: string): Promise<BuildingPlan[]> {
+  if (buildingId) return structuredClone(MOCK_BUILDING_PLANS.filter((p) => p.buildingId === buildingId));
+  return structuredClone(MOCK_BUILDING_PLANS);
+}
+
+export async function createBuildingPlan(p: Partial<BuildingPlan>): Promise<BuildingPlan> {
+  const newP: BuildingPlan = {
+    id: `bp_${Date.now()}`,
+    buildingId: p.buildingId || "",
+    name: p.name || "Nouveau plan",
+    floor: p.floor,
+    svgContent: p.svgContent || "",
+    width: p.width,
+    height: p.height,
+    isDefault: !!p.isDefault,
+    createdAt: new Date().toISOString(),
+  };
+  MOCK_BUILDING_PLANS.unshift(newP);
+  return structuredClone(newP);
+}
+
+export async function updateBuildingPlan(id: string, patch: Partial<BuildingPlan>): Promise<BuildingPlan | null> {
+  const idx = MOCK_BUILDING_PLANS.findIndex((p) => p.id === id);
+  if (idx === -1) return null;
+  MOCK_BUILDING_PLANS[idx] = { ...MOCK_BUILDING_PLANS[idx], ...patch };
+  return structuredClone(MOCK_BUILDING_PLANS[idx]);
+}
+
+export async function deleteBuildingPlan(id: string): Promise<boolean> {
+  const idx = MOCK_BUILDING_PLANS.findIndex((p) => p.id === id);
+  if (idx === -1) return false;
+  MOCK_BUILDING_PLANS.splice(idx, 1);
+  // cleanup areas and markers
+  MOCK_PLAN_AREAS = MOCK_PLAN_AREAS.filter((a) => a.buildingPlanId !== id);
+  MOCK_PLAN_MARKERS = MOCK_PLAN_MARKERS.filter((m) => m.buildingPlanId !== id);
+  return true;
+}
+
+export async function fetchPlanAreas(buildingPlanId: string): Promise<PlanArea[]> {
+  return structuredClone(MOCK_PLAN_AREAS.filter((a) => a.buildingPlanId === buildingPlanId));
+}
+
+export async function createPlanArea(a: Partial<PlanArea>): Promise<PlanArea> {
+  const newA: PlanArea = {
+    id: `pa_${Date.now()}`,
+    buildingPlanId: a.buildingPlanId || "",
+    spaceId: a.spaceId || "",
+    label: a.label,
+    shapeType: (a.shapeType as any) || "polygon",
+    shapeData: a.shapeData || "",
+    fillColor: a.fillColor || "#dbeafe",
+    strokeColor: a.strokeColor || "#60a5fa",
+    opacity: typeof a.opacity === 'number' ? a.opacity : 0.5,
+  };
+  MOCK_PLAN_AREAS.unshift(newA);
+  return structuredClone(newA);
+}
+
+export async function updatePlanArea(id: string, patch: Partial<PlanArea>): Promise<PlanArea | null> {
+  const idx = MOCK_PLAN_AREAS.findIndex((a) => a.id === id);
+  if (idx === -1) return null;
+  MOCK_PLAN_AREAS[idx] = { ...MOCK_PLAN_AREAS[idx], ...patch };
+  return structuredClone(MOCK_PLAN_AREAS[idx]);
+}
+
+export async function deletePlanArea(id: string): Promise<boolean> {
+  const idx = MOCK_PLAN_AREAS.findIndex((a) => a.id === id);
+  if (idx === -1) return false;
+  MOCK_PLAN_AREAS.splice(idx, 1);
+  return true;
+}
+
+export async function fetchPlanMarkers(buildingPlanId: string): Promise<PlanMarker[]> {
+  return structuredClone(MOCK_PLAN_MARKERS.filter((m) => m.buildingPlanId === buildingPlanId));
+}
+
+export async function createPlanMarker(m: Partial<PlanMarker>): Promise<PlanMarker> {
+  const newM: PlanMarker = {
+    id: `pm_${Date.now()}`,
+    buildingPlanId: m.buildingPlanId || "",
+    spaceId: m.spaceId,
+    equipmentId: m.equipmentId,
+    riskId: m.riskId,
+    type: (m.type as any) || "equipment",
+    x: m.x || 0,
+    y: m.y || 0,
+    iconType: m.iconType,
+    color: m.color || "#000000",
+    tooltip: m.tooltip,
+  };
+  MOCK_PLAN_MARKERS.unshift(newM);
+  return structuredClone(newM);
+}
+
+export async function updatePlanMarker(id: string, patch: Partial<PlanMarker>): Promise<PlanMarker | null> {
+  const idx = MOCK_PLAN_MARKERS.findIndex((m) => m.id === id);
+  if (idx === -1) return null;
+  MOCK_PLAN_MARKERS[idx] = { ...MOCK_PLAN_MARKERS[idx], ...patch };
+  return structuredClone(MOCK_PLAN_MARKERS[idx]);
+}
+
+export async function deletePlanMarker(id: string): Promise<boolean> {
+  const idx = MOCK_PLAN_MARKERS.findIndex((m) => m.id === id);
+  if (idx === -1) return false;
+  MOCK_PLAN_MARKERS.splice(idx, 1);
+  return true;
+}
+
 export async function fetchWorkflowRules(): Promise<WorkflowRule[]> {
   return structuredClone(MOCK_WORKFLOW_RULES);
 }
