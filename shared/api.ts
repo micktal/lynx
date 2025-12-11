@@ -68,6 +68,7 @@ export type RiskLevel = "FAIBLE" | "MOYEN" | "IMPORTANT" | "CRITIQUE";
 export interface Risk {
   id: ID;
   auditId?: ID;
+  clientId?: ID;
   siteId?: ID;
   buildingId?: ID;
   spaceId?: ID;
@@ -85,6 +86,7 @@ export type ActionStatus = "OUVERTE" | "EN_COURS" | "CLOTUREE";
 export interface ActionItem {
   id: ID;
   riskId: ID;
+  clientId?: ID;
   title: string;
   description?: string;
   ownerId?: ID;
@@ -97,6 +99,7 @@ export type AuditStatus = "draft" | "in_progress" | "completed";
 export interface Audit {
   id: ID;
   siteId: ID;
+  clientId?: ID;
   buildingId?: ID;
   templateId?: ID;
   status: AuditStatus;
@@ -119,6 +122,7 @@ export interface Attachment {
   fileUrl: string;
   fileType: string;
   auditId?: ID;
+  clientId?: ID;
   siteId?: ID;
   buildingId?: ID;
   spaceId?: ID;
