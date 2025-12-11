@@ -25,6 +25,8 @@ import BuildingPlansAdmin from "./pages/BuildingPlansAdmin";
 import AuditMobile from "./pages/AuditMobile";
 import AuditMobileSpace from "./pages/AuditMobileSpace";
 import AuditMobileEquipment from "./pages/AuditMobileEquipment";
+import Referentiels from "./pages/Referentiels";
+import ReferentielsPreview from "./pages/ReferentielsPreview";
 
 const queryClient = new QueryClient();
 
