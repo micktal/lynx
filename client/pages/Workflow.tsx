@@ -60,7 +60,7 @@ export default function WorkflowPage() {
 
           <input className="input" placeholder="Assignation (userId:..., role:..., team:...)" value={form.assignmentTarget || ""} onChange={(e) => setForm({ ...form, assignmentTarget: e.target.value })} />
 
-          <textarea className="input col-span-1 md:col-span-3" placeholder="Condition (ex: level == \"CRITIQUE\")" value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })} />
+          <textarea className="input col-span-1 md:col-span-3" placeholder={'Condition (ex: level == "CRITIQUE")'} value={form.condition || ""} onChange={(e) => setForm({ ...form, condition: e.target.value })} />
 
           <textarea className="input col-span-1 md:col-span-3" placeholder="Template de notification" value={form.notificationTemplate || ""} onChange={(e) => setForm({ ...form, notificationTemplate: e.target.value })} />
 
