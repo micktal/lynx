@@ -270,3 +270,66 @@ export interface Notification {
   read: boolean;
   createdAt: string;
 }
+
+// Supervision models
+export type IncidentType = "intrusion" | "incendie" | "agression" | "technique" | "TMS" | "autre";
+export type IncidentStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED";
+export type IncidentPriority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+
+export interface Incident {
+  id: ID;
+  type: IncidentType;
+  status: IncidentStatus;
+  priority: IncidentPriority;
+  siteId?: ID;
+  buildingId?: ID;
+  spaceId?: ID;
+  description?: string;
+  reportedBy?: ID;
+  assignedTo?: ID;
+  createdAt?: string;
+  updatedAt?: string;
+  resolvedAt?: string;
+}
+
+export type AgentRole = "agent" | "superviseur" | "pc_securite";
+export type AgentStatus = "AVAILABLE" | "ON_PATROL" | "ON_INCIDENT" | "OFFLINE";
+
+export interface Agent {
+  id: ID;
+  name: string;
+  role: AgentRole;
+  status: AgentStatus;
+  lastKnownPosition?: { lat: number; lng: number };
+  lastCheckIn?: string;
+  siteId?: ID;
+  battery?: number;
+}
+
+export type AgentEventType = "CHECK_IN" | "CHECK_OUT" | "PATROL_START" | "PATROL_END" | "INCIDENT_ASSIGNED" | "MESSAGE_SENT";
+export interface AgentEvent {
+  id: ID;
+  agentId: ID;
+  eventType: AgentEventType;
+  timestamp: string;
+  data?: string; // JSON
+}
+
+export interface LocationPing {
+  id: ID;
+  agentId: ID;
+  lat: number;
+  lng: number;
+  timestamp: string;
+}
+
+export type SupervisionEventType = "SYSTEM" | "ALERT" | "INFO";
+export interface SupervisionEvent {
+  id: ID;
+  eventType: SupervisionEventType;
+  entityType?: string; // agent / incident / system
+  entityId?: ID;
+  description?: string;
+  status?: string;
+  timestamp: string;
+}
