@@ -396,3 +396,73 @@ export interface ReportFilter {
   key: string; // e.g., 'siteId', 'buildingId', 'riskLevel'
   value: string;
 }
+
+// Security models
+
+export interface Role {
+  id: ID;
+  name: string; // ADMIN / MANAGER / AUDITEUR / AGENT / CLIENT_ADMIN / CLIENT_MANAGER / CLIENT_VIEW
+  description?: string;
+  level?: number; // hierarchical level
+  isSystem?: boolean;
+}
+
+export type PermissionAction = "VIEW" | "CREATE" | "UPDATE" | "DELETE" | "ASSIGN" | "EXPORT" | "MANAGE";
+
+export interface Permission {
+  id: ID;
+  roleId: ID;
+  resource: string; // e.g., audit, risk, action, site, building, equipment, incident, reporting, supervision, admin
+  action: PermissionAction;
+  condition?: string; // JSON logic string, e.g., {"field":"clientId","operator":"==","value":"currentUser.clientId"}
+  allowed: boolean;
+}
+
+export interface UserExtended {
+  id: ID;
+  userId: ID; // reference to auth user
+  roleId: ID;
+  clientId?: ID;
+  siteId?: ID;
+  restrictedTo?: string; // JSON string describing exact perimeter, e.g., {"sites":["s1","s2"]}
+}
+
+export interface SecurityAuditLog {
+  id: ID;
+  userId?: ID;
+  action: string;
+  entityType?: string;
+  entityId?: ID;
+  timestamp: string;
+  ipAddress?: string;
+  userAgent?: string;
+  details?: string; // JSON
+}
+
+export interface RuleEngineRule {
+  id: ID;
+  resource: string;
+  action: PermissionAction | string;
+  condition?: string; // JSON structure
+  onlyRoles?: string[]; // roles allowed
+  description?: string;
+  active?: boolean;
+}
+
+export interface SecureVaultEntry {
+  id: ID;
+  name: string;
+  ciphertext: string; // opaque, encrypted server-side
+  createdAt?: string;
+}
+
+export interface SecuritySettings {
+  id: ID;
+  passwordMinLength?: number;
+  passwordRequireUpper?: boolean;
+  passwordRequireNumber?: boolean;
+  passwordRequireSymbol?: boolean;
+  passwordExpiryDays?: number;
+  mfaRequiredForRoles?: string[];
+  sessionTimeoutMinutes?: number;
+}
