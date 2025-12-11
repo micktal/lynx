@@ -1,10 +1,14 @@
 import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification, ActivityLog } from "@shared/api";
 
 // Mocked in-memory data. In production, replace with real Builder SDK calls.
+let MOCK_CLIENTS: any[] = [
+  { id: 'client_1', name: 'Client Demo Retail', logoUrl: '', industry: 'Retail', contactName: 'Paul Client', contactEmail: 'paul@client.com', active: true },
+];
+
 const MOCK_SITES: Site[] = [
-  { id: "site_1", organisationId: "org_1", name: "Siège Social - Paris", address: "12 Rue de la Paix", city: "Paris", country: "France", contactName: "Alice Dupont", contactEmail: "alice@ex.com" },
-  { id: "site_2", organisationId: "org_1", name: "Entrepôt - Lyon", address: "45 Av. Industrielle", city: "Lyon", country: "France", contactName: "Marc Legrand", contactEmail: "marc@ex.com" },
-  { id: "site_3", organisationId: "org_2", name: "Centre de Données - Bordeaux", address: "Parc Tech", city: "Bordeaux", country: "France", contactName: "Sophie Martin", contactEmail: "sophie@ex.com" },
+  { id: "site_1", organisationId: "org_1", clientId: 'client_1', name: "Siège Social - Paris", address: "12 Rue de la Paix", city: "Paris", country: "France", contactName: "Alice Dupont", contactEmail: "alice@ex.com" },
+  { id: "site_2", organisationId: "org_1", clientId: undefined, name: "Entrepôt - Lyon", address: "45 Av. Industrielle", city: "Lyon", country: "France", contactName: "Marc Legrand", contactEmail: "marc@ex.com" },
+  { id: "site_3", organisationId: "org_2", clientId: 'client_1', name: "Centre de Données - Bordeaux", address: "Parc Tech", city: "Bordeaux", country: "France", contactName: "Sophie Martin", contactEmail: "sophie@ex.com" },
 ];
 
 let MOCK_BUILDINGS: Building[] = [
