@@ -345,20 +345,55 @@ export async function createRisk(r: Partial<Risk>): Promise<Risk> {
 export async function updateRisk(id: string, patch: Partial<Risk>): Promise<Risk | null> {
   const idx = MOCK_RISKS.findIndex((r) => r.id === id);
   if (idx === -1) return null;
-  MOCK_RISKS[idx] = { ...MOCK_RISKS[idx], ...patch };
-  return structuredClone(MOCK_RISKS[idx]);
+  const old = MOCK_RISKS[idx];
+  const updated = { ...old, ...patch };
+  MOCK_RISKS[idx] = updated;
+  // log level change specially
+  if (patch.level && patch.level !== old.level) {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "risk",
+      entityId: id,
+      operation: "statusChanged",
+      userId: "u_system",
+      description: `Niveau du risque modifié : ${old.level} → ${patch.level}`,
+      oldValue: old.level,
+      newValue: patch.level,
+    });
+  } else {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "risk",
+      entityId: id,
+      operation: "updated",
+      userId: "u_system",
+      description: `Risque mis à jour: ${updated.title}`,
+      metadata: JSON.stringify({ patch }),
+    });
+  }
+  return structuredClone(updated);
 }
 
 export async function deleteRisk(id: string): Promise<boolean> {
   const idx = MOCK_RISKS.findIndex((r) => r.id === id);
   if (idx === -1) return false;
+  const old = MOCK_RISKS[idx];
   MOCK_RISKS.splice(idx, 1);
   // also remove actions linked
   for (let i = MOCK_ACTIONS.length - 1; i >= 0; i--) {
     if (MOCK_ACTIONS[i].riskId === id) MOCK_ACTIONS.splice(i, 1);
   }
+  await createActivityLog({
+    timestamp: new Date().toISOString(),
+    entityType: "risk",
+    entityId: id,
+    operation: "deleted",
+    userId: "u_system",
+    description: `Risque supprimé: ${old.title}`,
+  });
   return true;
 }
+
 
 // Attachment CRUD
 export async function createAttachment(a: Partial<Attachment>): Promise<Attachment> {
