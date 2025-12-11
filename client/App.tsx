@@ -53,6 +53,8 @@ const App = () => (
           <Route path="/audit-mobile/:auditId" element={<AuditMobile />} />
           <Route path="/audit-mobile/:auditId/space/:spaceId" element={<AuditMobileSpace />} />
           <Route path="/audit-mobile/:auditId/equipment/:equipmentId" element={<AuditMobileEquipment />} />
+          <Route path="/referentiels" element={<Referentiels />} />
+          <Route path="/referentiels/preview/:templateId" element={<ReferentielsPreview />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
