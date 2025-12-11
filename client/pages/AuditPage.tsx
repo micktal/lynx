@@ -236,6 +236,17 @@ export default function AuditPage() {
       </section>
 
       <section className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">Timeline de l'audit</h2>
+        <div className="card p-4">
+          {logs.length === 0 ? (
+            <div className="text-center py-6">Aucun événement enregistré pour cet audit.</div>
+          ) : (
+            <div>{React.createElement(require('../components/Timeline').default, { items: logs })}</div>
+          )}
+        </div>
+      </section>
+
+      <section className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Plan d'actions</h2>
         <div className="mb-3 flex justify-end">
           <button onClick={()=>{ setEditingAction(null); setActionFormOpen(true); }} className="brand-btn">Ajouter une action</button>
