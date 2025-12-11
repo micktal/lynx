@@ -64,9 +64,11 @@ export default function MapFrancePage(): JSX.Element {
 
     async function initMap() {
       // fetch data
-      const [s, c] = await Promise.all([builder.fetchSitesWithScores(), builder.fetchClients()]);
+      const [s, c, r, d] = await Promise.all([builder.fetchSitesWithScores(), builder.fetchClients(), builder.fetchRegions(), builder.fetchDepartments()]);
       setSites(s);
       setClients(c || []);
+      setRegions(r || []);
+      setDepartments(d || []);
 
       // create map
       // @ts-ignore
@@ -84,6 +86,11 @@ export default function MapFrancePage(): JSX.Element {
         attribution: '&copy; <a href="https://carto.com/">CARTO</a> contributors',
         maxZoom: 19
       }).addTo(mapRef.current);
+
+      // re-render when zoom changes so we can switch between regional and site views
+      mapRef.current.on('zoomend', () => {
+        renderLayers(s);
+      });
 
       renderLayers(s);
     }
