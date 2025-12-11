@@ -410,13 +410,35 @@ export async function createAttachment(a: Partial<Attachment>): Promise<Attachme
     uploadedAt: new Date().toISOString(),
   };
   MOCK_ATTACHMENTS.unshift(newA);
+  // log photo added
+  const targetEntity = a.riskId ? { type: 'risk', id: a.riskId } : a.equipmentId ? { type: 'equipment', id: a.equipmentId } : a.auditId ? { type: 'audit', id: a.auditId } : a.spaceId ? { type: 'space', id: a.spaceId } : null;
+  if (targetEntity) {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: targetEntity.type,
+      entityId: targetEntity.id,
+      operation: "photoAdded",
+      userId: a.uploadedBy || "u_system",
+      description: `Pièce jointe ajoutée: ${newA.fileUrl}`,
+      metadata: JSON.stringify({ attachment: newA }),
+    });
+  }
   return structuredClone(newA);
 }
 
 export async function deleteAttachment(id: string): Promise<boolean> {
   const idx = MOCK_ATTACHMENTS.findIndex((a) => a.id === id);
   if (idx === -1) return false;
+  const old = MOCK_ATTACHMENTS[idx];
   MOCK_ATTACHMENTS.splice(idx, 1);
+  await createActivityLog({
+    timestamp: new Date().toISOString(),
+    entityType: old.auditId ? "audit" : old.riskId ? "risk" : old.equipmentId ? "equipment" : old.spaceId ? "space" : "attachment",
+    entityId: old.auditId || old.riskId || old.equipmentId || old.spaceId || old.siteId || "",
+    operation: "deleted",
+    userId: old.uploadedBy || "u_system",
+    description: `Pièce jointe supprimée: ${old.id}`,
+  });
   return true;
 }
 
@@ -432,20 +454,63 @@ export async function createAction(action: Partial<ActionItem>): Promise<ActionI
     status: action.status || "OUVERTE",
   };
   MOCK_ACTIONS.unshift(newAct);
+  // log action created
+  await createActivityLog({
+    timestamp: new Date().toISOString(),
+    entityType: "action",
+    entityId: newAct.id,
+    operation: "created",
+    userId: newAct.ownerId || "u_system",
+    description: `Action créée: ${newAct.title} assignée à ${newAct.ownerId || 'non défini'}`,
+    metadata: JSON.stringify({ action: newAct }),
+  });
   return structuredClone(newAct);
 }
 
 export async function updateAction(id: string, patch: Partial<ActionItem>): Promise<ActionItem | null> {
   const idx = MOCK_ACTIONS.findIndex((a) => a.id === id);
   if (idx === -1) return null;
-  MOCK_ACTIONS[idx] = { ...MOCK_ACTIONS[idx], ...patch };
+  const old = MOCK_ACTIONS[idx];
+  const updated = { ...old, ...patch };
+  MOCK_ACTIONS[idx] = updated;
+  if (patch.status && patch.status !== old.status) {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "action",
+      entityId: id,
+      operation: "statusChanged",
+      userId: updated.ownerId || "u_system",
+      description: `Action ${updated.title} déplacée en: ${patch.status}`,
+      oldValue: old.status,
+      newValue: patch.status as any,
+    });
+  } else {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "action",
+      entityId: id,
+      operation: "updated",
+      userId: updated.ownerId || "u_system",
+      description: `Action mise à jour: ${updated.title}`,
+      metadata: JSON.stringify({ patch }),
+    });
+  }
   return structuredClone(MOCK_ACTIONS[idx]);
 }
 
 export async function deleteAction(id: string): Promise<boolean> {
   const idx = MOCK_ACTIONS.findIndex((a) => a.id === id);
   if (idx === -1) return false;
+  const old = MOCK_ACTIONS[idx];
   MOCK_ACTIONS.splice(idx, 1);
+  await createActivityLog({
+    timestamp: new Date().toISOString(),
+    entityType: "action",
+    entityId: id,
+    operation: "deleted",
+    userId: old.ownerId || "u_system",
+    description: `Action supprimée: ${old.title}`,
+  });
   return true;
 }
 
