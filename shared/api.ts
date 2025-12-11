@@ -302,7 +302,6 @@ export interface Notification {
   createdAt: string;
 }
 
-// Supervision models
 export type IncidentType = "intrusion" | "incendie" | "agression" | "technique" | "TMS" | "autre";
 export type IncidentStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED";
 export type IncidentPriority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
@@ -363,4 +362,37 @@ export interface SupervisionEvent {
   description?: string;
   status?: string;
   timestamp: string;
+}
+
+// Reporting models
+
+export interface ReportDashboard {
+  id: ID;
+  name: string;
+  description?: string;
+  ownerId?: ID;
+  clientId?: ID;
+  config?: string; // JSON string describing widgets, layout and filters
+  isDefault?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type WidgetType = "bar" | "line" | "pie" | "donut" | "heatmap" | "table" | "kpi" | "gauge";
+
+export interface ReportWidget {
+  id: ID;
+  dashboardId: ID;
+  type: WidgetType;
+  title: string;
+  query?: string; // JSON string describing datasource and aggregations
+  position?: { x: number; y: number };
+  size?: { width: number; height: number };
+}
+
+export interface ReportFilter {
+  id: ID;
+  dashboardId: ID;
+  key: string; // e.g., 'siteId', 'buildingId', 'riskLevel'
+  value: string;
 }
