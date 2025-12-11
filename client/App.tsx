@@ -13,6 +13,7 @@ import SitePage from "./pages/SitePage";
 import SpacePage from "./pages/SpacePage";
 import AuditPage from "./pages/AuditPage";
 import EquipmentPage from "./pages/EquipmentPage";
+import RiskPage from "./pages/RiskPage";
 
 const queryClient = new QueryClient();
 
