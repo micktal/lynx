@@ -39,6 +39,10 @@ const App = () => (
           <Route path="/risk/:id" element={<RiskPage />} />
           <Route path="/action/:id" element={<ActionPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/workflow" element={<WorkflowPage />} />
+          <Route path="/workflow-dashboard" element={<WorkflowDashboard />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/journal" element={<JournalPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
