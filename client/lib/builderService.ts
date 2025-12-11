@@ -1,4 +1,4 @@
-import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification } from "@shared/api";
+import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification, ActivityLog } from "@shared/api";
 
 // Mocked in-memory data. In production, replace with real Builder SDK calls.
 const MOCK_SITES: Site[] = [
