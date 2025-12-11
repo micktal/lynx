@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "@/components/Layout";
+import Layout from "../components/Layout";
 import type { ReportDashboard, ReportWidget } from "@shared/api";
 
 function defaultDashboard(): ReportDashboard {
