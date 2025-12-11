@@ -24,6 +24,7 @@ export interface Site {
 export interface Building {
   id: ID;
   siteId: ID;
+  clientId?: ID;
   name: string;
   code?: string;
   description?: string;
@@ -34,6 +35,7 @@ export interface Building {
 export interface Space {
   id: ID;
   buildingId: ID;
+  clientId?: ID;
   name: string;
   code?: string;
   description?: string;
