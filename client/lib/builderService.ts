@@ -301,7 +301,31 @@ export async function createEquipment(e: Partial<Equipment>): Promise<Equipment>
 export async function updateEquipment(id: string, patch: Partial<Equipment>): Promise<Equipment | null> {
   const idx = MOCK_EQUIP.findIndex((eq) => eq.id === id);
   if (idx === -1) return null;
-  MOCK_EQUIP[idx] = { ...MOCK_EQUIP[idx], ...patch };
+  const old = MOCK_EQUIP[idx];
+  const updated = { ...old, ...patch };
+  MOCK_EQUIP[idx] = updated;
+  if (patch.state && patch.state !== old.state) {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "equipment",
+      entityId: id,
+      operation: "statusChanged",
+      userId: "u_system",
+      description: `État modifié : ${old.state} → ${patch.state}`,
+      oldValue: old.state,
+      newValue: patch.state,
+    });
+  } else {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "equipment",
+      entityId: id,
+      operation: "updated",
+      userId: "u_system",
+      description: `Équipement mis à jour: ${updated.name}`,
+      metadata: JSON.stringify({ patch }),
+    });
+  }
   return structuredClone(MOCK_EQUIP[idx]);
 }
 
