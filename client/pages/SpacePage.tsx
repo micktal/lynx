@@ -23,6 +23,7 @@ export default function SpacePage() {
   const [risks, setRisks] = useState<Risk[]>([]);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [actions, setActions] = useState<ActionItem[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
 
   const [stats, setStats] = useState({ equipments: 0, risks: 0, actionsOpen: 0 });
 
