@@ -93,10 +93,8 @@ export default function MapPage() {
       if (site.scoreCriticite === undefined) site.scoreCriticite = 0;
       if (site.scoreCriticite < minScore) return false;
       if (onlyWithActionsLate) {
-        // rough check: actions exist and overdue computed earlier
-        // use builderService to determine actions late per site is non-zero by recompute quickly
-        const actionsLate = (builder as any).MOCK_ACTIONS ? (builder as any).MOCK_ACTIONS.filter((a:any)=>{ const r=(builder as any).MOCK_RISKS.find((rr:any)=>rr.id===a.riskId); return r && r.siteId===site.id && a.dueDate && new Date(a.dueDate) < new Date() && a.status!=='CLOTUREE'; }).length : 0;
-        if (actionsLate===0) return false;
+        // approximate by checking if site has a non-zero criticity score (actions late typically increase score)
+        if (!(site.scoreCriticite && site.scoreCriticite > 0)) return false;
       }
       if (site.status==='IN_PROGRESS' && !showInProgress) return false;
       if (site.status==='FINISHED' && !showFinished) return false;
