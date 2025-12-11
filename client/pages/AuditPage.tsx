@@ -25,6 +25,7 @@ export default function AuditPage() {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [actions, setActions] = useState<ActionItem[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
 
   const [riskFormOpen, setRiskFormOpen] = useState(false);
   const [editingRisk, setEditingRisk] = useState<Risk | null>(null);
