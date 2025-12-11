@@ -52,6 +52,19 @@ let MOCK_ACTIONS: ActionItem[] = [
   { id: "act_2", riskId: "r_2", title: "Remplacer caméra", description: "Commander et remplacer", ownerId: "u_3", dueDate: "2024-08-15", status: "EN_COURS" },
 ];
 
+// Client APIs
+export async function fetchClients(): Promise<any[]> { return structuredClone(MOCK_CLIENTS); }
+export async function createClient(c: Partial<any>): Promise<any> { const newC = { id: `client_${Date.now()}`, name: c.name || 'Nouveau client', logoUrl: c.logoUrl, industry: c.industry, contactName: c.contactName, contactEmail: c.contactEmail, contactPhone: c.contactPhone, active: typeof c.active === 'boolean' ? c.active : true, notes: c.notes }; MOCK_CLIENTS.unshift(newC); return structuredClone(newC); }
+export async function updateClient(id: string, patch: Partial<any>): Promise<any | null> { const idx = MOCK_CLIENTS.findIndex(x=>x.id===id); if (idx===-1) return null; MOCK_CLIENTS[idx] = { ...MOCK_CLIENTS[idx], ...patch }; return structuredClone(MOCK_CLIENTS[idx]); }
+export async function deleteClient(id: string): Promise<boolean> { const idx = MOCK_CLIENTS.findIndex(x=>x.id===id); if (idx===-1) return false; MOCK_CLIENTS.splice(idx,1); // optionally cleanup related sites
+  return true; }
+
+let MOCK_CLIENT_USERS: any[] = [ { id: 'cu_1', userId: 'u_client_1', clientId: 'client_1', role: 'CLIENT_ADMIN', permissions: '{}', active: true } ];
+export async function fetchClientUsers(clientId?: string): Promise<any[]> { return structuredClone(clientId ? MOCK_CLIENT_USERS.filter(u=>u.clientId===clientId) : MOCK_CLIENT_USERS); }
+export async function createClientUser(u: Partial<any>): Promise<any> { const newU = { id: `cu_${Date.now()}`, userId: u.userId||`u_client_${Date.now()}`, clientId: u.clientId||'', role: u.role||'CLIENT_VIEW', permissions: u.permissions||'{}', active: typeof u.active==='boolean'?u.active:true }; MOCK_CLIENT_USERS.unshift(newU); return structuredClone(newU); }
+export async function updateClientUser(id: string, patch: Partial<any>): Promise<any | null> { const idx = MOCK_CLIENT_USERS.findIndex(x=>x.id===id); if (idx===-1) return null; MOCK_CLIENT_USERS[idx] = { ...MOCK_CLIENT_USERS[idx], ...patch }; return structuredClone(MOCK_CLIENT_USERS[idx]); }
+export async function deleteClientUser(id: string): Promise<boolean> { const idx = MOCK_CLIENT_USERS.findIndex(x=>x.id===id); if (idx===-1) return false; MOCK_CLIENT_USERS.splice(idx,1); return true; }
+
 export async function fetchSites(): Promise<Site[]> {
   return structuredClone(MOCK_SITES);
 }
