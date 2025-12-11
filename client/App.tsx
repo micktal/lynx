@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Synthese from "./pages/Synthese";
 import SitePage from "./pages/SitePage";
+import SpacePage from "./pages/SpacePage";
 
 const queryClient = new QueryClient();
 
