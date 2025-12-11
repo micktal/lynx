@@ -9,7 +9,10 @@ export default function MapFrancePage(): JSX.Element {
   const heatRef = useRef<any>(null);
   const [sites, setSites] = useState<Site[]>([]);
   const [clients, setClients] = useState<any[]>([]);
+  const [regions, setRegions] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<any[]>([]);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
+  const regionLayerRef = useRef<any>(null);
 
   // filters
   const [clientFilter, setClientFilter] = useState<string | "">("");
