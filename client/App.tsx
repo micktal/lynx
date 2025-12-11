@@ -27,6 +27,7 @@ import AuditMobileSpace from "./pages/AuditMobileSpace";
 import AuditMobileEquipment from "./pages/AuditMobileEquipment";
 import Referentiels from "./pages/Referentiels";
 import ReferentielsPreview from "./pages/ReferentielsPreview";
+import Supervision from "./pages/Supervision";
 
 const queryClient = new QueryClient();
 
