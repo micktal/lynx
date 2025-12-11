@@ -8,6 +8,29 @@ export interface Organisation {
   createdAt?: string;
 }
 
+export interface Client {
+  id: ID;
+  name: string;
+  logoUrl?: string;
+  industry?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  active?: boolean;
+  notes?: string;
+  createdAt?: string;
+}
+
+export type ClientUserRole = "CLIENT_VIEW" | "CLIENT_MANAGER" | "CLIENT_ADMIN";
+export interface ClientUser {
+  id: ID;
+  userId: ID;
+  clientId: ID;
+  role: ClientUserRole;
+  permissions?: string; // JSON
+  active?: boolean;
+}
+
 export interface Site {
   id: ID;
   organisationId: ID;
