@@ -49,8 +49,12 @@ export default function EquipmentPage() {
       setAttachments(atts);
       const acts = await builder.fetchActionsForRisks(myRisks.map((r) => r.id));
       setActions(acts);
+
+      const logs = await builder.fetchActivityLogsForEntity('equipment', eq.id);
+      setLogs(logs);
     })();
   }, [equipId]);
+
 
   const handleSaveEquipment = async (payload: Partial<Equipment>) => {
     if (!equipment) return;
