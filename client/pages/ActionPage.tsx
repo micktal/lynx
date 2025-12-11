@@ -194,17 +194,20 @@ export default function ActionPage() {
 
       <section className="mb-6">
         <h3 className="font-semibold mb-2">Historique</h3>
-        {history.length === 0 ? (
-          <div className="card text-center py-8">Aucun historique enregistré pour cette action.</div>
-        ) : (
-          <div className="card">
-            <ul className="space-y-2">
-              {history.map((h, idx) => (
-                <li key={idx} className="text-sm"><span className="text-muted">{new Date(h.date).toLocaleString()} — </span>{h.text}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div className="card p-4">
+          {/* Timeline component */}
+          {/* import Timeline dynamically to avoid circular issues */}
+          {logs.length === 0 ? (
+            <div className="text-center py-6">Aucun événement enregistré pour cette action.</div>
+          ) : (
+            <div>
+              {/* render timeline */}
+              {/* Timeline component */}
+              {/* eslint-disable-next-line @typescript-eslint/no-var-requires */}
+              {React.createElement(require('../components/Timeline').default, { items: logs })}
+            </div>
+          )}
+        </div>
       </section>
 
       <div className="flex gap-2">
