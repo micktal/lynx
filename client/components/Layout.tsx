@@ -16,15 +16,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <nav className="flex items-center gap-3">
-            <Link to="/" className="text-sm text-muted hover:text-foreground">
-              Sites
-            </Link>
-            <Link to="/synthese" className="text-sm text-muted hover:text-foreground">
-              Synthèse
-            </Link>
-            <Link to="/audit" className="text-sm text-muted hover:text-foreground">
-              Audits
-            </Link>
+            <Link to="/" className="text-sm text-muted hover:text-foreground">Sites</Link>
+            <Link to="/synthese" className="text-sm text-muted hover:text-foreground">Synthèse</Link>
+            <Link to="/audit" className="text-sm text-muted hover:text-foreground">Audits</Link>
+            <Link to="/workflow-dashboard" className="text-sm text-muted hover:text-foreground">Workflow</Link>
+            <Link to="/notifications" className="text-sm text-muted hover:text-foreground">Notifications</Link>
             <button className="brand-btn">Nouveau site</button>
           </nav>
         </div>
