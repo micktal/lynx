@@ -130,6 +130,19 @@ export interface DashboardPage {
   createdAt?: string;
 }
 
+export interface ActivityLog {
+  id: ID;
+  timestamp: string; // ISO datetime
+  entityType: string; // audit | risk | action | equipment | space | building | site
+  entityId: ID;
+  operation: "created" | "updated" | "deleted" | "statusChanged" | "commentAdded" | "photoAdded";
+  userId?: ID;
+  description?: string;
+  oldValue?: string;
+  newValue?: string;
+  metadata?: string; // JSON string
+}
+
 export type WorkflowTrigger =
   | "onRiskCreated"
   | "onRiskUpdated"
