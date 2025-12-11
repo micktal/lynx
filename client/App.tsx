@@ -22,6 +22,9 @@ import WorkflowDashboard from "./pages/WorkflowDashboard";
 import JournalPage from "./pages/journal";
 import BuildingPage from "./pages/BuildingPage";
 import BuildingPlansAdmin from "./pages/BuildingPlansAdmin";
+import AuditMobile from "./pages/AuditMobile";
+import AuditMobileSpace from "./pages/AuditMobileSpace";
+import AuditMobileEquipment from "./pages/AuditMobileEquipment";
 
 const queryClient = new QueryClient();
 
