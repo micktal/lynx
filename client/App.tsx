@@ -31,6 +31,10 @@ import Supervision from "./pages/Supervision";
 import ClientsPage from "./pages/Clients";
 import ClientDetail from "./pages/ClientDetail";
 import ClientPortal from "./pages/ClientPortal";
+import ReportingPage from "./pages/Reporting";
+import ReportingComparatifPage from "./pages/ReportingComparatif";
+import ReportingTimelinePage from "./pages/ReportingTimeline";
+import ReportingDesignerPage from "./pages/ReportingDesigner";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +69,10 @@ const App = () => (
           <Route path="/clients" element={<ClientsPage />} />
           <Route path="/clients/:id" element={<ClientDetail />} />
           <Route path="/client-portal" element={<ClientPortal />} />
+          <Route path="/reporting" element={<ReportingPage />} />
+          <Route path="/reporting/comparatif" element={<ReportingComparatifPage />} />
+          <Route path="/reporting/timeline" element={<ReportingTimelinePage />} />
+          <Route path="/reporting/designer" element={<ReportingDesignerPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
