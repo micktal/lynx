@@ -16,6 +16,10 @@ import EquipmentPage from "./pages/EquipmentPage";
 import RiskPage from "./pages/RiskPage";
 import ActionPage from "./pages/ActionPage";
 import Dashboard from "./pages/Dashboard";
+import WorkflowPage from "./pages/Workflow";
+import NotificationsPage from "./pages/Notifications";
+import WorkflowDashboard from "./pages/WorkflowDashboard";
+import JournalPage from "./pages/journal";
 
 const queryClient = new QueryClient();
 
