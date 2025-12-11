@@ -1,4 +1,4 @@
-import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification, ActivityLog } from "@shared/api";
+import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification, ActivityLog, DataLakeRecord, TimeSeriesMetric, MaterializedView } from "@shared/api";
 
 // Mocked in-memory data. In production, replace with real Builder SDK calls.
 let MOCK_CLIENTS: any[] = [
@@ -954,3 +954,134 @@ export async function fetchRisksForSpace(spaceId: string): Promise<Risk[]> {
 export async function fetchActionsForRisks(riskIds: string[]): Promise<ActionItem[]> {
   return structuredClone(MOCK_ACTIONS.filter((a) => riskIds.includes(a.riskId)));
 }
+
+// Data Lake & Time-series mocks
+let MOCK_DATA_LAKE: DataLakeRecord[] = [];
+let MOCK_TIME_SERIES: TimeSeriesMetric[] = [];
+let MOCK_MATERIALIZED_VIEWS: MaterializedView[] = [];
+
+export async function writeDataLakeRecord(r: Partial<DataLakeRecord>): Promise<DataLakeRecord> {
+  const newR: DataLakeRecord = {
+    id: `dl_${Date.now()}`,
+    entityType: r.entityType || '',
+    entityId: r.entityId || '',
+    timestamp: r.timestamp || new Date().toISOString(),
+    snapshot: r.snapshot || '{}',
+    changeType: (r.changeType as any) || 'UPDATED',
+    changedBy: r.changedBy,
+    delta: r.delta || '',
+    clientId: r.clientId,
+    createdAt: new Date().toISOString(),
+  } as DataLakeRecord;
+  MOCK_DATA_LAKE.unshift(newR);
+  return structuredClone(newR);
+}
+
+export async function fetchDataLakeRecords(filters: { entityType?: string; entityId?: string; clientId?: string; from?: string; to?: string } = {}): Promise<DataLakeRecord[]> {
+  return structuredClone(
+    MOCK_DATA_LAKE.filter((rec) => {
+      if (filters.entityType && rec.entityType !== filters.entityType) return false;
+      if (filters.entityId && rec.entityId !== filters.entityId) return false;
+      if (filters.clientId && rec.clientId !== filters.clientId) return false;
+      if (filters.from && rec.timestamp < filters.from) return false;
+      if (filters.to && rec.timestamp > filters.to) return false;
+      return true;
+    }).sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+  );
+}
+
+export async function exportDataLakeAsCsv(filters: { entityType?: string; entityId?: string; clientId?: string; from?: string; to?: string } = {}): Promise<Blob> {
+  const rows: string[] = ["id,entityType,entityId,timestamp,changeType,changedBy,clientId,snapshot"];
+  const recs = await fetchDataLakeRecords(filters);
+  for (const r of recs) {
+    const line = [r.id, r.entityType, r.entityId, r.timestamp, r.changeType, r.changedBy || '', r.clientId || '', `"${(r.snapshot || '').toString().replace(/"/g, '""')}"`].join(',');
+    rows.push(line);
+  }
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  return blob;
+}
+
+export async function purgeDataLakeOlderThan(months: number, clientId?: string): Promise<{ deleted: number }> {
+  const threshold = new Date();
+  threshold.setMonth(threshold.getMonth() - months);
+  const before = MOCK_DATA_LAKE.length;
+  MOCK_DATA_LAKE = MOCK_DATA_LAKE.filter((r) => {
+    if (clientId && r.clientId !== clientId) return true;
+    return new Date(r.timestamp) >= threshold;
+  });
+  return { deleted: before - MOCK_DATA_LAKE.length };
+}
+
+// Time-series
+export async function writeTimeSeriesMetric(m: Partial<TimeSeriesMetric>): Promise<TimeSeriesMetric> {
+  const newM: TimeSeriesMetric = {
+    id: `ts_${Date.now()}`,
+    metricType: (m.metricType as any) || 'CUSTOM',
+    value: typeof m.value === 'number' ? m.value : 0,
+    timestamp: m.timestamp || new Date().toISOString(),
+    siteId: m.siteId,
+    buildingId: m.buildingId,
+    clientId: m.clientId,
+    metadata: m.metadata || undefined,
+  } as TimeSeriesMetric;
+  MOCK_TIME_SERIES.unshift(newM);
+  return structuredClone(newM);
+}
+
+export async function fetchTimeSeries(filters: { metricType?: string; siteId?: string; buildingId?: string; clientId?: string; from?: string; to?: string } = {}): Promise<TimeSeriesMetric[]> {
+  return structuredClone(
+    MOCK_TIME_SERIES.filter((t) => {
+      if (filters.metricType && t.metricType !== filters.metricType) return false;
+      if (filters.siteId && t.siteId !== filters.siteId) return false;
+      if (filters.buildingId && t.buildingId !== filters.buildingId) return false;
+      if (filters.clientId && t.clientId !== filters.clientId) return false;
+      if (filters.from && t.timestamp < filters.from) return false;
+      if (filters.to && t.timestamp > filters.to) return false;
+      return true;
+    }).sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+  );
+}
+
+// Materialized views
+export async function createMaterializedView(v: Partial<MaterializedView>): Promise<MaterializedView> {
+  const newV: MaterializedView = {
+    id: `mv_${Date.now()}`,
+    name: v.name || 'Nouvelle vue matérialisée',
+    description: v.description,
+    query: v.query || '{}',
+    lastRefreshed: v.lastRefreshed,
+    refreshInterval: v.refreshInterval,
+    data: v.data || '[]',
+  } as MaterializedView;
+  MOCK_MATERIALIZED_VIEWS.unshift(newV);
+  return structuredClone(newV);
+}
+
+export async function fetchMaterializedViews(): Promise<MaterializedView[]> {
+  return structuredClone(MOCK_MATERIALIZED_VIEWS);
+}
+
+export async function refreshMaterializedView(id: string): Promise<MaterializedView | null> {
+  const idx = MOCK_MATERIALIZED_VIEWS.findIndex((m) => m.id === id);
+  if (idx === -1) return null;
+  // Simulate refresh by generating a small summary based on current mocks
+  const summary = { refreshedAt: new Date().toISOString(), sampleCount: Math.floor(Math.random() * 100) };
+  MOCK_MATERIALIZED_VIEWS[idx].data = JSON.stringify(summary);
+  MOCK_MATERIALIZED_VIEWS[idx].lastRefreshed = new Date().toISOString();
+  return structuredClone(MOCK_MATERIALIZED_VIEWS[idx]);
+}
+
+export async function fetchDataLakeStats(): Promise<{ totalRecords: number; timeSeriesPoints: number; materializedViews: number; avgSnapshotSize: number }> {
+  const total = MOCK_DATA_LAKE.length;
+  const ts = MOCK_TIME_SERIES.length;
+  const mv = MOCK_MATERIALIZED_VIEWS.length;
+  const avg = total ? Math.round(MOCK_DATA_LAKE.reduce((s, r) => s + ((r.snapshot || '').length || 0), 0) / total) : 0;
+  return { totalRecords: total, timeSeriesPoints: ts, materializedViews: mv, avgSnapshotSize: avg };
+}
+
+// convenience: replay helper
+export async function fetchDataLakeForEntity(entityType: string, entityId: string): Promise<DataLakeRecord[]> {
+  return fetchDataLakeRecords({ entityType, entityId });
+}
+
+// end of added Data Lake APIs
