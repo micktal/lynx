@@ -1,4 +1,4 @@
-import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification, ActivityLog, DataLakeRecord, TimeSeriesMetric, MaterializedView } from "@shared/api";
+import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification, ActivityLog, DataLakeRecord, TimeSeriesMetric, MaterializedView, Role, Permission, UserExtended, SecurityAuditLog, RuleEngineRule } from "@shared/api";
 
 // Mocked in-memory data. In production, replace with real Builder SDK calls.
 let MOCK_CLIENTS: any[] = [
