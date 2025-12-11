@@ -62,6 +62,9 @@ export default function AuditPage() {
       setAttachments(atts);
       const acts = await builder.fetchActionsForRisks(auditRisks.map((r) => r.id));
       setActions(acts);
+
+      const logs = await builder.fetchActivityLogsForEntity('audit', a.id);
+      setLogs(logs);
     })();
   }, [auditId]);
 
