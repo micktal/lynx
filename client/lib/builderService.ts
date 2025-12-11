@@ -72,6 +72,37 @@ export async function fetchAudits(): Promise<Audit[]> {
   return structuredClone(MOCK_AUDITS);
 }
 
+export async function updateAudit(id: string, patch: Partial<Audit>): Promise<Audit | null> {
+  const idx = MOCK_AUDITS.findIndex((a) => a.id === id);
+  if (idx === -1) return null;
+  const old = MOCK_AUDITS[idx];
+  const updated = { ...old, ...patch };
+  MOCK_AUDITS[idx] = updated;
+  if (patch.status && patch.status !== old.status) {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "audit",
+      entityId: id,
+      operation: "statusChanged",
+      userId: "u_system",
+      description: `Audit déplacé en: ${patch.status}`,
+      oldValue: old.status,
+      newValue: patch.status as any,
+    });
+  } else {
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: "audit",
+      entityId: id,
+      operation: "updated",
+      userId: "u_system",
+      description: `Audit mis à jour: ${updated.title}`,
+      metadata: JSON.stringify({ patch }),
+    });
+  }
+  return structuredClone(MOCK_AUDITS[idx]);
+}
+
 export async function fetchAttachments(): Promise<Attachment[]> {
   return structuredClone(MOCK_ATTACHMENTS);
 }
