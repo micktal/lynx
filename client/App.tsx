@@ -37,6 +37,9 @@ import ReportingTimelinePage from "./pages/ReportingTimeline";
 import ReportingDesignerPage from "./pages/ReportingDesigner";
 import DataLakeAdminPage from "./pages/datalake-admin";
 import DataLakeReplayPage from "./pages/datalake-replay";
+import AdminSecurityLogPage from "./pages/admin-security-log";
+import AdminRulesPage from "./pages/admin-rules";
+import UnauthorizedPage from "./pages/unauthorized";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +80,9 @@ const App = () => (
           <Route path="/reporting/designer" element={<ReportingDesignerPage />} />
           <Route path="/datalake-admin" element={<DataLakeAdminPage />} />
           <Route path="/datalake/replay/:entityType/:entityId" element={<DataLakeReplayPage />} />
+          <Route path="/admin/security-log" element={<AdminSecurityLogPage />} />
+          <Route path="/admin/rules" element={<AdminRulesPage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
