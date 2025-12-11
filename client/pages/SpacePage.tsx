@@ -243,6 +243,17 @@ export default function SpacePage() {
         <ActionList items={actions} onEdit={(a) => { setEditingAction(a); setActionFormOpen(true); }} onDelete={(id) => handleDeleteAction(id)} onToggleStatus={(id) => handleToggleActionStatus(id)} />
       </section>
 
+      <section className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">Historique</h2>
+        <div className="card p-4">
+          {logs.length === 0 ? (
+            <div className="text-center py-6">Aucun historique pour cet espace.</div>
+          ) : (
+            <div>{React.createElement(require('../components/Timeline').default, { items: logs })}</div>
+          )}
+        </div>
+      </section>
+
       <EquipmentForm initial={editingEquip} open={equipFormOpen} onClose={() => setEquipFormOpen(false)} onSave={handleSaveEquipment} />
       <RiskForm initial={editingRisk} open={riskFormOpen} onClose={() => setRiskFormOpen(false)} onSave={handleSaveRisk} />
       <ActionForm initial={editingAction} open={actionFormOpen} onClose={() => setActionFormOpen(false)} onSave={handleSaveAction} />
