@@ -1,4 +1,4 @@
-import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem } from "@shared/api";
+import type { Site, Building, Space, Equipment, Risk, Audit, Attachment, ActionItem, WorkflowRule, Notification } from "@shared/api";
 
 // Mocked in-memory data. In production, replace with real Builder SDK calls.
 const MOCK_SITES: Site[] = [
@@ -78,6 +78,105 @@ export async function fetchAttachments(): Promise<Attachment[]> {
 
 export async function fetchActions(): Promise<ActionItem[]> {
   return structuredClone(MOCK_ACTIONS);
+}
+
+// WorkflowRule & Notification mocks and simple APIs
+let MOCK_WORKFLOW_RULES: WorkflowRule[] = [
+  {
+    id: "wr_1",
+    ruleName: "Risque critique -> assignation chef de site",
+    trigger: "onRiskCreated",
+    condition: "level == \"CRITIQUE\"",
+    assignmentTarget: "role:site_lead",
+    notificationTemplate: "Risque critique détecté : {{risk.title}} - assigné au chef de site",
+    escalationTarget: "role:security_region",
+    delayBeforeEscalation: 48,
+    active: true,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "wr_2",
+    ruleName: "Action créée - assignation par catégorie incendie",
+    trigger: "onActionCreated",
+    condition: "equipment.category == \"incendie\"",
+    assignmentTarget: "team:ssi",
+    notificationTemplate: "Une action liée à un équipement incendie vous a été assignée : {{action.title}}",
+    active: true,
+    createdAt: new Date().toISOString(),
+  },
+];
+
+let MOCK_NOTIFICATIONS: Notification[] = [];
+
+export async function fetchWorkflowRules(): Promise<WorkflowRule[]> {
+  return structuredClone(MOCK_WORKFLOW_RULES);
+}
+
+export async function createWorkflowRule(rule: Partial<WorkflowRule>): Promise<WorkflowRule> {
+  const newRule: WorkflowRule = {
+    id: `wr_${Date.now()}`,
+    ruleName: rule.ruleName || "Nouvelle règle",
+    trigger: rule.trigger || "onActionCreated",
+    condition: rule.condition,
+    assignmentTarget: rule.assignmentTarget,
+    notificationTemplate: rule.notificationTemplate,
+    escalationTarget: rule.escalationTarget,
+    delayBeforeEscalation: rule.delayBeforeEscalation,
+    active: typeof rule.active === "boolean" ? rule.active : true,
+    createdAt: new Date().toISOString(),
+  };
+  MOCK_WORKFLOW_RULES.unshift(newRule);
+  return structuredClone(newRule);
+}
+
+export async function updateWorkflowRule(id: string, patch: Partial<WorkflowRule>): Promise<WorkflowRule | null> {
+  const idx = MOCK_WORKFLOW_RULES.findIndex((r) => r.id === id);
+  if (idx === -1) return null;
+  MOCK_WORKFLOW_RULES[idx] = { ...MOCK_WORKFLOW_RULES[idx], ...patch, updatedAt: new Date().toISOString() };
+  return structuredClone(MOCK_WORKFLOW_RULES[idx]);
+}
+
+export async function deleteWorkflowRule(id: string): Promise<boolean> {
+  const idx = MOCK_WORKFLOW_RULES.findIndex((r) => r.id === id);
+  if (idx === -1) return false;
+  MOCK_WORKFLOW_RULES.splice(idx, 1);
+  return true;
+}
+
+export async function fetchNotificationsForUser(userId: string): Promise<Notification[]> {
+  return structuredClone(MOCK_NOTIFICATIONS.filter((n) => n.userId === userId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
+}
+
+export async function createNotification(n: Partial<Notification>): Promise<Notification> {
+  const newN: Notification = {
+    id: `not_${Date.now()}`,
+    userId: n.userId || "u_1",
+    title: n.title || "Notification",
+    body: n.body || "",
+    link: n.link,
+    read: false,
+    createdAt: new Date().toISOString(),
+  };
+  MOCK_NOTIFICATIONS.unshift(newN);
+  return structuredClone(newN);
+}
+
+export async function markNotificationAsRead(id: string): Promise<Notification | null> {
+  const idx = MOCK_NOTIFICATIONS.findIndex((n) => n.id === id);
+  if (idx === -1) return null;
+  MOCK_NOTIFICATIONS[idx].read = true;
+  return structuredClone(MOCK_NOTIFICATIONS[idx]);
+}
+
+export async function markAllNotificationsRead(userId: string): Promise<number> {
+  let count = 0;
+  for (const n of MOCK_NOTIFICATIONS) {
+    if (n.userId === userId && !n.read) {
+      n.read = true;
+      count++;
+    }
+  }
+  return count;
 }
 
 // Site CRUD

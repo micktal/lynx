@@ -129,3 +129,35 @@ export interface DashboardPage {
   siteId?: ID;
   createdAt?: string;
 }
+
+export type WorkflowTrigger =
+  | "onRiskCreated"
+  | "onRiskUpdated"
+  | "onActionCreated"
+  | "onActionUpdated"
+  | "beforeDueDate"
+  | "overdue";
+
+export interface WorkflowRule {
+  id: ID;
+  ruleName: string;
+  trigger: WorkflowTrigger;
+  condition?: string; // logical expression to evaluate on the event payload
+  assignmentTarget?: string; // e.g. "userId:u_1" or "role:site_lead" or "team:ssi"
+  notificationTemplate?: string; // template with placeholders like {{risk.title}}
+  escalationTarget?: string;
+  delayBeforeEscalation?: number; // hours
+  active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Notification {
+  id: ID;
+  userId: ID;
+  title: string;
+  body: string;
+  link?: string;
+  read: boolean;
+  createdAt: string;
+}
