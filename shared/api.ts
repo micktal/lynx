@@ -54,6 +54,7 @@ export type EquipmentState =
 export interface Equipment {
   id: ID;
   spaceId: ID;
+  clientId?: ID;
   category: string;
   name: string;
   reference?: string;
