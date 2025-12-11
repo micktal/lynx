@@ -22,6 +22,7 @@ export default function RiskPage() {
 
   const [actions, setActions] = useState<ActionItem[]>([]);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
 
   const [editOpen, setEditOpen] = useState(false);
   const [actionFormOpen, setActionFormOpen] = useState(false);
