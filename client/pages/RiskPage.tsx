@@ -240,17 +240,15 @@ export default function RiskPage() {
 
       <section className="mb-6">
         <h3 className="font-semibold mb-2">Historique</h3>
-        {historyEvents.length === 0 ? (
-          <div className="card text-center py-8">Aucun événement enregistré pour ce risque.</div>
-        ) : (
-          <div className="card">
-            <ul className="space-y-2">
-              {historyEvents.map((h, idx) => (
-                <li key={idx} className="text-sm"><span className="text-muted">{new Date(h.date).toLocaleString()} — </span>{h.text}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div className="card p-4">
+          {logs.length === 0 ? (
+            <div className="text-center py-6">Aucun événement enregistré pour ce risque.</div>
+          ) : (
+            <div>
+              {React.createElement(require('../components/Timeline').default, { items: logs })}
+            </div>
+          )}
+        </div>
       </section>
 
       <div className="flex gap-2">
