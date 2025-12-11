@@ -47,15 +47,13 @@ export default function ActionPage() {
       // attachments possibly linked by actionId, riskId or auditId
       const atts = (await builder.fetchAttachments()).filter((att) => att.auditId === a.riskId || att.riskId === a.riskId || (att.uploadedBy && att.uploadedBy === a.id) || (att as any).actionId === a.id);
       setAttachments(atts);
+
+      // fetch activity logs for this action
+      const logs = await builder.fetchActivityLogsForEntity('action', a.id);
+      setLogs(logs);
     })();
   }, [actionId]);
 
-  const history = useMemo(() => {
-    const ev: { date: string; text: string }[] = [];
-    if (action) ev.push({ date: action.dueDate || new Date().toISOString(), text: `Action chargée: ${action.title}` });
-    attachments.forEach((a) => ev.push({ date: a.uploadedAt || new Date().toISOString(), text: `Photo: ${a.fileType} ajouté par ${a.uploadedBy}` }));
-    return ev.sort((a, b) => b.date.localeCompare(a.date));
-  }, [action, attachments]);
 
   const statusBadge = (s?: ActionItem["status"]) => {
     switch (s) {
