@@ -217,7 +217,8 @@ export default function MapFrancePage(props: { sitesData?: any[] } = {}): JSX.El
     const departmentsGeo = (mapRef as any).departmentsGeo;
 
     // prepare unified site dataset (Supabase or fallback mocks)
-    const supaSites = (sitesData && sitesData.length) ? sitesData.map((s:any) => ({
+    const inputSites = (props.sitesData && props.sitesData.length) ? props.sitesData : sitesData;
+    const supaSites = (inputSites && inputSites.length) ? inputSites.map((s:any) => ({
       id: s.id,
       name: s.name,
       lat: Number(s.lat),
