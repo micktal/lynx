@@ -45,6 +45,10 @@ import LoginPage from "./pages/login";
 import MapPage from "./pages/map";
 import MapFrancePage from "./pages/map-france";
 import MapFranceAirbnb from "./pages/map-france-airbnb";
+import ProjectsPage from "./pages/projects";
+import ProjectPage from "./pages/project";
+import ChantiersPage from "./pages/chantiers";
+import ChantierPage from "./pages/chantier";
 
 const queryClient = new QueryClient();
 
