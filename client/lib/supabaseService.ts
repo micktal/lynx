@@ -1,78 +1,78 @@
-// Supabase configuration
-const SUPABASE_URL = 'https://juyownedgwfbigbwofxx.supabase.com';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1eW93bmVkZ3dmYmlnYndvZnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MzM4MTgsImV4cCI6MjA4MTEwOTgxOH0.4LOp1KHJH2pY6SHXjvRVLcicbENe5-EUH16yIxGD-HI';
+// Supabase REST API configuration and small fetch wrapper
+export const SUPABASE_URL = 'https://juyownedgwfbigbwofxx.supabase.com';
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1eW93bmVkZ3dmYmlnYndvZnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MzM4MTgsImV4cCI6MjA4MTEwOTgxOH0.4LOp1KHJH2pY6SHXjvRVLcicbENe5-EUH16yIxGD-HI';
 
-// Default headers for Supabase REST API
-const supabaseHeaders = {
+const defaultHeaders = {
   'Content-Type': 'application/json',
-  'apikey': SUPABASE_ANON_KEY,
-  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-  'Prefer': 'return=representation',
+  apikey: SUPABASE_ANON_KEY,
+  Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+  Prefer: 'return=representation',
 };
 
-// Function to create a Supabase client or configure fetch
-// This is a placeholder and would need a proper Supabase client library integration
-// or a custom fetch wrapper. For now, we'll assume a fetch wrapper exists.
+async function parseResponse(response: Response) {
+  const contentType = response.headers.get('Content-Type') || '';
+  if (response.status === 204 || contentType.indexOf('application/json') === -1) {
+    // No content or non-JSON response
+    return null;
+  }
+  return await response.json();
+}
 
-// Example of how fetch might be configured (conceptual)
-async function supabaseFetch(url: string, options: RequestInit = {}) {
-  const defaultOptions = {
-    headers: {
-      ...supabaseHeaders,
-      ...options.headers,
-    },
-    // credentials: 'include' // For cross-site requests if needed, though Supabase usually handles CORS
+export async function supabaseFetch<T = any>(path: string, options: RequestInit = {}): Promise<T | null> {
+  const url = `${SUPABASE_URL}/rest/v1/${path}`;
+
+  const method = (options.method || 'GET').toUpperCase();
+
+  const headers = {
+    ...defaultHeaders,
+    ...(options.headers || {}),
+  } as Record<string, string>;
+
+  const fetchOptions: RequestInit = {
+    ...options,
+    method,
+    headers,
+    // include credentials (cookies) for cross-site requests when needed
+    credentials: 'include',
   };
 
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${url}`, {
-    ...defaultOptions,
-    ...options,
-    body: options.body ? JSON.stringify(options.body) : null,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Supabase API error: ${response.status} - ${errorData.message || response.statusText}`);
+  // Only stringfy body for non-GET/HEAD methods when body is an object
+  if (options.body && typeof options.body !== 'string' && method !== 'GET' && method !== 'HEAD') {
+    try {
+      fetchOptions.body = JSON.stringify(options.body);
+    } catch (err) {
+      throw new Error('Failed to serialize request body for Supabase request');
+    }
   }
 
-  return response.json();
+  const response = await fetch(url, fetchOptions);
+
+  if (!response.ok) {
+    let errorMessage = response.statusText;
+    try {
+      const data = await response.json();
+      // Supabase REST errors often come in { message: '...' } or description
+      errorMessage = (data && (data.message || data.error || data.description)) || errorMessage;
+    } catch (e) {
+      // ignore JSON parse errors
+    }
+    const err = new Error(`Supabase API error: ${response.status} - ${errorMessage}`);
+    (err as any).status = response.status;
+    throw err;
+  }
+
+  return (await parseResponse(response)) as T | null;
 }
 
-// Example usage (conceptual)
-// async function fetchSitesFromSupabase() {
-//   try {
-//     const data = await supabaseFetch('sites', { method: 'GET' });
-//     return data as Site[];
-//   } catch (error) {
-//     console.error("Failed to fetch sites from Supabase:", error);
-//     return [];
-//   }
-// }
+// Convenience helpers
+export const supabaseGet = <T = any>(path: string, headers?: Record<string, string>) => supabaseFetch<T>(path, { method: 'GET', headers });
+export const supabasePost = <T = any>(path: string, body?: any, headers?: Record<string, string>) => supabaseFetch<T>(path, { method: 'POST', body, headers });
+export const supabasePatch = <T = any>(path: string, body?: any, headers?: Record<string, string>) => supabaseFetch<T>(path, { method: 'PATCH', body, headers });
+export const supabasePut = <T = any>(path: string, body?: any, headers?: Record<string, string>) => supabaseFetch<T>(path, { method: 'PUT', body, headers });
+export const supabaseDelete = <T = any>(path: string, headers?: Record<string, string>) => supabaseFetch<T>(path, { method: 'DELETE', headers });
 
-// TODO: Integrate Supabase client library for better type safety and features
-// e.g., using '@supabase/supabase-js'
-
-// For now, we'll keep the mock service but acknowledge the Supabase config.
-// The actual integration would involve replacing calls to builderService with calls
-// to a new supabaseService or directly using supabaseFetch.
-
-// Existing mock service (for context, not modified here)
-let MOCK_CLIENTS: any[] = [
-  { id: 'client_1', name: 'Client Demo Retail', logoUrl: '', industry: 'Retail', contactName: 'Paul Client', contactEmail: 'paul@client.com', active: true },
-];
-
-// ... rest of builderService.ts ...
-
-export async function fetchClients(): Promise<any[]> {
-  // In a real implementation, this would call supabaseFetch('clients')
-  return structuredClone(MOCK_CLIENTS);
-}
-
-// ... other builderService functions ...
-
-// Exporting the configuration for potential use elsewhere
 export const supabaseConfig = {
   url: SUPABASE_URL,
   anonKey: SUPABASE_ANON_KEY,
-  headers: supabaseHeaders,
+  headers: defaultHeaders,
 };
