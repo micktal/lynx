@@ -113,9 +113,6 @@ export default function MapFrancePage(
   }
 
   useEffect(() => {
-    // Initialize with mock data as fallback
-    setSitesData(generateMockSites());
-
     // dynamically load leaflet and plugins and initialize map
     const promises: Promise<void>[] = [];
 
