@@ -5,7 +5,7 @@ import { fetchRegionsGeoJSON, fetchDepartmentsGeoJSON } from "../lib/geojsonLoad
 import { supabaseGet } from "../lib/supabaseService";
 import type { Site } from "@shared/api";
 
-export default function MapFrancePage(): JSX.Element {
+export default function MapFrancePage(props: { sitesData?: any[] } = {}): JSX.Element {
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any>(null);
   const heatRef = useRef<any>(null);
