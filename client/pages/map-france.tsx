@@ -249,6 +249,12 @@ export default function MapFrancePage(
         renderLayers();
       });
 
+      // Set initial mock data so regions show with content
+      if (!sitesData || sitesData.length === 0) {
+        console.log("Setting initial mock data");
+        setSitesData(generateMockSites());
+      }
+
       // initial render
       renderLayers();
 
