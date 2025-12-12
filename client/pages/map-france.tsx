@@ -198,6 +198,12 @@ export default function MapFrancePage(
         console.log("Loading Supabase sites...");
         await loadSupabaseSites();
 
+        // If still no data, use fallback mock data
+        if (!sitesData || sitesData.length === 0) {
+          console.log("No Supabase data, setting mock data");
+          setSitesData(generateMockSites());
+        }
+
         // setup auto-refresh
         if (autoRefresh) {
           const t = setInterval(() => {
