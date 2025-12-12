@@ -107,7 +107,19 @@ export default function MapFrancePage(
     );
 
     Promise.all(promises)
-      .then(initMap)
+      .then(() => {
+        // Wait for DOM to be ready
+        const checkDOM = () => {
+          const container = document.getElementById("map-france-root");
+          if (container) {
+            initMap();
+          } else {
+            console.warn("Map container not found, retrying...");
+            setTimeout(checkDOM, 100);
+          }
+        };
+        checkDOM();
+      })
       .catch((e) => {
         console.error("Failed to load map libs", e);
       });
