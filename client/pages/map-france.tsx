@@ -81,7 +81,7 @@ export default function MapFrancePage(
   const regionLayerRef = useRef<any>(null);
 
   // Supabase fetched sites (sitesData variable requested)
-  const [sitesData, setSitesData] = useState<any[]>(generateMockSites());
+  const [sitesData, setSitesData] = useState<any[]>([]);
   const [sitesDataLoading, setSitesDataLoading] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
