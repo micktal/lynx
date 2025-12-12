@@ -395,6 +395,8 @@ export default function MapFrancePage(
     const regionsGeo = (mapRef as any).regionsGeo;
     const departmentsGeo = (mapRef as any).departmentsGeo;
 
+    console.log("renderLayers - zoom:", zoom, "regions geo:", !!regionsGeo, "departments geo:", !!departmentsGeo);
+
     // prepare unified site dataset (Supabase or fallback mocks)
     const inputSites =
       props.sitesData && props.sitesData.length ? props.sitesData : sitesData;
