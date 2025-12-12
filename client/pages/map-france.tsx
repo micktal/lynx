@@ -173,6 +173,7 @@ export default function MapFrancePage(
 
       // fetch supabase sites initially only when Builder did not provide sitesData
       if (!props.sitesData) {
+        console.log("Loading Supabase sites...");
         await loadSupabaseSites();
 
         // setup auto-refresh
@@ -182,6 +183,8 @@ export default function MapFrancePage(
           }, 60_000);
           (mapRef as any)._supabaseRefreshTimer = t;
         }
+      } else {
+        console.log("Using sitesData from props:", props.sitesData);
       }
     }
 
