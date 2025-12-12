@@ -70,7 +70,7 @@ export default function FiltersBar({
           <div className="text-sm w-8 text-right">{buildingsMax}</div>
         </div>
 
-        <button onClick={onExport} className="px-3 py-2 rounded-md border border-border text-sm">
+        <button onClick={onExport} className="btn-premium px-3 py-2 rounded-md text-sm">
           Export Excel – Liste Sites
         </button>
       </div>
