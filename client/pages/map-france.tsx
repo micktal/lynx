@@ -569,18 +569,10 @@ export default function MapFrancePage(
         } catch (e) {}
       });
 
-      markerCluster.addLayer(marker);
+      if (markersRef.current && markersRef.current.addLayer) {
+        markersRef.current.addLayer(marker);
+      }
     }
-
-    markersRef.current = markerCluster;
-    mapRef.current.addLayer(markerCluster);
-
-    // cluster click zoom behavior
-    markerCluster.on("clusterclick", function (a: any) {
-      try {
-        mapRef.current.fitBounds(a.layer.getBounds().pad(0.5));
-      } catch (e) {}
-    });
 
     // heatmap
     if (heatmapOn) {
