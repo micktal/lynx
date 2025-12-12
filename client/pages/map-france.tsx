@@ -112,7 +112,13 @@ export default function MapFrancePage(
     return "#10B981";
   }
 
+  const mapInitializedRef = useRef(false);
+
   useEffect(() => {
+    // Only initialize once
+    if (mapInitializedRef.current) return;
+    mapInitializedRef.current = true;
+
     // dynamically load leaflet and plugins and initialize map
     const promises: Promise<void>[] = [];
 
@@ -165,15 +171,14 @@ export default function MapFrancePage(
       ),
     );
 
-    Promise.all(promises)
+    const initPromise = Promise.all(promises)
       .then(() => {
         // Wait for DOM to be ready
         const checkDOM = () => {
           const container = document.getElementById("map-france-root");
-          if (container) {
+          if (container && !mapRef.current) {
             initMap();
-          } else {
-            console.warn("Map container not found, retrying...");
+          } else if (!container) {
             setTimeout(checkDOM, 100);
           }
         };
@@ -184,94 +189,89 @@ export default function MapFrancePage(
       });
 
     async function initMap() {
-      // fetch data + geojson boundaries
-      const [s, c, r, d, regionsGeo, departmentsGeo] = await Promise.all([
-        builder.fetchSitesWithScores(),
-        builder.fetchClients(),
-        builder.fetchRegions(),
-        builder.fetchDepartments(),
-        fetchRegionsGeoJSON().catch(() => null),
-        fetchDepartmentsGeoJSON().catch(() => null),
-      ]);
+      // Ensure no previous map exists
+      const container = document.getElementById("map-france-root");
+      if (!container) return;
 
-      setSites(s);
-      setClients(c || []);
-      setRegions(r || []);
-      setDepartments(d || []);
-
-      // store geojson on ref for renderLayers
-      (mapRef as any).regionsGeo = regionsGeo;
-      (mapRef as any).departmentsGeo = departmentsGeo;
-
-      // create map
-      // @ts-ignore
-      const L = (window as any).L;
-      if (!L) return;
-
-      // Safely remove any existing map instance
-      if (mapRef.current) {
-        try {
-          mapRef.current.remove();
-        } catch (e) {
-          console.warn("Error removing old map instance:", e);
-        }
-        mapRef.current = null;
+      // Clear any existing Leaflet instance from the container
+      if ((container as any)._leaflet_id) {
+        delete (container as any)._leaflet_id;
       }
 
-      // Create new map instance
       try {
-        mapRef.current = L.map("map-france-root", { preferCanvas: true }).setView(
-        [46.5, 2.5],
-        6,
-      );
+        // fetch data + geojson boundaries
+        const [s, c, r, d, regionsGeo, departmentsGeo] = await Promise.all([
+          builder.fetchSitesWithScores(),
+          builder.fetchClients(),
+          builder.fetchRegions(),
+          builder.fetchDepartments(),
+          fetchRegionsGeoJSON().catch(() => null),
+          fetchDepartmentsGeoJSON().catch(() => null),
+        ]);
+
+        setSites(s);
+        setClients(c || []);
+        setRegions(r || []);
+        setDepartments(d || []);
+
+        // store geojson on ref for renderLayers
+        (mapRef as any).regionsGeo = regionsGeo;
+        (mapRef as any).departmentsGeo = departmentsGeo;
+
+        // create map
+        // @ts-ignore
+        const L = (window as any).L;
+        if (!L) return;
+
+        // Create map instance
+        mapRef.current = L.map("map-france-root", { preferCanvas: true, maxZoom: 19 }).setView(
+          [46.5, 2.5],
+          6,
+        );
+
+        L.tileLayer(
+          "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+          {
+            attribution:
+              '&copy; <a href="https://carto.com/">CARTO</a> contributors',
+            maxZoom: 19,
+          },
+        ).addTo(mapRef.current);
+
+        // re-render when zoom changes so we can switch between regional and site views
+        mapRef.current.on("zoomend", () => {
+          const z = mapRef.current.getZoom();
+          if (z <= 6) {
+            setMode("country");
+            setCurrentRegion(null);
+            setCurrentDepartment(null);
+          }
+          renderLayers();
+        });
+
+        // Set initial mock data so regions show with content
+        setSitesData(generateMockSites());
+
+        // initial render
+        renderLayers();
+
+        // fetch supabase sites initially only when Builder did not provide sitesData
+        if (!props.sitesData) {
+          console.log("Loading Supabase sites...");
+          await loadSupabaseSites();
+
+          // setup auto-refresh
+          if (autoRefresh) {
+            const t = setInterval(() => {
+              loadSupabaseSites();
+            }, 60_000);
+            (mapRef as any)._supabaseRefreshTimer = t;
+          }
+        } else {
+          console.log("Using sitesData from props:", props.sitesData);
+        }
       } catch (e) {
         console.error("Failed to initialize map:", e);
-        throw e;
-      }
-
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-        {
-          attribution:
-            '&copy; <a href="https://carto.com/">CARTO</a> contributors',
-          maxZoom: 19,
-        },
-      ).addTo(mapRef.current);
-
-      // re-render when zoom changes so we can switch between regional and site views
-      mapRef.current.on("zoomend", () => {
-        const z = mapRef.current.getZoom();
-        if (z <= 6) {
-          setMode("country");
-          setCurrentRegion(null);
-          setCurrentDepartment(null);
-        }
-        renderLayers();
-      });
-
-      // Set initial mock data so regions show with content
-      if (!sitesData || sitesData.length === 0) {
-        console.log("Setting initial mock data");
-        setSitesData(generateMockSites());
-      }
-
-      // initial render
-      renderLayers();
-
-      // fetch supabase sites initially only when Builder did not provide sitesData
-      if (!props.sitesData) {
-        console.log("Loading Supabase sites...");
-        await loadSupabaseSites();
-
-        // setup auto-refresh
-        if (autoRefresh) {
-          const t = setInterval(() => {
-            loadSupabaseSites();
-          }, 60_000);
-          (mapRef as any)._supabaseRefreshTimer = t;
-        }
-      } else {
-        console.log("Using sitesData from props:", props.sitesData);
       }
     }
 
@@ -303,8 +303,11 @@ export default function MapFrancePage(
         try {
           const t = (mapRef as any)._supabaseRefreshTimer;
           if (t) clearInterval(t);
-        } catch (e) {}
-        mapRef.current.remove();
+          mapRef.current.remove();
+          mapRef.current = null;
+        } catch (e) {
+          console.warn("Error during cleanup:", e);
+        }
       }
     };
   }, []);
