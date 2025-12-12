@@ -64,12 +64,24 @@ export default function MapFrancePage(): JSX.Element {
     });
 
     async function initMap() {
-      // fetch data
-      const [s, c, r, d] = await Promise.all([builder.fetchSitesWithScores(), builder.fetchClients(), builder.fetchRegions(), builder.fetchDepartments()]);
+      // fetch data + geojson boundaries
+      const [s, c, r, d, regionsGeo, departmentsGeo] = await Promise.all([
+        builder.fetchSitesWithScores(),
+        builder.fetchClients(),
+        builder.fetchRegions(),
+        builder.fetchDepartments(),
+        fetchRegionsGeoJSON().catch(() => null),
+        fetchDepartmentsGeoJSON().catch(() => null),
+      ]);
+
       setSites(s);
       setClients(c || []);
       setRegions(r || []);
       setDepartments(d || []);
+
+      // store geojson on ref for renderLayers
+      (mapRef as any).regionsGeo = regionsGeo;
+      (mapRef as any).departmentsGeo = departmentsGeo;
 
       // create map
       // @ts-ignore
