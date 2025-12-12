@@ -126,15 +126,17 @@ export default function MapFrancePage(props: { sitesData?: any[] } = {}): JSX.El
       // initial render
       renderLayers();
 
-      // fetch supabase sites initially
-      await loadSupabaseSites();
+      // fetch supabase sites initially only when Builder did not provide sitesData
+      if (!props.sitesData) {
+        await loadSupabaseSites();
 
-      // setup auto-refresh
-      if (autoRefresh) {
-        const t = setInterval(() => {
-          loadSupabaseSites();
-        }, 60_000);
-        (mapRef as any)._supabaseRefreshTimer = t;
+        // setup auto-refresh
+        if (autoRefresh) {
+          const t = setInterval(() => {
+            loadSupabaseSites();
+          }, 60_000);
+          (mapRef as any)._supabaseRefreshTimer = t;
+        }
       }
     }
 
