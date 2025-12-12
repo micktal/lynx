@@ -210,18 +210,46 @@ export default function MapFrancePage(): JSX.Element {
     try { if (heatRef.current) { mapRef.current.removeLayer(heatRef.current); heatRef.current = null; } } catch(e){}
     try { if (regionLayerRef.current) { mapRef.current.removeLayer(regionLayerRef.current); regionLayerRef.current = null; } } catch(e){}
 
-    const points = filteredSites.map((s) => s);
     const zoom = mapRef.current.getZoom();
 
     const regionsGeo = (mapRef as any).regionsGeo;
     const departmentsGeo = (mapRef as any).departmentsGeo;
 
-    // Show region polygons when zoomed out
+    // build unified site list either from Supabase or from existing mocks
+    const supaSites = (sitesData && sitesData.length) ? sitesData.map((s:any) => ({
+      id: s.id,
+      name: s.name,
+      lat: Number(s.lat),
+      lng: Number(s.lng),
+      scoreCriticite: Number(s.score_criticite ?? s.scoreCriticite ?? 0),
+      region_name: s.region_name,
+      department_name: s.department_name,
+      raw: s,
+    })) : [];
+
+    const fallbackSites = filteredSites.map((s:any) => ({
+      id: s.id,
+      name: s.name,
+      lat: s.lat,
+      lng: s.lng,
+      scoreCriticite: s.scoreCriticite || 0,
+      region_name: (s as any).region_name || s.regionCode || undefined,
+      department_name: (s as any).department_name || s.departmentCode || undefined,
+      status: s.status,
+      progressionTravaux: s.progressionTravaux,
+      nbRisquesCritiques: s.nbRisquesCritiques,
+      nbActionsEnRetard: s.nbActionsEnRetard,
+      nbIncidentsOuverts: s.nbIncidentsOuverts,
+    }));
+
+    const allSites = supaSites.length ? supaSites : fallbackSites;
+
+    // When showing region polygons, compute counts from allSites
     if (zoom <= 6 && regionsGeo && regionsGeo.features && regionsGeo.features.length) {
       const rg = L.geoJSON(regionsGeo, {
         style: function(feature: any) {
           const code = feature.properties?.code || feature.properties?.insee || feature.properties?.CODREG || feature.properties?.region_code || feature.properties?.nom;
-          const sitesInRegion = points.filter(p => p.regionCode && (String(p.regionCode) === String(code) || (String(p.regionCode).toLowerCase().indexOf(String(code || '').toLowerCase()) !== -1)));
+          const sitesInRegion = allSites.filter(p => (p.region_name && String(p.region_name) === String(code)) || (p.region_name && String(p.region_name).toLowerCase().indexOf(String(feature.properties?.nom || '').toLowerCase().split(' ')[0]) !== -1));
           const count = sitesInRegion.length;
           const avg = count ? Math.round((sitesInRegion.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
           const fill = count ? colorForCluster(avg) : 'rgba(255,255,255,0.02)';
@@ -230,12 +258,20 @@ export default function MapFrancePage(): JSX.Element {
         onEachFeature: function(feature: any, layer: any) {
           const name = feature.properties?.nom || feature.properties?.name || feature.properties?.REGION || 'Région';
           const code = feature.properties?.code || feature.properties?.insee || feature.properties?.CODREG || feature.properties?.region_code;
-          const sitesInRegion = points.filter(p => p.regionCode === code || (p.regionCode && name && (String(p.regionCode).toLowerCase().indexOf(String(name).split(' ')[0].toLowerCase()) !== -1)));
+          const sitesInRegion = allSites.filter(p => String(p.region_name) === String(code) || (p.region_name && String(p.region_name).toLowerCase().indexOf(String(name).split(' ')[0].toLowerCase()) !== -1));
           const count = sitesInRegion.length;
           const avg = count ? Math.round((sitesInRegion.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
           layer.bindTooltip(`<strong>${name}</strong><br/>Sites: ${count}<br/>Criticité moyenne: ${avg}`);
           layer.on('click', () => {
-            try { mapRef.current.fitBounds(layer.getBounds().pad(0.2)); } catch(e) { try { mapRef.current.setView([feature.properties?.lat || 46.5, feature.properties?.lng || 2.5], 7); } catch(e){} }
+            try {
+              mapRef.current.fitBounds(layer.getBounds().pad(0.2));
+            } catch (e) {
+              try { mapRef.current.setView([feature.properties?.lat || 46.5, feature.properties?.lng || 2.5], 7); } catch(e){}
+            }
+            // set drilldown to region
+            setMode('region');
+            setCurrentRegion(name);
+            setCurrentDepartment(null);
           });
         }
       });
@@ -249,7 +285,7 @@ export default function MapFrancePage(): JSX.Element {
       const dg = L.geoJSON(departmentsGeo, {
         style: function(feature: any) {
           const code = feature.properties?.code || feature.properties?.insee || feature.properties?.code_dept || feature.properties?.nom;
-          const sitesInDept = points.filter(p => p.departmentCode !== undefined && (String(p.departmentCode) === String(code) || (String(p.departmentCode).indexOf(String(code || '')) !== -1)));
+          const sitesInDept = allSites.filter(p => String(p.department_name) === String(code) || (p.department_name && String(p.department_name).toLowerCase().indexOf(String(feature.properties?.nom || '').toLowerCase().split(' ')[0]) !== -1));
           const count = sitesInDept.length;
           const avg = count ? Math.round((sitesInDept.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
           const fill = count ? colorForCluster(avg) : 'rgba(255,255,255,0.02)';
@@ -258,11 +294,15 @@ export default function MapFrancePage(): JSX.Element {
         onEachFeature: function(feature: any, layer: any) {
           const name = feature.properties?.nom || feature.properties?.name || 'Département';
           const code = feature.properties?.code || feature.properties?.insee || feature.properties?.code_dept;
-          const sitesInDept = points.filter(p => String(p.departmentCode) === String(code) || (p.departmentCode && String(p.departmentCode).indexOf(String(code || '')) !== -1));
+          const sitesInDept = allSites.filter(p => String(p.department_name) === String(code) || (p.department_name && String(p.department_name).toLowerCase().indexOf(String(name).split(' ')[0].toLowerCase()) !== -1));
           const count = sitesInDept.length;
           const avg = count ? Math.round((sitesInDept.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
           layer.bindTooltip(`<strong>${name}</strong><br/>Sites: ${count}<br/>Criticité moyenne: ${avg}`);
-          layer.on('click', () => { try { mapRef.current.fitBounds(layer.getBounds().pad(0.1)); } catch(e){} });
+          layer.on('click', () => {
+            try { mapRef.current.fitBounds(layer.getBounds().pad(0.1)); } catch(e){}
+            setMode('department');
+            setCurrentDepartment(name);
+          });
         }
       });
       regionLayerRef.current = dg;
