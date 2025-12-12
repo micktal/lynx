@@ -149,16 +149,26 @@ export default function MapFrancePage(
       const L = (window as any).L;
       if (!L) return;
 
+      // Safely remove any existing map instance
       if (mapRef.current) {
         try {
           mapRef.current.remove();
-        } catch (e) {}
+        } catch (e) {
+          console.warn("Error removing old map instance:", e);
+        }
+        mapRef.current = null;
       }
 
-      mapRef.current = L.map("map-france-root", { preferCanvas: true }).setView(
-        [46.5, 2.5],
-        5,
-      );
+      // Create new map instance
+      try {
+        mapRef.current = L.map("map-france-root", { preferCanvas: true }).setView(
+          [46.5, 2.5],
+          5,
+        );
+      } catch (e) {
+        console.error("Failed to initialize map:", e);
+        throw e;
+      }
 
       L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
