@@ -499,3 +499,62 @@ export interface SecuritySettings {
   mfaRequiredForRoles?: string[];
   sessionTimeoutMinutes?: number;
 }
+
+// Project management models
+export interface Project {
+  id: ID;
+  name: string;
+  clientId?: ID;
+  description?: string;
+  status?: 'PLANNED' | 'IN_PROGRESS' | 'DELAYED' | 'FINISHED' | 'CANCELLED';
+  startDate?: string; // ISO
+  endDate?: string; // ISO
+  progression?: number; // 0-100
+  projectManager?: string;
+  budget?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Chantier {
+  id: ID;
+  projectId?: ID;
+  siteId?: ID;
+  name: string;
+  status?: 'PLANNED' | 'IN_PROGRESS' | 'DELAYED' | 'FINISHED' | 'CANCELLED';
+  startDate?: string;
+  endDate?: string;
+  progression?: number; // 0-100
+  companyAssigned?: string;
+  teamLeader?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Task {
+  id: ID;
+  chantierId?: ID;
+  name: string;
+  description?: string;
+  assignee?: string;
+  startDate?: string;
+  endDate?: string;
+  progression?: number; // 0-100
+  dependsOn?: ID[];
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  status?: 'TO_DO' | 'IN_PROGRESS' | 'BLOCKED' | 'DONE';
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ExternalCompany {
+  id: ID;
+  name: string;
+  contactName?: string;
+  contactEmail?: string;
+  phone?: string;
+  specialty?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
