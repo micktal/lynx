@@ -75,21 +75,45 @@ const App = () => (
           <Route path="/building/:id" element={<BuildingPage />} />
           <Route path="/building/:id/plans" element={<BuildingPlansAdmin />} />
           <Route path="/audit-mobile/:auditId" element={<AuditMobile />} />
-          <Route path="/audit-mobile/:auditId/space/:spaceId" element={<AuditMobileSpace />} />
-          <Route path="/audit-mobile/:auditId/equipment/:equipmentId" element={<AuditMobileEquipment />} />
+          <Route
+            path="/audit-mobile/:auditId/space/:spaceId"
+            element={<AuditMobileSpace />}
+          />
+          <Route
+            path="/audit-mobile/:auditId/equipment/:equipmentId"
+            element={<AuditMobileEquipment />}
+          />
           <Route path="/referentiels" element={<Referentiels />} />
-          <Route path="/referentiels/preview/:templateId" element={<ReferentielsPreview />} />
+          <Route
+            path="/referentiels/preview/:templateId"
+            element={<ReferentielsPreview />}
+          />
           <Route path="/supervision" element={<Supervision />} />
           <Route path="/clients" element={<ClientsPage />} />
           <Route path="/clients/:id" element={<ClientDetail />} />
           <Route path="/client-portal" element={<ClientPortal />} />
           <Route path="/reporting" element={<ReportingPage />} />
-          <Route path="/reporting/comparatif" element={<ReportingComparatifPage />} />
-          <Route path="/reporting/timeline" element={<ReportingTimelinePage />} />
-          <Route path="/reporting/designer" element={<ReportingDesignerPage />} />
+          <Route
+            path="/reporting/comparatif"
+            element={<ReportingComparatifPage />}
+          />
+          <Route
+            path="/reporting/timeline"
+            element={<ReportingTimelinePage />}
+          />
+          <Route
+            path="/reporting/designer"
+            element={<ReportingDesignerPage />}
+          />
           <Route path="/datalake-admin" element={<DataLakeAdminPage />} />
-          <Route path="/datalake/replay/:entityType/:entityId" element={<DataLakeReplayPage />} />
-          <Route path="/admin/security-log" element={<AdminSecurityLogPage />} />
+          <Route
+            path="/datalake/replay/:entityType/:entityId"
+            element={<DataLakeReplayPage />}
+          />
+          <Route
+            path="/admin/security-log"
+            element={<AdminSecurityLogPage />}
+          />
           <Route path="/admin/rules" element={<AdminRulesPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/home" element={<HomePage />} />

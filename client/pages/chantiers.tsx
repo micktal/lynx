@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import Layout from '../components/Layout';
-import projectService from '../lib/projectService';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import Layout from "../components/Layout";
+import projectService from "../lib/projectService";
+import { Link } from "react-router-dom";
 
-export default function ChantiersPage(){
+export default function ChantiersPage() {
   const [chantiers, setChantiers] = useState<any[]>([]);
 
-  useEffect(()=>{
-    (async ()=>{
+  useEffect(() => {
+    (async () => {
       const ch = await projectService.fetchChantiers();
       setChantiers(ch || []);
     })();
-  },[]);
+  }, []);
 
   return (
     <Layout>
@@ -21,12 +21,14 @@ export default function ChantiersPage(){
           <div className="text-sm text-muted">Liste des chantiers</div>
         </div>
         <div>
-          <Link to="/chantier/new" className="btn btn-premium">Créer chantier</Link>
+          <Link to="/chantier/new" className="btn btn-premium">
+            Créer chantier
+          </Link>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {chantiers.map(c=> (
+        {chantiers.map((c) => (
           <div key={c.id} className="card">
             <div className="flex justify-between">
               <div>
@@ -35,7 +37,9 @@ export default function ChantiersPage(){
               </div>
               <div className="text-right">
                 <div className="font-bold">{c.progression || 0}%</div>
-                <div className="text-sm"><Link to={`/chantier/${c.id}`}>Ouvrir</Link></div>
+                <div className="text-sm">
+                  <Link to={`/chantier/${c.id}`}>Ouvrir</Link>
+                </div>
               </div>
             </div>
           </div>

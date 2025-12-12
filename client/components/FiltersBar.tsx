@@ -25,7 +25,13 @@ export default function FiltersBar({
   onExport: () => void;
 }) {
   const countries = Array.from(new Set(sites.map((s) => s.country || "Autre")));
-  const cities = Array.from(new Set(sites.filter((s) => (country ? s.country === country : true)).map((s) => s.city || "Autre")));
+  const cities = Array.from(
+    new Set(
+      sites
+        .filter((s) => (country ? s.country === country : true))
+        .map((s) => s.city || "Autre"),
+    ),
+  );
 
   return (
     <div className="bg-card border border-border rounded-md p-4 flex flex-col md:flex-row md:items-center gap-3">
@@ -37,7 +43,11 @@ export default function FiltersBar({
           className="px-3 py-2 rounded-md border border-border bg-input text-sm w-full md:w-96"
         />
 
-        <select value={country ?? ""} onChange={(e) => setCountry(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input text-sm">
+        <select
+          value={country ?? ""}
+          onChange={(e) => setCountry(e.target.value || null)}
+          className="px-3 py-2 rounded-md border border-border bg-input text-sm"
+        >
           <option value="">Tous les pays</option>
           {countries.map((c) => (
             <option key={c} value={c}>
@@ -46,7 +56,11 @@ export default function FiltersBar({
           ))}
         </select>
 
-        <select value={city ?? ""} onChange={(e) => setCity(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input text-sm">
+        <select
+          value={city ?? ""}
+          onChange={(e) => setCity(e.target.value || null)}
+          className="px-3 py-2 rounded-md border border-border bg-input text-sm"
+        >
           <option value="">Toutes les villes</option>
           {cities.map((c) => (
             <option key={c} value={c}>
@@ -70,7 +84,10 @@ export default function FiltersBar({
           <div className="text-sm w-8 text-right">{buildingsMax}</div>
         </div>
 
-        <button onClick={onExport} className="btn-premium px-3 py-2 rounded-md text-sm">
+        <button
+          onClick={onExport}
+          className="btn-premium px-3 py-2 rounded-md text-sm"
+        >
           Export Excel – Liste Sites
         </button>
       </div>

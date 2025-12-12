@@ -44,7 +44,7 @@ export interface Site {
   createdAt?: string;
   lat?: number;
   lng?: number;
-  status?: 'IN_PROGRESS' | 'FINISHED' | 'NOT_STARTED';
+  status?: "IN_PROGRESS" | "FINISHED" | "NOT_STARTED";
   scoreCriticite?: number;
   progressionTravaux?: number; // 0-100
   // geo / admin codes
@@ -201,7 +201,13 @@ export interface ActivityLog {
   timestamp: string; // ISO datetime
   entityType: string; // audit | risk | action | equipment | space | building | site
   entityId: ID;
-  operation: "created" | "updated" | "deleted" | "statusChanged" | "commentAdded" | "photoAdded";
+  operation:
+    | "created"
+    | "updated"
+    | "deleted"
+    | "statusChanged"
+    | "commentAdded"
+    | "photoAdded";
   userId?: ID;
   description?: string;
   oldValue?: string;
@@ -270,7 +276,12 @@ export interface AuditSubcategory {
   order?: number;
 }
 
-export type AuditQuestionType = "yesno" | "choice" | "text" | "photo_required" | "numeric";
+export type AuditQuestionType =
+  | "yesno"
+  | "choice"
+  | "text"
+  | "photo_required"
+  | "numeric";
 
 export interface AuditQuestion {
   id: ID;
@@ -337,7 +348,13 @@ export interface Notification {
   createdAt: string;
 }
 
-export type IncidentType = "intrusion" | "incendie" | "agression" | "technique" | "TMS" | "autre";
+export type IncidentType =
+  | "intrusion"
+  | "incendie"
+  | "agression"
+  | "technique"
+  | "TMS"
+  | "autre";
 export type IncidentStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED";
 export type IncidentPriority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
@@ -371,7 +388,13 @@ export interface Agent {
   battery?: number;
 }
 
-export type AgentEventType = "CHECK_IN" | "CHECK_OUT" | "PATROL_START" | "PATROL_END" | "INCIDENT_ASSIGNED" | "MESSAGE_SENT";
+export type AgentEventType =
+  | "CHECK_IN"
+  | "CHECK_OUT"
+  | "PATROL_START"
+  | "PATROL_END"
+  | "INCIDENT_ASSIGNED"
+  | "MESSAGE_SENT";
 export interface AgentEvent {
   id: ID;
   agentId: ID;
@@ -413,7 +436,15 @@ export interface ReportDashboard {
   updatedAt?: string;
 }
 
-export type WidgetType = "bar" | "line" | "pie" | "donut" | "heatmap" | "table" | "kpi" | "gauge";
+export type WidgetType =
+  | "bar"
+  | "line"
+  | "pie"
+  | "donut"
+  | "heatmap"
+  | "table"
+  | "kpi"
+  | "gauge";
 
 export interface ReportWidget {
   id: ID;
@@ -442,7 +473,14 @@ export interface Role {
   isSystem?: boolean;
 }
 
-export type PermissionAction = "VIEW" | "CREATE" | "UPDATE" | "DELETE" | "ASSIGN" | "EXPORT" | "MANAGE";
+export type PermissionAction =
+  | "VIEW"
+  | "CREATE"
+  | "UPDATE"
+  | "DELETE"
+  | "ASSIGN"
+  | "EXPORT"
+  | "MANAGE";
 
 export interface Permission {
   id: ID;
@@ -508,7 +546,7 @@ export interface Project {
   name: string;
   clientId?: ID;
   description?: string;
-  status?: 'PLANNED' | 'IN_PROGRESS' | 'DELAYED' | 'FINISHED' | 'CANCELLED';
+  status?: "PLANNED" | "IN_PROGRESS" | "DELAYED" | "FINISHED" | "CANCELLED";
   startDate?: string; // ISO
   endDate?: string; // ISO
   progression?: number; // 0-100
@@ -523,7 +561,7 @@ export interface Chantier {
   projectId?: ID;
   siteId?: ID;
   name: string;
-  status?: 'PLANNED' | 'IN_PROGRESS' | 'DELAYED' | 'FINISHED' | 'CANCELLED';
+  status?: "PLANNED" | "IN_PROGRESS" | "DELAYED" | "FINISHED" | "CANCELLED";
   startDate?: string;
   endDate?: string;
   progression?: number; // 0-100
@@ -544,8 +582,8 @@ export interface Task {
   endDate?: string;
   progression?: number; // 0-100
   dependsOn?: ID[];
-  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  status?: 'TO_DO' | 'IN_PROGRESS' | 'BLOCKED' | 'DONE';
+  priority?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  status?: "TO_DO" | "IN_PROGRESS" | "BLOCKED" | "DONE";
   createdAt?: string;
   updatedAt?: string;
 }
