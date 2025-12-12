@@ -44,6 +44,7 @@ import HomePage from "./pages/home";
 import LoginPage from "./pages/login";
 import MapPage from "./pages/map";
 import MapFrancePage from "./pages/map-france";
+import MapFranceAirbnb from "./pages/map-france-airbnb";
 
 const queryClient = new QueryClient();
 
