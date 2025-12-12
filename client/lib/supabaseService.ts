@@ -1,14 +1,5 @@
-// Supabase REST API configuration and small fetch wrapper
-export const SUPABASE_URL = "https://juyownedgwfbigbwofxx.supabase.com";
-export const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1eW93bmVkZ3dmYmlnYndvZnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MzM4MTgsImV4cCI6MjA4MTEwOTgxOH0.4LOp1KHJH2pY6SHXjvRVLcicbENe5-EUH16yIxGD-HI";
-
-const defaultHeaders = {
-  "Content-Type": "application/json",
-  apikey: SUPABASE_ANON_KEY,
-  Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-  Prefer: "return=representation",
-};
+// Supabase proxy service - uses server-side proxy to avoid CORS issues
+const PROXY_BASE = "/api/supabase";
 
 async function parseResponse(response: Response) {
   const contentType = response.headers.get("Content-Type") || "";
@@ -16,7 +7,6 @@ async function parseResponse(response: Response) {
     response.status === 204 ||
     contentType.indexOf("application/json") === -1
   ) {
-    // No content or non-JSON response
     return null;
   }
   return await response.json();
@@ -26,24 +16,20 @@ export async function supabaseFetch<T = any>(
   path: string,
   options: RequestInit = {},
 ): Promise<T | null> {
-  const url = `${SUPABASE_URL}/rest/v1/${path}`;
-
   const method = (options.method || "GET").toUpperCase();
 
-  const headers = {
-    ...defaultHeaders,
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
     ...(options.headers || {}),
-  } as Record<string, string>;
+  };
 
   const fetchOptions: RequestInit = {
     ...options,
     method,
     headers,
-    // include credentials (cookies) for cross-site requests when needed
-    credentials: "include",
   };
 
-  // Only stringfy body for non-GET/HEAD methods when body is an object
+  // Stringify body for non-GET/HEAD methods when body is an object
   if (
     options.body &&
     typeof options.body !== "string" &&
@@ -57,13 +43,15 @@ export async function supabaseFetch<T = any>(
     }
   }
 
+  // Use server proxy with path as query parameter
+  const url = `${PROXY_BASE}?path=${encodeURIComponent(path)}`;
+
   const response = await fetch(url, fetchOptions);
 
   if (!response.ok) {
     let errorMessage = response.statusText;
     try {
       const data = await response.json();
-      // Supabase REST errors often come in { message: '...' } or description
       errorMessage =
         (data && (data.message || data.error || data.description)) ||
         errorMessage;
