@@ -75,8 +75,16 @@
   .kpi .value { font-size: 32px; font-weight: 700; }
   .kpi .label { color: var(--text-muted); }
 
-  .btn-premium { background: linear-gradient(90deg,var(--primary),var(--primary-dark)); color: white; padding: 10px 16px; border-radius: 10px; box-shadow: rgba(10,136,255,0.18) 0 6px 20px; transition: var(--transition); }
+  .btn-premium { background: linear-gradient(90deg,var(--primary),var(--primary-dark)); color: white; padding: 10px 16px; border-radius: 10px; box-shadow: rgba(10,136,255,0.18) 0 6px 20px; transition: var(--transition); border: none; }
   .btn-premium:hover { transform: translateY(-2px); }
+
+  /* General buttons */
+  .btn { background: var(--bg-card); color: var(--text); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); transition: var(--transition); }
+  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .btn-ghost { background: transparent; border: 1px dashed var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; }
+  .btn-sm { padding: 6px 8px; font-size: 13px; border-radius: 6px; }
+  .btn-destructive { background: linear-gradient(90deg,var(--danger),#b91c1c); color: white; padding: 8px 12px; border-radius: 8px; border: none; }
+  .btn-primary { background: linear-gradient(90deg,var(--primary),var(--primary-dark)); color: white; padding: 8px 12px; border-radius: 8px; border: none; }
 
   .tabs-premium { display:flex; gap:8px; }
   .tabs-premium .tab { padding:8px 12px; border-radius:8px; cursor:pointer; transition: var(--transition); }
