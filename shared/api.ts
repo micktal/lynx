@@ -64,6 +64,7 @@ export interface Region {
   lng?: number;
   zoomLevel?: number;
   bounds?: any; // GeoJSON polygon or bbox
+  geojsonUrl?: string; // optional URL pointing to GeoJSON boundary
 }
 
 export interface Department {
@@ -75,6 +76,7 @@ export interface Department {
   lng?: number;
   zoomLevel?: number;
   bounds?: any;
+  geojsonUrl?: string; // optional URL pointing to GeoJSON boundary
 }
 
 export interface Building {
