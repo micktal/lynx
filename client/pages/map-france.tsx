@@ -438,6 +438,7 @@ export default function MapFrancePage(
       regionsGeo.features &&
       regionsGeo.features.length
     ) {
+      console.log("Rendering regions. Total allSites:", allSites.length);
       const rg = L.geoJSON(regionsGeo, {
         style: function (feature: any) {
           const code =
@@ -458,6 +459,9 @@ export default function MapFrancePage(
                       .split(" ")[0],
                   ) !== -1),
           );
+          if (feature.properties?.nom === "Île-de-France" || sitesInRegion.length > 0) {
+            console.log(`Region: ${feature.properties?.nom}, sites: ${sitesInRegion.length}`);
+          }
           const count = sitesInRegion.length;
           const avg = count
             ? Math.round(
