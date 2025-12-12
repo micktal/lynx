@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import React, { useEffect, useRef, useState, useMemo } from "react";
 import Layout from "../components/Layout";
 import * as builder from "../lib/builderService";
+import { fetchRegionsGeoJSON, fetchDepartmentsGeoJSON } from "../lib/geojsonLoader";
 import type { Site } from "@shared/api";
 
 export default function MapFrancePage(): JSX.Element {
