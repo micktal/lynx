@@ -19,6 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <nav className="flex items-center gap-3">
             <Link to="/" className="text-sm" style={{color: 'var(--text-muted)'}}>Sites</Link>
             <Link to="/map-france" className="text-sm" style={{color: 'var(--text-muted)'}}>Carte France</Link>
+            <Link to="/map-france-airbnb" className="text-sm" style={{color: 'var(--text-muted)'}}>Carte (Airbnb)</Link>
             <Link to="/synthese" className="text-sm" style={{color: 'var(--text-muted)'}}>Synthèse</Link>
             <Link to="/audit" className="text-sm" style={{color: 'var(--text-muted)'}}>Audits</Link>
             <Link to="/reporting" className="text-sm" style={{color: 'var(--text-muted)'}}>Reporting</Link>
