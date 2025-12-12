@@ -121,10 +121,35 @@ export default function MapFrancePage(): JSX.Element {
 
       // re-render when zoom changes so we can switch between regional and site views
       mapRef.current.on('zoomend', () => {
+        const z = mapRef.current.getZoom();
+        if (z <= 6) { setMode('country'); setCurrentRegion(null); setCurrentDepartment(null); }
         renderLayers(s);
       });
 
       renderLayers(s);
+
+      // fetch supabase sites initially
+      loadSupabaseSites();
+      // setup auto-refresh
+      if (autoRefresh) {
+        const t = setInterval(() => {
+          loadSupabaseSites();
+        }, 60_000);
+        // store interval on ref to clear later
+        (mapRef as any)._supabaseRefreshTimer = t;
+      }
+    }
+
+    async function loadSupabaseSites() {
+      setSitesDataLoading(true);
+      try {
+        const data = await supabaseGet<any[]>('sites?select=id,name,lat,lng,region_name,department_name,score_criticite');
+        if (data && Array.isArray(data)) setSitesData(data);
+      } catch (e) {
+        console.warn('Failed to fetch Supabase sites', e);
+      } finally {
+        setSitesDataLoading(false);
+      }
     }
 
     return () => {
