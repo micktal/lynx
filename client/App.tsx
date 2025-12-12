@@ -92,6 +92,7 @@ const App = () => (
           <Route path="/login" element={<LoginPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/map-france" element={<MapFrancePage />} />
+          <Route path="/map-france-airbnb" element={<MapFranceAirbnb />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
