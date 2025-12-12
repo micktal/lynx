@@ -1,8 +1,8 @@
-// Simple GeoJSON loader for France regions & departments via CDN
+// Simple GeoJSON loader for France regions & departments via raw GitHub
 export const REGIONS_GEOJSON_CDN =
-  "https://cdn.jsdelivr.net/gh/gregoiredavid/france-geojson@master/regions/regions.geojson";
+  "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions/regions.geojson";
 export const DEPARTMENTS_GEOJSON_CDN =
-  "https://cdn.jsdelivr.net/gh/gregoiredavid/france-geojson@master/departements/departements.geojson";
+  "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements/departements.geojson";
 
 export async function fetchRegionsGeoJSON(): Promise<any> {
   const res = await fetch(REGIONS_GEOJSON_CDN, { cache: "force-cache" });
