@@ -16,6 +16,16 @@ export default function MapFrancePage(): JSX.Element {
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const regionLayerRef = useRef<any>(null);
 
+  // Supabase fetched sites (sitesData variable requested)
+  const [sitesData, setSitesData] = useState<any[]>([]);
+  const [sitesDataLoading, setSitesDataLoading] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+
+  // drilldown mode & current selection
+  const [mode, setMode] = useState<'country'|'region'|'department'>('country');
+  const [currentRegion, setCurrentRegion] = useState<string | null>(null);
+  const [currentDepartment, setCurrentDepartment] = useState<string | null>(null);
+
   // filters
   const [clientFilter, setClientFilter] = useState<string | "">("");
   const [showInProgress, setShowInProgress] = useState(true);
@@ -25,6 +35,14 @@ export default function MapFrancePage(): JSX.Element {
   const [minScore, setMinScore] = useState(0);
   const [maxScore, setMaxScore] = useState(50);
   const [heatmapOn, setHeatmapOn] = useState(false);
+
+  function getColorFromCriticite(score: number | undefined | null) {
+    const s = typeof score === 'number' ? score : Number(score || 0);
+    if (s >= 80) return '#E02424';
+    if (s >= 50) return '#FFB020';
+    if (s >= 20) return '#0A84FF';
+    return '#10B981';
+  }
 
   useEffect(() => {
     // dynamically load leaflet and plugins
