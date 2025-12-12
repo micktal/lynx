@@ -75,6 +75,10 @@
   .kpi .value { font-size: 32px; font-weight: 700; }
   .kpi .label { color: var(--text-muted); }
 
+  .kpi-premium { background: linear-gradient(90deg, rgba(10,132,255,0.12), rgba(6,52,90,0.06)); padding: 12px; border-radius: 12px; display:flex; align-items:center; gap:12px; }
+  .kpi-premium .value { font-size: 28px; font-weight:800; color: var(--neutral-900); }
+  .kpi-premium .label { color: var(--text-muted); font-size: 13px; }
+
   .btn-premium { background: linear-gradient(90deg,var(--primary),var(--primary-dark)); color: white; padding: 10px 16px; border-radius: 10px; box-shadow: rgba(10,136,255,0.18) 0 6px 20px; transition: var(--transition); border: none; }
   .btn-premium:hover { transform: translateY(-2px); }
 
