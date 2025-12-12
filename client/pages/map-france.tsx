@@ -162,9 +162,9 @@ export default function MapFrancePage(
       // Create new map instance
       try {
         mapRef.current = L.map("map-france-root", { preferCanvas: true }).setView(
-          [46.5, 2.5],
-          5,
-        );
+        [46.5, 2.5],
+        6,
+      );
       } catch (e) {
         console.error("Failed to initialize map:", e);
         throw e;
