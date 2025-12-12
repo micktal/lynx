@@ -223,14 +223,80 @@ export default function MapFrancePage(
           setSitesData(data);
         } else {
           console.warn("Unexpected Supabase response format:", data);
+          // Use fallback mock data
+          console.log("Using fallback mock data");
+          const mockData = generateMockSites();
+          setSitesData(mockData);
         }
       } catch (e) {
-        console.error("Failed to fetch Supabase sites", e);
+        console.error("Failed to fetch Supabase sites, using mock data:", e);
+        // Use fallback mock data
+        const mockData = generateMockSites();
+        setSitesData(mockData);
       } finally {
         setSitesDataLoading(false);
         // trigger map re-render
         setTimeout(() => renderLayers(), 50);
       }
+    }
+
+    function generateMockSites() {
+      return [
+        {
+          id: "site-1",
+          name: "Site Paris Nord",
+          lat: 48.9,
+          lng: 2.3,
+          region_name: "Île-de-France",
+          department_name: "Paris",
+          score_criticite: 45,
+        },
+        {
+          id: "site-2",
+          name: "Site Lyon Centre",
+          lat: 45.76,
+          lng: 4.84,
+          region_name: "Auvergne-Rhône-Alpes",
+          department_name: "Rhône",
+          score_criticite: 65,
+        },
+        {
+          id: "site-3",
+          name: "Site Marseille Port",
+          lat: 43.3,
+          lng: 5.37,
+          region_name: "Provence-Alpes-Côte d'Azur",
+          department_name: "Bouches-du-Rhône",
+          score_criticite: 85,
+        },
+        {
+          id: "site-4",
+          name: "Site Toulouse",
+          lat: 43.6,
+          lng: 1.44,
+          region_name: "Occitanie",
+          department_name: "Haute-Garonne",
+          score_criticite: 30,
+        },
+        {
+          id: "site-5",
+          name: "Site Bordeaux",
+          lat: 44.84,
+          lng: -0.57,
+          region_name: "Nouvelle-Aquitaine",
+          department_name: "Gironde",
+          score_criticite: 50,
+        },
+        {
+          id: "site-6",
+          name: "Site Lille Nord",
+          lat: 50.63,
+          lng: 3.06,
+          region_name: "Hauts-de-France",
+          department_name: "Nord",
+          score_criticite: 72,
+        },
+      ];
     }
 
     return () => {
