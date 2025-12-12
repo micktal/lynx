@@ -92,9 +92,3 @@ export const supabaseDelete = <T = any>(
   path: string,
   headers?: Record<string, string>,
 ) => supabaseFetch<T>(path, { method: "DELETE", headers });
-
-export const supabaseConfig = {
-  url: SUPABASE_URL,
-  anonKey: SUPABASE_ANON_KEY,
-  headers: defaultHeaders,
-};
