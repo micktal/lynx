@@ -477,31 +477,47 @@ export default function MapFrancePage(
 
     // create cluster group
     // @ts-ignore
-    const markerCluster = (L as any).markerClusterGroup({
-      chunkedLoading: true,
-      showCoverageOnHover: false,
-      iconCreateFunction: function (cluster: any) {
-        const children = cluster.getAllChildMarkers();
-        const count = children.length;
-        const avg =
-          Math.round(
-            (children.reduce(
-              (acc: number, m: any) => acc + (m.options._score || 0),
-              0,
-            ) /
-              Math.max(1, count)) *
-              10,
-          ) / 10;
-        const color = colorForCluster(avg);
-        const size = Math.min(70, 30 + Math.round(Math.log(count + 1) * 8));
-        const html = `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(0,0,0,0)), ${color}; box-shadow: 0 6px 18px rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.06); color: white; font-weight:600;">${count}</div>`;
-        return L.divIcon({
-          html,
-          className: "custom-cluster-icon",
-          iconSize: [size, size],
-        });
-      },
-    });
+    if (!L.markerClusterGroup) {
+      console.warn("Marker cluster plugin not loaded, using regular markers");
+      markersRef.current = L.featureGroup();
+      mapRef.current.addLayer(markersRef.current as any);
+    } else {
+      const markerCluster = (L as any).markerClusterGroup({
+        chunkedLoading: true,
+        showCoverageOnHover: false,
+        iconCreateFunction: function (cluster: any) {
+          const children = cluster.getAllChildMarkers();
+          const count = children.length;
+          const avg =
+            Math.round(
+              (children.reduce(
+                (acc: number, m: any) => acc + (m.options._score || 0),
+                0,
+              ) /
+                Math.max(1, count)) *
+                10,
+            ) / 10;
+          const color = colorForCluster(avg);
+          const size = Math.min(70, 30 + Math.round(Math.log(count + 1) * 8));
+          const html = `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(0,0,0,0)), ${color}; box-shadow: 0 6px 18px rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.06); color: white; font-weight:600;">${count}</div>`;
+          return L.divIcon({
+            html,
+            className: "custom-cluster-icon",
+            iconSize: [size, size],
+          });
+        },
+      });
+
+      markersRef.current = markerCluster;
+      mapRef.current.addLayer(markerCluster);
+
+      // cluster click zoom behavior
+      markerCluster.on("clusterclick", function (a: any) {
+        try {
+          mapRef.current.fitBounds(a.layer.getBounds().pad(0.5));
+        } catch (e) {}
+      });
+    }
 
     // determine which sites to show based on drilldown mode
     let sitesToShow = allSites;
