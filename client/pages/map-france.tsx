@@ -180,11 +180,11 @@ export default function MapFrancePage(): JSX.Element {
   }, [sites, clientFilter, showInProgress, showFinished, showNotStarted, minScore, onlyWithActionsLate]);
 
   useEffect(() => {
-    // whenever filters or sites change, re-render layers
+    // whenever filters, mode or sitesData change, re-render layers
     if (!mapRef.current) return;
     renderLayers(sites);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredSites, heatmapOn]);
+  }, [filteredSites, heatmapOn, mode, currentRegion, currentDepartment, sitesData]);
 
   function colorForStatus(status?: string) {
     if (status === 'IN_PROGRESS') return '#FFB020';
