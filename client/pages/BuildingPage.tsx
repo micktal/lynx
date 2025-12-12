@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import * as builder from "../lib/builderService";
@@ -16,9 +16,11 @@ import PlanLegend from "../components/BuildingPlanInteractive/PlanLegend";
 export default function BuildingPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const buildingId = id || "";
 
+  // ------------------------------------------
+  // STATE
+  // ------------------------------------------
   const [building, setBuilding] = useState<Building | null>(null);
   const [plans, setPlans] = useState<BuildingPlan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<BuildingPlan | null>(null);
@@ -29,60 +31,90 @@ export default function BuildingPage() {
   const [showAreas, setShowAreas] = useState(true);
   const [showMarkers, setShowMarkers] = useState(true);
 
-  const [loadingPlans, setLoadingPlans] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [loadingPlanData, setLoadingPlanData] = useState(false);
 
-  /* ------------------------------------------
-     LOAD BUILDING + PLANS
-  -------------------------------------------*/
+  // ------------------------------------------
+  // LOAD BUILDING + PLANS
+  // ------------------------------------------
   useEffect(() => {
     (async () => {
-      if (!buildingId) return;
+      try {
+        if (!buildingId) return;
 
-      const allBuildings = await builder.fetchBuildings();
-      const b = allBuildings.find((x) => x.id === buildingId) || null;
-      setBuilding(b);
+        const allBuildings = await builder.fetchBuildings();
+        const b = allBuildings.find(x => x.id === buildingId) || null;
+        setBuilding(b);
 
-      const pls = await builder.fetchBuildingPlans(buildingId);
-      setPlans(pls);
+        const pls = await builder.fetchBuildingPlans(buildingId);
+        setPlans(pls);
 
-      if (pls.length) {
-        const def = pls.find((p) => p.isDefault) || pls[0];
-        setSelectedPlan(def);
+        if (pls.length) {
+          const def = pls.find(p => p.isDefault) || pls[0];
+          setSelectedPlan(def);
+        }
+      } catch (e) {
+        console.error("Erreur chargement building/plans", e);
+      } finally {
+        setLoading(false);
       }
-
-      setLoadingPlans(false);
     })();
   }, [buildingId]);
 
-  /* ------------------------------------------
-     LOAD AREAS + MARKERS WHEN PLAN CHANGES
-  -------------------------------------------*/
+  // ------------------------------------------
+  // AUTO-REVALIDATE selectedPlan if plans change
+  // ------------------------------------------
+  useEffect(() => {
+    if (!selectedPlan) return;
+
+    const stillExists = plans.find(p => p.id === selectedPlan.id);
+    if (!stillExists && plans.length > 0) {
+      setSelectedPlan(plans[0]);
+    }
+  }, [plans, selectedPlan]);
+
+  // ------------------------------------------
+  // LOAD AREAS + MARKERS WHEN SELECTED PLAN CHANGES
+  // ------------------------------------------
   useEffect(() => {
     (async () => {
       if (!selectedPlan) return;
 
-      const pa = await builder.fetchPlanAreas(selectedPlan.id);
-      setAreas(pa);
+      setLoadingPlanData(true);
+      try {
+        const pa = await builder.fetchPlanAreas(selectedPlan.id);
+        setAreas(pa);
 
-      const pm = await builder.fetchPlanMarkers(selectedPlan.id);
-      setMarkers(pm);
+        const pm = await builder.fetchPlanMarkers(selectedPlan.id);
+        setMarkers(pm);
+      } catch (e) {
+        console.error("Erreur chargement areas/markers", e);
+        setAreas([]);
+        setMarkers([]);
+      } finally {
+        setLoadingPlanData(false);
+      }
     })();
   }, [selectedPlan]);
 
-  /* ------------------------------------------
-     HEADER PREMIUM
-  -------------------------------------------*/
+  // ------------------------------------------
+  // HEADER COMPONENT
+  // ------------------------------------------
   const Header = () => (
     <div className="mb-6 p-4 bg-card rounded-xl shadow border border-border flex items-center justify-between">
       <div>
-        <h1 className="text-2xl font-bold">{building?.name || "Bâtiment"}</h1>
+        <h1 className="text-2xl font-bold">
+          {building?.name || "Bâtiment"}
+        </h1>
+
         <div className="text-sm text-muted mt-1">
           {building?.code ? `Code : ${building.code}` : "Aucun code indiqué"}
         </div>
 
         {building?.mainUse && (
           <div className="text-sm text-muted mt-1">
-            Usage principal : <span className="font-medium">{building.mainUse}</span>
+            Usage principal :
+            <span className="font-medium"> {building.mainUse}</span>
           </div>
         )}
 
@@ -96,30 +128,55 @@ export default function BuildingPage() {
         )}
       </div>
 
-      <div>
+      <div className="flex gap-2">
         <Link to={`/building/${buildingId}/plans`} className="btn">
           Gérer les plans
         </Link>
+        <button
+          className="btn-ghost"
+          onClick={() => window.location.reload()}
+        >
+          Rafraîchir
+        </button>
       </div>
     </div>
   );
 
-  /* ------------------------------------------
-     MAIN RENDER
-  -------------------------------------------*/
+  // ------------------------------------------
+  // MAIN RENDER
+  // ------------------------------------------
+  if (loading)
+    return (
+      <Layout>
+        <div className="card p-6 text-center text-muted">
+          Chargement du bâtiment…
+        </div>
+      </Layout>
+    );
+
+  if (!building)
+    return (
+      <Layout>
+        <div className="card p-6 text-center">
+          <h2 className="text-xl font-semibold">Bâtiment introuvable</h2>
+          <p className="text-muted mt-2">
+            Impossible de trouver ce bâtiment.
+          </p>
+          <div className="mt-4">
+            <button className="btn" onClick={() => navigate("/")}>
+              Retour
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+
   return (
     <Layout>
       <Header />
 
-      {/* Loading */}
-      {loadingPlans && (
-        <div className="card p-6 text-center text-muted">
-          Chargement des plans…
-        </div>
-      )}
-
-      {/* No plans */}
-      {!loadingPlans && plans.length === 0 && (
+      {/* NO PLANS */}
+      {!loading && plans.length === 0 && (
         <div className="card p-6 text-center">
           <h3 className="font-semibold text-lg">Aucun plan disponible</h3>
           <p className="text-muted text-sm mt-2">
@@ -133,36 +190,38 @@ export default function BuildingPage() {
         </div>
       )}
 
-      {/* Plans available */}
+      {/* MAIN LAYOUT */}
       {plans.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+
           {/* LEFT — INTERACTIVE PLAN */}
           <div className="lg:col-span-3">
             <div className="mb-3 flex items-center gap-3 flex-wrap">
-              {/* Plan selector */}
+
+              {/* PLAN SELECTOR */}
               <select
                 className="input"
                 value={selectedPlan?.id || ""}
                 onChange={(e) =>
                   setSelectedPlan(
-                    plans.find((p) => p.id === e.target.value) || null
+                    plans.find(p => p.id === e.target.value) || null
                   )
                 }
               >
                 <option value="">Sélectionner un niveau / étage</option>
-                {plans.map((p) => (
+                {plans.map(p => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
                 ))}
               </select>
 
-              {/* Toggles */}
+              {/* TOGGLES */}
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={showAreas}
-                  onChange={(e) => setShowAreas(e.target.checked)}
+                  onChange={e => setShowAreas(e.target.checked)}
                 />
                 Zones
               </label>
@@ -171,14 +230,24 @@ export default function BuildingPage() {
                 <input
                   type="checkbox"
                   checked={showMarkers}
-                  onChange={(e) => setShowMarkers(e.target.checked)}
+                  onChange={e => setShowMarkers(e.target.checked)}
                 />
                 Équipements / risques
               </label>
+
+              <button
+                className="btn-ghost"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                Remonter
+              </button>
             </div>
 
-            {/* Interactive Plan */}
-            {selectedPlan ? (
+            {loadingPlanData ? (
+              <div className="card p-6 text-center text-muted">
+                Chargement du plan…
+              </div>
+            ) : selectedPlan ? (
               <BuildingPlanInteractive
                 buildingPlan={selectedPlan}
                 planAreas={areas}
@@ -187,7 +256,7 @@ export default function BuildingPage() {
                 showMarkers={showMarkers}
                 onMarkerClick={(m) => {
                   if (m.equipmentId) navigate(`/equipment/${m.equipmentId}`);
-                  else if (m.riskId) navigate(`/risk/${m.riskId}`);
+                  if (m.riskId) navigate(`/risk/${m.riskId}`);
                 }}
                 onAreaClick={(a) => {
                   if (a.spaceId) navigate(`/space/${a.spaceId}`);
@@ -198,7 +267,7 @@ export default function BuildingPage() {
             )}
           </div>
 
-          {/* RIGHT — LEGEND + FILTERS */}
+          {/* RIGHT — LEGEND & FILTERS */}
           <div className="lg:col-span-1 space-y-4">
             <PlanLegend />
 
@@ -208,16 +277,27 @@ export default function BuildingPage() {
               <div className="flex flex-col gap-2 text-sm">
                 <label className="flex items-center gap-2">
                   <input type="checkbox" defaultChecked />
-                  Zones colorées par risque
+                  Zones colorées par niveau de risque
                 </label>
 
                 <label className="flex items-center gap-2">
                   <input type="checkbox" defaultChecked />
                   Afficher la légende
                 </label>
+
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" />
+                  Masquer les équipements
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" />
+                  Masquer les risques
+                </label>
               </div>
             </div>
           </div>
+
         </div>
       )}
     </Layout>
