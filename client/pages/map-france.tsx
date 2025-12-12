@@ -191,12 +191,19 @@ export default function MapFrancePage(
     async function loadSupabaseSites() {
       setSitesDataLoading(true);
       try {
+        console.log("Fetching from Supabase...");
         const data = await supabaseGet<any[]>(
           "sites?select=id,name,lat,lng,region_name,department_name,score_criticite",
         );
-        if (data && Array.isArray(data)) setSitesData(data);
+        console.log("Supabase response:", data);
+        if (data && Array.isArray(data)) {
+          console.log(`Setting ${data.length} sites from Supabase`);
+          setSitesData(data);
+        } else {
+          console.warn("Unexpected Supabase response format:", data);
+        }
       } catch (e) {
-        console.warn("Failed to fetch Supabase sites", e);
+        console.error("Failed to fetch Supabase sites", e);
       } finally {
         setSitesDataLoading(false);
         // trigger map re-render
