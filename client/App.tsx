@@ -97,6 +97,10 @@ const App = () => (
           <Route path="/map" element={<MapPage />} />
           <Route path="/map-france" element={<MapFrancePage />} />
           <Route path="/map-france-airbnb" element={<MapFranceAirbnb />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/project/:id" element={<ProjectPage />} />
+          <Route path="/chantiers" element={<ChantiersPage />} />
+          <Route path="/chantier/:id" element={<ChantierPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
