@@ -159,50 +159,71 @@ export default function MapFrancePage(): JSX.Element {
     const L = (window as any).L;
     if (!L || !mapRef.current) return;
 
-    // remove existing marker cluster and heat
+    // remove existing layers
     try {
-      if (markersRef.current) {
-        markersRef.current.clearLayers();
-        markersRef.current = null;
-      }
-    } catch (e) {}
-    try {
-      if (heatRef.current) {
-        mapRef.current.removeLayer(heatRef.current);
-        heatRef.current = null;
-      }
-    } catch (e) {}
+      if (markersRef.current) { markersRef.current.clearLayers(); markersRef.current = null; }
+    } catch(e){}
+    try { if (heatRef.current) { mapRef.current.removeLayer(heatRef.current); heatRef.current = null; } } catch(e){}
+    try { if (regionLayerRef.current) { mapRef.current.removeLayer(regionLayerRef.current); regionLayerRef.current = null; } } catch(e){}
 
     const points = filteredSites.map((s) => s);
-
     const zoom = mapRef.current.getZoom();
 
-    // If zoomed out enough, show region summary markers instead of individual clusters
-    if (zoom <= 6 && regions && regions.length) {
-      try { if (regionLayerRef.current) { mapRef.current.removeLayer(regionLayerRef.current); regionLayerRef.current = null; } } catch(e){}
-      const rg = L.layerGroup();
-      for (const r of regions) {
-        const sitesInRegion = points.filter(p => p.regionCode === r.code);
-        if (!sitesInRegion.length) continue;
-        const count = sitesInRegion.length;
-        const avg = Math.round((sitesInRegion.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10;
-        const color = colorForCluster(avg);
-        const size = Math.min(84, 40 + Math.round(Math.log(count + 1) * 8));
-        const html = `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(0,0,0,0.05)), ${color}; box-shadow: 0 10px 30px rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.06); color: white; font-weight:600; font-size:14px;">${r.name.split(' ')[0]}<br/>${count}</div>`;
-        const icon = L.divIcon({ html, className: 'region-marker', iconSize: [size, size] });
-        const marker = L.marker([r.lat || 46.5, r.lng || 2.5], { icon });
-        marker.on('click', () => {
-          try {
-            mapRef.current.setView([r.lat || 46.5, r.lng || 2.5], (r.zoomLevel || 7) + 1);
-          } catch (e) {}
-        });
-        marker.bindTooltip(`<strong>${r.name}</strong><br/>Sites: ${count}<br/>Criticité moyenne: ${avg}`);
-        rg.addLayer(marker);
-      }
+    const regionsGeo = (mapRef as any).regionsGeo;
+    const departmentsGeo = (mapRef as any).departmentsGeo;
+
+    // Show region polygons when zoomed out
+    if (zoom <= 6 && regionsGeo && regionsGeo.features && regionsGeo.features.length) {
+      const rg = L.geoJSON(regionsGeo, {
+        style: function(feature: any) {
+          const code = feature.properties?.code || feature.properties?.insee || feature.properties?.CODREG || feature.properties?.region_code || feature.properties?.nom;
+          const sitesInRegion = points.filter(p => p.regionCode && (String(p.regionCode) === String(code) || (String(p.regionCode).toLowerCase().indexOf(String(code || '').toLowerCase()) !== -1)));
+          const count = sitesInRegion.length;
+          const avg = count ? Math.round((sitesInRegion.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
+          const fill = count ? colorForCluster(avg) : 'rgba(255,255,255,0.02)';
+          return { color: 'rgba(255,255,255,0.12)', weight: 1, fillColor: fill, fillOpacity: count ? 0.85 : 0.02 } as any;
+        },
+        onEachFeature: function(feature: any, layer: any) {
+          const name = feature.properties?.nom || feature.properties?.name || feature.properties?.REGION || 'Région';
+          const code = feature.properties?.code || feature.properties?.insee || feature.properties?.CODREG || feature.properties?.region_code;
+          const sitesInRegion = points.filter(p => p.regionCode === code || (p.regionCode && name && (String(p.regionCode).toLowerCase().indexOf(String(name).split(' ')[0].toLowerCase()) !== -1)));
+          const count = sitesInRegion.length;
+          const avg = count ? Math.round((sitesInRegion.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
+          layer.bindTooltip(`<strong>${name}</strong><br/>Sites: ${count}<br/>Criticité moyenne: ${avg}`);
+          layer.on('click', () => {
+            try { mapRef.current.fitBounds(layer.getBounds().pad(0.2)); } catch(e) { try { mapRef.current.setView([feature.properties?.lat || 46.5, feature.properties?.lng || 2.5], 7); } catch(e){} }
+          });
+        }
+      });
       regionLayerRef.current = rg;
-      mapRef.current.addLayer(regionLayerRef.current);
-      // don't add further markers at this zoom
+      mapRef.current.addLayer(regionLayerRef.current as any);
       return;
+    }
+
+    // If zoomed to region level, show department polygons
+    if (zoom > 6 && zoom <= 9 && departmentsGeo && departmentsGeo.features && departmentsGeo.features.length) {
+      const dg = L.geoJSON(departmentsGeo, {
+        style: function(feature: any) {
+          const code = feature.properties?.code || feature.properties?.insee || feature.properties?.code_dept || feature.properties?.nom;
+          const sitesInDept = points.filter(p => p.departmentCode !== undefined && (String(p.departmentCode) === String(code) || (String(p.departmentCode).indexOf(String(code || '')) !== -1)));
+          const count = sitesInDept.length;
+          const avg = count ? Math.round((sitesInDept.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
+          const fill = count ? colorForCluster(avg) : 'rgba(255,255,255,0.02)';
+          return { color: 'rgba(255,255,255,0.08)', weight: 0.8, fillColor: fill, fillOpacity: count ? 0.9 : 0.02 } as any;
+        },
+        onEachFeature: function(feature: any, layer: any) {
+          const name = feature.properties?.nom || feature.properties?.name || 'Département';
+          const code = feature.properties?.code || feature.properties?.insee || feature.properties?.code_dept;
+          const sitesInDept = points.filter(p => String(p.departmentCode) === String(code) || (p.departmentCode && String(p.departmentCode).indexOf(String(code || '')) !== -1));
+          const count = sitesInDept.length;
+          const avg = count ? Math.round((sitesInDept.reduce((acc, x) => acc + (x.scoreCriticite || 0), 0) / count) * 10) / 10 : 0;
+          layer.bindTooltip(`<strong>${name}</strong><br/>Sites: ${count}<br/>Criticité moyenne: ${avg}`);
+          layer.on('click', () => { try { mapRef.current.fitBounds(layer.getBounds().pad(0.1)); } catch(e){} });
+        }
+      });
+      regionLayerRef.current = dg;
+      mapRef.current.addLayer(regionLayerRef.current as any);
+      // continue to add markers below
     }
 
     // create cluster group
@@ -216,7 +237,7 @@ export default function MapFrancePage(): JSX.Element {
         const avg = Math.round((children.reduce((acc: number, m: any) => acc + (m.options._score || 0), 0) / Math.max(1, count)) * 10) / 10;
         const color = colorForCluster(avg);
         const size = Math.min(70, 30 + Math.round(Math.log(count + 1) * 8));
-        const html = `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(0,0,0,0)), ${color}; box-shadow: 0 6px 18px rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.06); color: white; font-weight:600;">${count}</div>`;
+        const html = `<div style=\"display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(0,0,0,0)), ${color}; box-shadow: 0 6px 18px rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.06); color: white; font-weight:600;\">${count}</div>`;
         return L.divIcon({ html, className: 'custom-cluster-icon', iconSize: [size, size] });
       }
     });
@@ -228,9 +249,7 @@ export default function MapFrancePage(): JSX.Element {
       const size = 14 + Math.min(10, Math.round(Math.log(score + 1) * 4));
 
       const iconHtml = `
-        <div style="width: ${size}px; height: ${size}px; border-radius:50%; background: ${statusColor}; box-shadow: 0 6px 14px rgba(2,6,23,0.5); border: 2px solid rgba(255,255,255,0.06); display:flex;align-items:center;justify-content:center;">
-        </div>
-      `;
+        <div style=\"width: ${size}px; height: ${size}px; border-radius:50%; background: ${statusColor}; box-shadow: 0 6px 14px rgba(2,6,23,0.5); border: 2px solid rgba(255,255,255,0.06); display:flex;align-items:center;justify-content:center;\">\n        </div>\n      `;
 
       const icon = L.divIcon({ html: iconHtml, className: 'site-marker-div-icon', iconSize: [size, size], iconAnchor: [size/2, size/2] });
 
@@ -239,9 +258,7 @@ export default function MapFrancePage(): JSX.Element {
       const clientName = clients.find(c=>c.id===s.clientId)?.name || '—';
       const tooltip = `<strong>${s.name}</strong><br/>Client: ${clientName}<br/>Chantier: ${s.status}${typeof s.progressionTravaux === 'number' ? ` (${s.progressionTravaux}%)` : ''}<br/>Risques critiques: ${s['nbRisquesCritiques']||0}<br/>Actions en retard: ${s['nbActionsEnRetard']||0}`;
       marker.bindTooltip(tooltip);
-      marker.on('click', () => {
-        setSelectedSite(s);
-      });
+      marker.on('click', () => { setSelectedSite(s); });
 
       markerCluster.addLayer(marker);
     }
@@ -251,21 +268,14 @@ export default function MapFrancePage(): JSX.Element {
 
     // cluster click zoom behavior
     markerCluster.on('clusterclick', function (a: any) {
-      try {
-        mapRef.current.fitBounds(a.layer.getBounds().pad(0.5));
-      } catch (e) {}
+      try { mapRef.current.fitBounds(a.layer.getBounds().pad(0.5)); } catch (e) {}
     });
 
     // heatmap
     if (heatmapOn) {
       const max = Math.max(1, ...filteredSites.map(s=> s.scoreCriticite || 0));
       const heatPoints = filteredSites.map(s => [s.lat!, s.lng!, Math.max(0.1, (s.scoreCriticite || 0) / max)]);
-      try {
-        heatRef.current = (L as any).heatLayer(heatPoints, { radius: 25, blur: 30, maxZoom: 13, gradient: {0.1:'#16a34a',0.3:'#facc15',0.6:'#f97316',1:'#dc2626'} });
-        heatRef.current.addTo(mapRef.current);
-      } catch (e) {
-        console.warn('heat plugin not available', e);
-      }
+      try { heatRef.current = (L as any).heatLayer(heatPoints, { radius: 25, blur: 30, maxZoom: 13, gradient: {0.1:'#16a34a',0.3:'#facc15',0.6:'#f97316',1:'#dc2626'} }); heatRef.current.addTo(mapRef.current); } catch (e) { console.warn('heat plugin not available', e); }
     }
 
     // fit bounds to points if any
