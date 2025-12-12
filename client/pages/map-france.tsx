@@ -342,6 +342,7 @@ export default function MapFrancePage(
 
   useEffect(() => {
     if (!mapRef.current) return;
+    console.log("Rendering layers. Sites data:", sitesData?.length || 0, "Filtered sites:", filteredSites.length);
     renderLayers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
