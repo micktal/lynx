@@ -52,13 +52,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               Carte France
             </Link>
             <Link
-              to="/map-france-airbnb"
-              className="text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Carte (Airbnb)
-            </Link>
-            <Link
               to="/synthese"
               className="text-sm"
               style={{ color: "var(--text-muted)" }}

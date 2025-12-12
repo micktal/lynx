@@ -44,7 +44,6 @@ import HomePage from "./pages/home";
 import LoginPage from "./pages/login";
 import MapPage from "./pages/map";
 import MapFrancePage from "./pages/map-france";
-import MapFranceAirbnb from "./pages/map-france-airbnb";
 import ProjectsPage from "./pages/projects";
 import ProjectPage from "./pages/project";
 import ChantiersPage from "./pages/chantiers";
@@ -120,7 +119,6 @@ const App = () => (
           <Route path="/login" element={<LoginPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/map-france" element={<MapFrancePage />} />
-          <Route path="/map-france-airbnb" element={<MapFranceAirbnb />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/project/:id" element={<ProjectPage />} />
           <Route path="/chantiers" element={<ChantiersPage />} />
