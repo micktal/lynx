@@ -112,6 +112,11 @@ export default function MapFrancePage(
     return "#10B981";
   }
 
+  // Set mock data immediately as fallback
+  useEffect(() => {
+    setSitesData(generateMockSites());
+  }, []);
+
   useEffect(() => {
     // dynamically load leaflet and plugins and initialize map
     const promises: Promise<void>[] = [];
