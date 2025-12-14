@@ -1626,44 +1626,34 @@ export async function deleteRisk(id: string): Promise<boolean> {
 }
 
 // Attachment CRUD
+import { supabaseGet } from "./supabaseService";
+
 export async function createAttachment(
   a: Partial<Attachment>,
 ): Promise<Attachment> {
-  const newA: Attachment = {
-    id: `att_${Date.now()}`,
-    fileUrl: a.fileUrl || "/placeholder.svg",
-    fileType: a.fileType || "image/png",
-    auditId: a.auditId,
-    siteId: a.siteId,
-    buildingId: a.buildingId,
-    spaceId: a.spaceId,
-    equipmentId: a.equipmentId,
-    uploadedBy: a.uploadedBy,
-    uploadedAt: new Date().toISOString(),
-  };
-  MOCK_ATTACHMENTS.unshift(newA);
-  // log photo added
-  const targetEntity = a.riskId
-    ? { type: "risk", id: a.riskId }
-    : a.equipmentId
-      ? { type: "equipment", id: a.equipmentId }
-      : a.auditId
-        ? { type: "audit", id: a.auditId }
-        : a.spaceId
-          ? { type: "space", id: a.spaceId }
-          : null;
-  if (targetEntity) {
-    await createActivityLog({
-      timestamp: new Date().toISOString(),
-      entityType: targetEntity.type,
-      entityId: targetEntity.id,
-      operation: "photoAdded",
-      userId: a.uploadedBy || "u_system",
-      description: `Pièce jointe ajoutée: ${newA.fileUrl}`,
-      metadata: JSON.stringify({ attachment: newA }),
-    });
+  // POST to server-side endpoint which uses service role to insert into Supabase
+  const res = await fetch('/api/attachments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(a),
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`Failed to create attachment: ${res.status} ${txt}`);
   }
-  return structuredClone(newA);
+  const data = await res.json();
+  // Expect server to return the created record
+  return data;
+}
+
+export async function fetchAttachments(): Promise<Attachment[]> {
+  try {
+    const data = await supabaseGet<Attachment[]>('attachments?select=*');
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    console.warn('Failed to fetch attachments from Supabase, falling back to mocks', e);
+    return structuredClone(MOCK_ATTACHMENTS);
+  }
 }
 
 export async function deleteAttachment(id: string): Promise<boolean> {
