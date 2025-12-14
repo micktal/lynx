@@ -1627,7 +1627,6 @@ export async function deleteRisk(id: string): Promise<boolean> {
 }
 
 // Attachment CRUD
-import { supabaseGet } from "./supabaseService";
 
 export async function createAttachment(
   a: Partial<Attachment>,
