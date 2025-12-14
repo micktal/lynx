@@ -49,7 +49,7 @@ function OverviewTab({ site }: any) {
         <div className="text-sm text-muted mb-2">
           Position et contexte géographique.
         </div>
-        <img src="/placeholder.svg" className="rounded-lg" />
+        <img src="/placeholder.svg" loading="lazy" className="rounded-lg" />
       </div>
     </div>
   );
