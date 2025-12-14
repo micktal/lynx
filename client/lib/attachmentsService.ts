@@ -22,6 +22,45 @@ export async function createAttachment(payload: {
 	return res.json();
 }
 
+export async function uploadAttachment(
+	file: File,
+	entity_type: "site" | "audit" | "risk" | "equipment",
+	entity_id: number | string,
+	onProgress?: (p: number) => void,
+) {
+	return new Promise<any>((resolve, reject) => {
+		const fd = new FormData();
+		fd.append('file', file, file.name);
+		fd.append('entity_type', entity_type);
+		fd.append('entity_id', String(entity_id));
+
+		const xhr = new XMLHttpRequest();
+		xhr.open('POST', '/.netlify/functions/attachments');
+
+		xhr.upload.onprogress = (ev) => {
+			if (ev.lengthComputable && onProgress) {
+				onProgress(Math.round((ev.loaded / ev.total) * 100));
+			}
+		};
+
+		xhr.onload = () => {
+			if (xhr.status >= 200 && xhr.status < 300) {
+				try {
+					const json = JSON.parse(xhr.responseText);
+					resolve(json);
+				} catch (e) {
+					resolve(xhr.responseText);
+				}
+			} else {
+				reject(new Error(`Upload failed: ${xhr.status} ${xhr.responseText}`));
+			}
+		};
+
+		xhr.onerror = () => reject(new Error('Network error during upload'));
+		xhr.send(fd);
+	});
+}
+
 export async function deleteAttachment(id: string) {
 	if (!id) throw new Error('Missing attachment id');
 
