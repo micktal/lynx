@@ -195,6 +195,20 @@
     box-shadow: 0 8px 24px rgba(91,140,255,0.12);
   }
 
+  /* Secondary button style (outlined) */
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+  }
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+
   .tabs-premium {
     display: flex;
     gap: 8px;
