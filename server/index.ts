@@ -32,5 +32,49 @@ export function createServer() {
   // Supabase proxy route
   app.all("/api/supabase", handleSupabaseProxy);
 
+  // Health check
+  app.get('/api/health', async (_req, res) => {
+    const result: any = { ok: true };
+
+    // Supabase check
+    try {
+      const SUPABASE_URL = process.env.SUPABASE_URL;
+      const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+        result.supabase = { ok: false, error: 'env missing' };
+      } else {
+        const url = `${SUPABASE_URL}/rest/v1/attachments?select=id&limit=1`;
+        const r = await fetch(url, { headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}` } });
+        result.supabase = { ok: r.ok, status: r.status };
+      }
+    } catch (e: any) {
+      result.supabase = { ok: false, error: String(e?.message || e) };
+    }
+
+    // Redis check (optional)
+    try {
+      const redisUrl = process.env.REDIS_URL || process.env.REDIS_TLS_URL;
+      if (!redisUrl) {
+        result.redis = { ok: false, error: 'no REDIS_URL' };
+      } else {
+        try {
+          const redisModule = await import('redis');
+          const client = redisModule.createClient({ url: redisUrl });
+          client.on('error', () => {});
+          await client.connect();
+          const pong = await client.ping();
+          await client.disconnect();
+          result.redis = { ok: pong === 'PONG' || pong === 'OK', pong };
+        } catch (re) {
+          result.redis = { ok: false, error: String(re) };
+        }
+      }
+    } catch (e: any) {
+      result.redis = { ok: false, error: String(e?.message || e) };
+    }
+
+    res.json(result);
+  });
+
   return app;
 }
