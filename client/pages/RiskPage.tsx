@@ -20,6 +20,8 @@ import ActionList from "../components/ActionList";
 import ActionForm from "../components/ActionForm";
 import Gallery from "../components/Gallery";
 import ConfirmModal from "../components/ConfirmModal";
+import PhotoUploader from "../components/PhotoUploader";
+import AttachmentsGallery from "../components/AttachmentsGallery";
 
 
 export default function RiskPage() {
