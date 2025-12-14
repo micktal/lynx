@@ -10,6 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:block p-2" style={{position:'absolute',left:8,top:8,zIndex:60}}>Aller au contenu</a>
       <header
         className="border-b"
         style={{
