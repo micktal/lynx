@@ -27,12 +27,15 @@ export const handleStorageUpload: RequestHandler = async (req, res) => {
       body: req.body,
     });
 
+    const ok = upstream.ok;
     const text = await upstream.text();
-    res.status(upstream.status);
-    // forward content-type
-    const ct = upstream.headers.get('content-type');
-    if (ct) res.setHeader('Content-Type', ct);
-    return res.send(text);
+    if (!ok) {
+      console.error('Upstream storage error', upstream.status, text);
+      return res.status(upstream.status).send(text);
+    }
+
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeURIComponent(path)}`;
+    return res.json({ publicUrl });
   } catch (err: any) {
     console.error('Storage proxy error:', err && err.stack ? err.stack : err);
     return res.status(500).json({ error: 'Failed to upload to storage', details: err?.message || String(err) });
