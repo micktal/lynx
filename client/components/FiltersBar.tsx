@@ -34,13 +34,13 @@ export default function FiltersBar({
   );
 
   return (
-    <div className="bg-card border border-border rounded-md p-4 flex flex-col md:flex-row md:items-center gap-3">
+    <div className="bg-card border border-border rounded-md p-4 flex flex-col md:flex-row md:items-center gap-4">
       <div className="flex items-center gap-3 flex-1">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Rechercher par nom, ville, contact..."
-          className="px-3 py-2 rounded-md border border-border bg-input text-sm w-full md:w-96"
+          className="px-4 py-2 rounded-md border border-border bg-input text-sm w-full md:w-96"
         />
 
         <select
@@ -70,7 +70,7 @@ export default function FiltersBar({
         </select>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <label className="text-sm text-muted">Max bâtiments</label>
           <input
