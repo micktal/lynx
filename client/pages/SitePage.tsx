@@ -381,23 +381,23 @@ export default function SitePage() {
           <KpiCard title="Score criticité" value={site.score_criticite || 0} />
         </div>
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
           <button
-            className="btn"
+            className="btn w-full sm:w-auto"
             onClick={() => window.location.href = `/map-france?site=${siteId}`}
           >
             Voir sur la carte
           </button>
 
           <button
-            className="btn-secondary"
+            className="btn-secondary w-full sm:w-auto"
             onClick={() => window.location.href = `/audit/${siteId}`}
           >
             Dernier audit
           </button>
 
           <button
-            className="btn-secondary"
+            className="btn-secondary w-full sm:w-auto"
             onClick={() => window.location.href = `/actions?site=${siteId}`}
           >
             Actions du site
