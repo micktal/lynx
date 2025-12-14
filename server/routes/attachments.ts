@@ -56,7 +56,14 @@ router.get('/:id/url', async (req, res) => {
     }
 
     const signJson = JSON.parse(signText);
-    return res.json({ url: signJson.signedURL || signJson.signed_url || signJson.url || signJson });
+    const url = signJson.signedURL || signJson.signed_url || signJson.url || signJson;
+    // Determine expiry (use expires_in if provided, otherwise default to 3600s)
+    const expiresIn = typeof signJson.expires_in === 'number' ? signJson.expires_in : 3600;
+    const expiresAt = Date.now() + Math.max(5000, (expiresIn - 5) * 1000);
+
+    signedUrlCache.set(id, { url, expiresAt });
+
+    return res.json({ url, expiresAt });
   } catch (err: any) {
     console.error('Signed url generation failed:', err && err.stack ? err.stack : err);
     return res.status(500).json({ error: 'Internal server error generating signed url', details: err?.message || String(err) });
