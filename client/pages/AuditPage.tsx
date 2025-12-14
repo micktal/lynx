@@ -329,6 +329,17 @@ export default function AuditPage() {
             </button>
           )}
         </div>
+
+        <div className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2">
+              <AttachmentsGallery entityType="audit" entityId={auditId} />
+            </div>
+            <div>
+              <PhotoUploader siteId={Number(audit.siteId)} onUploaded={(att)=>console.log('uploaded',att)} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* PROGRESS + KPIS */}
