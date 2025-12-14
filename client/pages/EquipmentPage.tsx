@@ -21,6 +21,8 @@ import Gallery from "../components/Gallery";
 import ActionForm from "../components/ActionForm";
 import ConfirmModal from "../components/ConfirmModal";
 import Timeline from "../components/Timeline";
+import PhotoUploader from "../components/PhotoUploader";
+import AttachmentsGallery from "../components/AttachmentsGallery";
 
 export default function EquipmentPage() {
   const { id } = useParams();
