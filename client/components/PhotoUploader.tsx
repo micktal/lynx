@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
-import { uploadPhoto } from "../lib/storageService";
-import { createAttachment } from "../lib/attachmentsService";
+import { uploadAttachment } from "../lib/attachmentsService";
 
 type EntityType = "site" | "audit" | "risk" | "equipment";
 
