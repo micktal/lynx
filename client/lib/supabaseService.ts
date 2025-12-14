@@ -46,17 +46,27 @@ export async function supabaseFetch<T = any>(
   // Use server proxy with path as query parameter
   const url = `${PROXY_BASE}?path=${encodeURIComponent(path)}`;
 
-  const response = await fetch(url, fetchOptions);
+  let response: Response;
+  try {
+    response = await fetch(url, fetchOptions);
+  } catch (networkErr: any) {
+    const err = new Error(`Network error when contacting Supabase proxy: ${networkErr?.message || String(networkErr)}`);
+    (err as any).status = 0;
+    throw err;
+  }
 
   if (!response.ok) {
     let errorMessage = response.statusText;
     try {
-      const data = await response.json();
-      errorMessage =
-        (data && (data.message || data.error || data.description)) ||
-        errorMessage;
+      const text = await response.text();
+      try {
+        const data = JSON.parse(text);
+        errorMessage = (data && (data.message || data.error || data.description)) || text || errorMessage;
+      } catch (e) {
+        errorMessage = text || errorMessage;
+      }
     } catch (e) {
-      // ignore JSON parse errors
+      // ignore read errors
     }
     const err = new Error(
       `Supabase API error: ${response.status} - ${errorMessage}`,
