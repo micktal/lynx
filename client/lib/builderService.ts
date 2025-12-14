@@ -1863,7 +1863,22 @@ export async function countStatsForSpace(spaceId: string) {
 export async function fetchAttachmentsForSpace(
   spaceId: string,
 ): Promise<Attachment[]> {
-  return structuredClone(MOCK_ATTACHMENTS.filter((a) => a.spaceId === spaceId));
+  try {
+    const data = await supabaseGet<Attachment[]>(`attachments?space_id=eq.${spaceId}&select=*` as any);
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    return structuredClone(MOCK_ATTACHMENTS.filter((a) => a.spaceId === spaceId));
+  }
+}
+
+export async function fetchAttachmentsForEntity(entityType: string, entityId: string | number): Promise<Attachment[]> {
+  try {
+    const encoded = `attachments?entity_type=eq.${encodeURIComponent(entityType)}&entity_id=eq.${encodeURIComponent(String(entityId))}&select=*`;
+    const data = await supabaseGet<Attachment[]>(encoded as any);
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    return structuredClone(MOCK_ATTACHMENTS.filter((a) => (a as any).entity_type === entityType && String((a as any).entity_id) === String(entityId)));
+  }
 }
 
 export async function fetchEquipmentsForSpace(
