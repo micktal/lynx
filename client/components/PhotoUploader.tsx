@@ -58,24 +58,8 @@ export default function PhotoUploader({
       setUploading(true);
       setProgress(5);
 
-      // 1️⃣ Upload vers Supabase Storage via proxy serveur
-      const result = await uploadPhoto(file, entityType, entityId, (p) => setProgress(Math.min(90, p)));
-
-      const publicUrl = (result as any).publicUrl || (result as any);
-      const bucket = (result as any).bucket;
-      const file_path = (result as any).file_path;
-
-      setProgress(92);
-
-      // 2️⃣ Création de l’attachment en DB via server route (store bucket + file_path)
-      const attachment = await createAttachment({
-        entity_type: entityType,
-        entity_id: entityId,
-        bucket,
-        file_path,
-        file_name: file.name,
-        file_type: file.type,
-      });
+      // Upload via Netlify function which handles storage + DB insert
+      const attachment = await uploadAttachment(file, entityType, entityId, (p) => setProgress(p));
 
       setProgress(100);
 
