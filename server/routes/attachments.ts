@@ -9,10 +9,10 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 // Body: { entity_type, entity_id, file_url, file_name?, file_type? }
 router.post('/', async (req, res) => {
   try {
-    const { entity_type, entity_id, file_url, file_name, file_type } = req.body as any;
+    const { entity_type, entity_id, file_url, file_name, file_type, bucket, file_path } = req.body as any;
 
-    if (!entity_type || !entity_id || !file_url) {
-      return res.status(400).json({ error: 'Missing required fields (entity_type, entity_id, file_url)' });
+    if (!entity_type || !entity_id || !(file_url || (bucket && file_path))) {
+      return res.status(400).json({ error: 'Missing required fields (entity_type, entity_id, file_url or bucket+file_path)' });
     }
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
@@ -20,12 +20,14 @@ router.post('/', async (req, res) => {
       return res.status(500).json({ error: 'Server not configured' });
     }
 
-    const payload = {
+    const payload: any = {
       entity_type,
       entity_id,
-      file_url,
       file_name: file_name || null,
       file_type: file_type || null,
+      bucket: bucket || null,
+      file_path: file_path || null,
+      file_url: file_url || null,
     };
 
     const insertUrl = `${SUPABASE_URL}/rest/v1/attachments`;
