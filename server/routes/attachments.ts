@@ -138,6 +138,13 @@ router.delete("/:id", async (req, res) => {
       return res.status(dbResp.status).send(dbText);
     }
 
+    // Invalidate cached signed url for this attachment (if any)
+    try {
+      signedUrlCache.delete(id);
+    } catch (e) {
+      // ignore
+    }
+
     return res.status(204).send(); // No content on successful deletion
 
   } catch (err: any) {
