@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import DarkModeToggle from "./ui/DarkModeToggle";
+import MobileBottomNav from "./mobile/MobileBottomNav";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [mobileNav, setMobileNav] = React.useState<string>("spaces");
+
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <header
