@@ -30,8 +30,27 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
         </nav>
 
         <div className="mt-6">
-          <div className="text-xs text-muted">Theme</div>
-          {/* Dark mode toggle is present in header; clicking here can also close drawer */}
+          <div className="text-xs text-muted mb-2">Theme</div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                document.documentElement.classList.remove("dark");
+                onClose();
+              }}
+              className="px-3 py-2 rounded-md border border-border text-sm"
+            >
+              Clair
+            </button>
+            <button
+              onClick={() => {
+                document.documentElement.classList.add("dark");
+                onClose();
+              }}
+              className="px-3 py-2 rounded-md border border-border text-sm"
+            >
+              Sombre
+            </button>
+          </div>
         </div>
       </aside>
     </div>
