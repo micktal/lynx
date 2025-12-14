@@ -324,6 +324,18 @@ export default function RiskPage() {
 
       </div>
 
+      <div className="mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2">
+            <AttachmentsGallery entityType="risk" entityId={riskId} />
+          </div>
+          <div>
+            <PhotoUploader siteId={Number(risk?.siteId || 0)} onUploaded={(att)=>{
+              setAttachments((prev)=>[att, ...prev]);
+            }} />
+          </div>
+        </div>
+      </div>
 
       {/* RISK DETAILS */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
