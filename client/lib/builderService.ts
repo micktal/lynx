@@ -1654,33 +1654,45 @@ export async function fetchAttachments(): Promise<Attachment[]> {
 }
 
 export async function deleteAttachment(id: string): Promise<boolean> {
-  const idx = MOCK_ATTACHMENTS.findIndex((a) => a.id === id);
-  if (idx === -1) return false;
-  const old = MOCK_ATTACHMENTS[idx];
-  MOCK_ATTACHMENTS.splice(idx, 1);
-  await createActivityLog({
-    timestamp: new Date().toISOString(),
-    entityType: old.auditId
-      ? "audit"
-      : old.riskId
-        ? "risk"
-        : old.equipmentId
-          ? "equipment"
-          : old.spaceId
-            ? "space"
-            : "attachment",
-    entityId:
-      old.auditId ||
-      old.riskId ||
-      old.equipmentId ||
-      old.spaceId ||
-      old.siteId ||
-      "",
-    operation: "deleted",
-    userId: old.uploadedBy || "u_system",
-    description: `Pièce jointe supprimée: ${old.id}`,
-  });
-  return true;
+  try {
+    const res = await fetch(`/api/attachments/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    if (!res.ok) {
+      // If server returned not found, reflect that
+      if (res.status === 404) return false;
+      const txt = await res.text();
+      throw new Error(`Failed to delete attachment: ${res.status} ${txt}`);
+    }
+    return true;
+  } catch (err) {
+    // Fallback to in-memory mock behavior when offline or server not available
+    const idx = MOCK_ATTACHMENTS.findIndex((a) => a.id === id);
+    if (idx === -1) return false;
+    const old = MOCK_ATTACHMENTS[idx];
+    MOCK_ATTACHMENTS.splice(idx, 1);
+    await createActivityLog({
+      timestamp: new Date().toISOString(),
+      entityType: old.auditId
+        ? "audit"
+        : old.riskId
+          ? "risk"
+          : old.equipmentId
+            ? "equipment"
+            : old.spaceId
+              ? "space"
+              : "attachment",
+      entityId:
+        old.auditId ||
+        old.riskId ||
+        old.equipmentId ||
+        old.spaceId ||
+        old.siteId ||
+        "",
+      operation: "deleted",
+      userId: old.uploadedBy || "u_system",
+      description: `Pièce jointe supprimée: ${old.id}`,
+    });
+    return true;
+  }
 }
 
 // Action CRUD
