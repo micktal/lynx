@@ -298,4 +298,16 @@
 
   :where(p, span, li, h1, h2, h3, h4, h5, h6, a, button, label, td, th) { overflow-wrap: anywhere; word-break: break-word; }
   pre, code { overflow-x: auto; white-space: pre; }
+
+  /* Small screen tweaks */
+  @media (max-width: 640px) {
+    .card { padding: 14px; border-radius: 12px; }
+    .kpi .value { font-size: 22px; }
+    .kpi-premium { padding: 10px; gap: 10px; }
+
+    header .container { padding-left: 12px; padding-right: 12px; }
+
+    /* reduce top toast padding on small screens */
+    .radix-toast-viewport { padding: 6px; }
+  }
 }
