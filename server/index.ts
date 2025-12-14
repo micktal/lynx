@@ -9,6 +9,10 @@ export function createServer() {
 
   // Middleware
   app.use(cors());
+
+  // storage upload route (raw body)
+  app.put('/api/storage/upload', express.raw({ type: '*/*', limit: '25mb' }), handleStorageUpload);
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
