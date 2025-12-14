@@ -1,114 +1,83 @@
-import express from "express";
-
-const router = express.Router();
+import { RequestHandler } from "express";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-// POST /api/attachments
-// Body: { entity_type, entity_id, file_url, file_name?, file_type? }
-router.post('/', async (req, res) => {
-  try {
-    const { entity_type, entity_id, file_url, file_name, file_type, bucket, file_path } = req.body as any;
+// DELETE /api/attachments/:id
+export const handleAttachmentsDelete: RequestHandler = async (req, res) => {
+  const id = req.params.id;
 
-    if (!entity_type || !entity_id || !(file_url || (bucket && file_path))) {
-      return res.status(400).json({ error: 'Missing required fields (entity_type, entity_id, file_url or bucket+file_path)' });
-    }
-
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      console.error('SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured');
-      return res.status(500).json({ error: 'Server not configured' });
-    }
-
-    const payload: any = {
-      entity_type,
-      entity_id,
-      file_name: file_name || null,
-      file_type: file_type || null,
-      bucket: bucket || null,
-      file_path: file_path || null,
-      file_url: file_url || null,
-    };
-
-    const insertUrl = `${SUPABASE_URL}/rest/v1/attachments`;
-    const r = await fetch(insertUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: SUPABASE_SERVICE_ROLE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-        Prefer: 'return=representation',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const text = await r.text();
-    if (!r.ok) {
-      console.error('Supabase error inserting attachment:', text);
-      return res.status(r.status).send(text);
-    }
-
-    const data = JSON.parse(text);
-    return res.json(Array.isArray(data) ? data[0] : data);
-  } catch (err) {
-    console.error('Attachment creation failed:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+  if (!id) {
+    return res.status(400).json({ error: "Missing attachment ID" });
   }
-});
 
-// GET /api/attachments/:id/url -> returns signed URL for private storage
-router.get('/:id/url', async (req, res) => {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error("SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured");
+    return res.status(500).json({ error: "Server not configured" });
+  }
+
   try {
-    const id = req.params.id;
-    if (!id) return res.status(400).json({ error: 'Missing id' });
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'Server not configured' });
-
-    // fetch attachment record
-    const selectUrl = `${SUPABASE_URL}/rest/v1/attachments?id=eq.${encodeURIComponent(id)}&select=*`;
+    // 1. Fetch attachment record to get bucket and file_path
+    const selectUrl = `${SUPABASE_URL}/rest/v1/attachments?id=eq.${encodeURIComponent(id)}&select=id,bucket,file_path`;
     const r = await fetch(selectUrl, {
       headers: {
         apikey: SUPABASE_SERVICE_ROLE_KEY,
         Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
       },
     });
+
+    const text = await r.text();
     if (!r.ok) {
-      const txt = await r.text();
-      return res.status(r.status).send(txt);
+      console.error("Supabase error fetching attachment:", r.status, text);
+      return res.status(r.status).send(text);
     }
-    const arr = await r.json();
-    const att = Array.isArray(arr) && arr.length ? arr[0] : null;
-    if (!att) return res.status(404).json({ error: 'Attachment not found' });
 
-    const bucket = att.bucket;
-    const file_path = att.file_path;
-    if (!bucket || !file_path) return res.status(400).json({ error: 'Attachment missing bucket or file_path' });
+    const attachments = JSON.parse(text);
+    const attachment = Array.isArray(attachments) && attachments.length ? attachments[0] : null;
 
-    // call supabase storage sign endpoint
-    const signUrl = `${SUPABASE_URL}/storage/v1/object/sign/${encodeURIComponent(bucket)}/${encodeURIComponent(file_path)}`;
-    const signResp = await fetch(signUrl, {
-      method: 'POST',
+    if (!attachment || !attachment.bucket || !attachment.file_path) {
+      return res.status(404).json({ error: "Attachment not found or missing storage info" });
+    }
+
+    // 2. Delete file from Supabase Storage
+    const storageDeleteUrl = `${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(attachment.bucket)}/${encodeURIComponent(attachment.file_path)}`;
+    const storageResp = await fetch(storageDeleteUrl, {
+      method: 'DELETE',
       headers: {
         apikey: SUPABASE_SERVICE_ROLE_KEY,
         Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ expiresIn: 3600 }),
     });
 
-    if (!signResp.ok) {
-      const txt = await signResp.text();
-      console.error('Failed to create signed url', signResp.status, txt);
-      return res.status(signResp.status).send(txt);
+    if (!storageResp.ok) {
+      const storageText = await storageResp.text();
+      console.error('Failed to delete file from Supabase Storage:', storageResp.status, storageText);
+      // Decide if we should proceed to delete DB record even if storage delete fails
+      // For now, we'll return an error.
+      return res.status(storageResp.status).send(storageText);
     }
 
-    const signData = await signResp.json();
-    // supabase may return { signedURL } or { signed_url }
-    const url = signData.signedURL || signData.signed_url || signData.signedUrl || signData?.url || signData;
-    return res.json({ url });
-  } catch (err) {
-    console.error('Error generating signed url', err);
-    return res.status(500).json({ error: 'Failed to generate signed url' });
-  }
-});
+    // 3. Delete attachment record from Supabase DB
+    const dbDeleteUrl = `${SUPABASE_URL}/rest/v1/attachments?id=eq.${encodeURIComponent(id)}`;
+    const dbResp = await fetch(dbDeleteUrl, {
+      method: 'DELETE',
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      },
+    });
 
-export default router;
+    if (!dbResp.ok) {
+      const dbText = await dbResp.text();
+      console.error('Failed to delete attachment record from DB:', dbResp.status, dbText);
+      // This is a critical failure, as storage delete might have succeeded.
+      return res.status(dbResp.status).send(dbText);
+    }
+
+    return res.status(204).send(); // No content on successful deletion
+
+  } catch (err: any) {
+    console.error('Attachment deletion failed:', err && err.stack ? err.stack : err);
+    return res.status(500).json({ error: 'Internal server error during attachment deletion', details: err?.message || String(err) });
+  }
+};
