@@ -10,49 +10,49 @@
    * Premium Design System variables (hex-based for clarity)
    */
   :root {
-    /* Core colors */
-    --bg: #0f1724; /* deep charcoal for modern look */
-    --bg-card: #0b1220; /* slightly lighter for cards */
-    --text: #e6eef8; /* near-white for contrast */
-    --text-muted: #9fb0c9; /* muted blue-gray */
-    --border: rgba(255,255,255,0.06);
+    /* Core colors - Light default */
+    --bg: #f5f7fb; /* soft light */
+    --bg-card: #ffffff; /* cards */
+    --text: #0b1220; /* dark text */
+    --text-muted: #59677a; /* muted slate */
+    --border: #e6eef8;
 
     /* Primary palette */
-    --primary: #5b8cff; /* electric blue */
-    --primary-dark: #1f3f8a; /* deep indigo */
-    --primary-light: linear-gradient(90deg, rgba(91,140,255,0.12), rgba(31,63,138,0.06));
+    --primary: #0a84ff; /* vivid blue */
+    --primary-dark: #06345a; /* deep blue */
+    --primary-light: linear-gradient(90deg, rgba(10,132,255,0.12), rgba(6,52,90,0.06));
 
     /* Accent palettes */
-    --accent-teal: #20c997;
+    --accent-teal: #0fbf7f;
     --accent-rose: #ff6b6b;
-    --accent-amber: #ffb86b;
+    --accent-amber: #ffb020;
 
     /* Neutral scale */
-    --neutral-900: #0b1220;
-    --neutral-700: #263444;
-    --neutral-500: #6b7b8c;
-    --neutral-300: #9fb0c9;
-    --neutral-100: #e6eef8;
+    --neutral-900: #0d1117;
+    --neutral-700: #2d3748;
+    --neutral-500: #718096;
+    --neutral-300: #cbd5e0;
+    --neutral-100: #edf2f7;
 
     /* Success / warning / danger */
-    --success: #20c997;
-    --warning: #ffb86b;
-    --danger: #ff6b6b;
-    --info: #5b8cff;
+    --success: #0fbf7f;
+    --warning: #ffb020;
+    --danger: #e02424;
+    --info: #3182ce;
 
     /* Radii & shadows */
     --radius: 12px;
-    --card-radius: 14px;
-    --shadow-sm: 0 6px 18px rgba(2,6,23,0.6);
-    --shadow-md: 0 18px 40px rgba(2,6,23,0.6);
-    --shadow-lg: 0 30px 80px rgba(10,24,48,0.65);
+    --card-radius: 16px;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 30px 60px rgba(2, 6, 23, 0.06);
 
     /* Animations */
-    --transition-fast: all 0.14s cubic-bezier(.2,.9,.2,1);
-    --transition: all 0.22s cubic-bezier(.2,.9,.2,1);
+    --transition-fast: all 0.18s ease;
+    --transition: all 0.25s ease;
 
     /* Layout */
-    --sidebar-width: 260px;
+    --sidebar-width: 240px;
     --content-max-width: 1320px;
   }
 
