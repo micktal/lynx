@@ -119,10 +119,10 @@ export default function Index() {
             <p className="text-sm text-muted mt-2">Accédez aux sites pour consulter bâtiments, espaces, équipements et gérer vos audits.</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button onClick={handleCreate} className="btn-primary px-4 py-2 rounded-md text-sm">Créer un site</button>
-            <button onClick={exportCsv} className="btn px-3 py-2 rounded-md text-sm border border-border">Exporter CSV</button>
-            <Link to="/map-france" className="btn-ghost px-3 py-2 rounded-md text-sm">Voir la carte</Link>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <button onClick={handleCreate} className="btn-primary px-4 py-2 rounded-md text-sm w-full sm:w-auto">Créer un site</button>
+            <button onClick={exportCsv} className="btn px-3 py-2 rounded-md text-sm border border-border w-full sm:w-auto">Exporter CSV</button>
+            <Link to="/map-france" className="btn-ghost px-3 py-2 rounded-md text-sm w-full sm:w-auto">Voir la carte</Link>
           </div>
         </div>
 
