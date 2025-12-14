@@ -17,13 +17,19 @@ export default function PhotoUploader({ siteId, onUploaded }:{ siteId:number, on
       if (result.attachment) {
         onUploaded?.(result.attachment);
       } else {
-        // fallback: try to persist via builder service (mock)
+        // create attachment via server endpoint
         try {
-          const created = await builder.createAttachment({ fileUrl: publicUrl, fileType: file.type, siteId: siteId, fileName: file.name } as any);
+          const created = await createAttachment({ entity_type: 'site', entity_id: siteId, file_url: publicUrl, file_name: file.name, file_type: file.type });
           onUploaded?.(created);
         } catch (e) {
-          console.warn('Failed to save attachment record via builder service', e);
-          onUploaded?.({ file_url: publicUrl });
+          console.warn('Failed to create attachment via server', e);
+          // fallback to builder mock
+          try {
+            const created = await builder.createAttachment({ fileUrl: publicUrl, fileType: file.type, siteId: siteId, fileName: file.name } as any);
+            onUploaded?.(created);
+          } catch (err) {
+            onUploaded?.({ file_url: publicUrl });
+          }
         }
       }
     } catch (e) {
