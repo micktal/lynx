@@ -33,9 +33,7 @@ export function uploadPhoto(
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('PUT', url);
-    // set metadata headers
-    xhr.setRequestHeader('x-entity-type', String(entityType));
-    xhr.setRequestHeader('x-entity-id', String(entityId));
+    // set some file headers (not entity metadata)
     xhr.setRequestHeader('x-file-name', file.name);
     xhr.setRequestHeader('x-file-type', file.type || '');
 
@@ -50,6 +48,7 @@ export function uploadPhoto(
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           const data = JSON.parse(xhr.responseText);
+          // data: { publicUrl, bucket, file_path }
           resolve(data as UploadResult);
         } catch (e) {
           resolve({ publicUrl: `/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeURIComponent(path)}` });
