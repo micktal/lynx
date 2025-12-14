@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { uploadPhoto } from "../lib/storageService";
 import * as builder from "../lib/builderService";
+import { createAttachment } from "../lib/attachmentsService";
 
 export default function PhotoUploader({ siteId, onUploaded }:{ siteId:number, onUploaded?: (url:string)=>void }){
   const inputRef = useRef<HTMLInputElement | null>(null);
