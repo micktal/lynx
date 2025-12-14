@@ -12,101 +12,83 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           background: "var(--bg-card)",
           position: "sticky",
           top: 0,
-          zIndex: 30,
+          zIndex: 40,
         }}
       >
-        <div className="container mx-auto flex items-center justify-between gap-4 py-4">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-md flex items-center justify-center text-white font-bold"
-              style={{ background: "var(--primary)" }}
-            >
-              SB
-            </div>
-            <div>
-              <Link
-                to="/"
-                className="text-lg font-semibold"
-                style={{ color: "var(--text)" }}
+        <div className="container mx-auto flex items-center justify-between gap-4 py-3">
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-md flex items-center justify-center text-white font-bold"
+                style={{ background: "var(--primary)" }}
               >
-                SecureBase
-              </Link>
-              <div className="text-sm" style={{ color: "var(--text-muted)" }}>
-                Plateforme de gestion d’audits
+                SB
+              </div>
+              <div>
+                <div className="text-lg font-semibold" style={{ color: "var(--text)" }}>SecureBase</div>
+                <div className="text-xs" style={{ color: "var(--text-muted)" }}>Gestion d’audits</div>
+              </div>
+            </Link>
+          </div>
+
+          <div className="hidden md:flex items-center flex-1 px-6">
+            <input
+              aria-label="Rechercher"
+              placeholder="Rechercher des sites, villes, contacts..."
+              className="w-full px-4 py-2 rounded-md border border-border bg-input text-sm"
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <nav className="hidden md:flex items-center gap-4">
+              <Link to="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Sites</Link>
+              <Link to="/map-france" className="text-sm" style={{ color: "var(--text-muted)" }}>Carte</Link>
+              <Link to="/synthese" className="text-sm" style={{ color: "var(--text-muted)" }}>Synthèse</Link>
+              <Link to="/audit" className="text-sm" style={{ color: "var(--text-muted)" }}>Audits</Link>
+            </nav>
+
+            <div className="flex items-center gap-3">
+              <DarkModeToggle />
+              <div className="flex items-center gap-2 px-3 py-1 rounded-md" style={{ border: "1px solid var(--border)" }}>
+                <div className="w-8 h-8 rounded-full bg-neutral-300 flex items-center justify-center" style={{ color: "var(--text)" }}>MK</div>
               </div>
             </div>
           </div>
-          <nav className="flex items-center gap-3">
-            <Link
-              to="/"
-              className="text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Sites
-            </Link>
-            <Link
-              to="/map-france"
-              className="text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Carte France
-            </Link>
-            <Link
-              to="/synthese"
-              className="text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Synthèse
-            </Link>
-            <Link
-              to="/audit"
-              className="text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Audits
-            </Link>
-            <Link
-              to="/reporting"
-              className="text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Reporting
-            </Link>
-            <Link
-              to="/notifications"
-              className="text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Notifications
-            </Link>
+
+          <div className="md:hidden">
             <DarkModeToggle />
-          </nav>
+          </div>
         </div>
       </header>
 
-      <main
-        className="container mx-auto py-8"
-        style={{ maxWidth: "var(--content-max-width)" }}
-      >
-        {children}
-      </main>
+      <div className="container mx-auto py-8" style={{ maxWidth: "var(--content-max-width)" }}>
+        <div className="md:flex md:gap-6">
+          <aside className="hidden md:block" style={{ width: "var(--sidebar-width)" }}>
+            <div className="sidebar-premium card">
+              <nav className="flex flex-col gap-2">
+                <Link to="/" className="text-sm" style={{ color: "var(--text)" }}>Sites</Link>
+                <Link to="/map-france" className="text-sm" style={{ color: "var(--text)" }}>Carte France</Link>
+                <Link to="/synthese" className="text-sm" style={{ color: "var(--text)" }}>Synthèse</Link>
+                <Link to="/audit" className="text-sm" style={{ color: "var(--text)" }}>Audits</Link>
+                <Link to="/reporting" className="text-sm" style={{ color: "var(--text)" }}>Reporting</Link>
+              </nav>
+            </div>
+          </aside>
 
-      <footer
-        className="border-t"
-        style={{
-          borderColor: "var(--border)",
-          paddingTop: "1.5rem",
-          marginTop: "3rem",
-        }}
-      >
-        <div
-          className="container mx-auto text-sm"
-          style={{ color: "var(--text-muted)" }}
-        >
-          © {new Date().getFullYear()} SecureBase — Gestion d’audits de
-          sécurité
+          <main className="flex-1">{children}</main>
         </div>
-      </footer>
+
+        <footer className="mt-12 border-t pt-6" style={{ borderColor: "var(--border)" }}>
+          <div className="flex flex-col md:flex-row md:justify-between gap-6 text-sm" style={{ color: "var(--text-muted)" }}>
+            <div>© {new Date().getFullYear()} SecureBase — Gestion d’audits de sécurité</div>
+            <div className="flex gap-4">
+              <Link to="/privacy" style={{ color: "var(--text-muted)" }}>Confidentialité</Link>
+              <Link to="/terms" style={{ color: "var(--text-muted)" }}>Conditions</Link>
+              <a href="#" style={{ color: "var(--text-muted)" }}>Support</a>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
