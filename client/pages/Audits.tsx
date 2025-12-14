@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import { Link } from "react-router-dom";
 import * as builder from "../lib/builderService";
 import type { Audit } from "@shared/api";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 
 export default function AuditsPage() {
   const [audits, setAudits] = useState<Audit[]>([]);
