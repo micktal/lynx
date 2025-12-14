@@ -493,7 +493,7 @@ export default function EquipmentPage() {
             <AttachmentsGallery entityType="equipment" entityId={equipId} />
           </div>
           <div>
-            <PhotoUploader siteId={Number(building?.siteId || 0)} onUploaded={(att)=>setAttachments((prev)=>[att, ...prev])} />
+            <PhotoUploader entityType="equipment" entityId={Number(equipId)} onUploaded={(att)=>setAttachments((prev)=>[att, ...prev])} />
           </div>
         </div>
       </section>
