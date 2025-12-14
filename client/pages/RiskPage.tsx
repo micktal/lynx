@@ -330,7 +330,7 @@ export default function RiskPage() {
             <AttachmentsGallery entityType="risk" entityId={riskId} />
           </div>
           <div>
-            <PhotoUploader siteId={Number(risk?.siteId || 0)} onUploaded={(att)=>{
+            <PhotoUploader entityType="risk" entityId={Number(riskId)} onUploaded={(att)=>{
               setAttachments((prev)=>[att, ...prev]);
             }} />
           </div>
