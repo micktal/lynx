@@ -5,8 +5,19 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const router = express.Router();
 
+// Simple in-memory cache for signed URLs
+const signedUrlCache = new Map<string, { url: string; expiresAt: number }>();
+
 // GET /api/attachments/:id/url -> generate signed URL for private bucket
 router.get('/:id/url', async (req, res) => {
+  const id = req.params.id;
+  if (!id) return res.status(400).json({ error: 'Missing attachment ID' });
+
+  // Return cached url if still valid
+  const cached = signedUrlCache.get(id);
+  if (cached && cached.expiresAt > Date.now()) {
+    return res.json({ url: cached.url, cached: true, expiresAt: cached.expiresAt });
+  }
   const id = req.params.id;
   if (!id) return res.status(400).json({ error: 'Missing attachment ID' });
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
