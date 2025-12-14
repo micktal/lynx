@@ -21,8 +21,8 @@ export default function SiteCard({ site }: { site: Site }) {
           <div className="text-sm text-muted">Bâtiments</div>
           <div className="text-xl font-bold">{Math.floor(Math.random() * 8) + 1}</div>
           <div className="flex gap-2">
-            <Link to={`/site/${site.id}`} className="btn-primary btn-sm">Ouvrir</Link>
-            <Link to={`/audit?site=${site.id}`} className="btn-ghost btn-sm">Audits</Link>
+            <Link aria-label={`Ouvrir le site ${site.name}`} to={`/site/${site.id}`} className="btn-primary btn-sm">Ouvrir</Link>
+            <Link aria-label={`Voir les audits du site ${site.name}`} to={`/audit?site=${site.id}`} className="btn-ghost btn-sm">Audits</Link>
           </div>
         </div>
       </div>
