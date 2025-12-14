@@ -1,49 +1,68 @@
 export type UploadResult = { publicUrl: string; attachment?: any };
 
-export async function uploadToServer(
-  bucket: string,
-  filePath: string,
+function safeName(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, "_");
+}
+
+function generateFilePath(entityType: string, entityId: string | number, file: File) {
+  const base = `${entityType}s`;
+  const idPart = String(entityId);
+  return `${base}/${idPart}/${Date.now()}-${safeName(file.name)}`;
+}
+
+function bucketForEntity(entityType: string) {
+  switch (entityType) {
+    case 'site': return 'site-photos';
+    case 'audit': return 'audit-photos';
+    case 'risk': return 'risk-photos';
+    case 'equipment': return 'equipment-photos';
+    default: return 'site-photos';
+  }
+}
+
+export function uploadPhoto(
   file: File,
-  metadata?: { entity_type?: string; entity_id?: string | number; file_name?: string; file_type?: string },
+  entityType: string,
+  entityId: string | number,
+  onProgress?: (p: number) => void,
 ): Promise<UploadResult> {
-  const url = `/api/storage/upload?bucket=${encodeURIComponent(bucket)}&path=${encodeURIComponent(filePath)}`;
+  const bucket = bucketForEntity(entityType);
+  const path = generateFilePath(entityType, entityId, file);
+  const url = `/api/storage/upload?bucket=${encodeURIComponent(bucket)}&path=${encodeURIComponent(path)}`;
 
-  const headers: Record<string, string> = {};
-  if (metadata) {
-    if (metadata.entity_type) headers["x-entity-type"] = String(metadata.entity_type);
-    if (metadata.entity_id) headers["x-entity-id"] = String(metadata.entity_id);
-    if (metadata.file_name) headers["x-file-name"] = String(metadata.file_name);
-    if (metadata.file_type) headers["x-file-type"] = String(metadata.file_type);
-  }
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', url);
+    // set metadata headers
+    xhr.setRequestHeader('x-entity-type', String(entityType));
+    xhr.setRequestHeader('x-entity-id', String(entityId));
+    xhr.setRequestHeader('x-file-name', file.name);
+    xhr.setRequestHeader('x-file-type', file.type || '');
 
-  const res = await fetch(url, {
-    method: "PUT",
-    headers,
-    body: file,
+    xhr.upload.onprogress = function(e) {
+      if (e.lengthComputable && onProgress) {
+        const percent = Math.round((e.loaded / e.total) * 100);
+        onProgress(percent);
+      }
+    };
+
+    xhr.onload = function() {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          resolve(data as UploadResult);
+        } catch (e) {
+          resolve({ publicUrl: `/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeURIComponent(path)}` });
+        }
+      } else {
+        reject(new Error(`Upload failed ${xhr.status}: ${xhr.responseText}`));
+      }
+    };
+
+    xhr.onerror = function() {
+      reject(new Error('Network error during upload'));
+    };
+
+    xhr.send(file);
   });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Upload failed: ${res.status} ${text}`);
-  }
-
-  try {
-    const data = await res.json();
-    // Expect { publicUrl, attachment? }
-    return data as UploadResult;
-  } catch (e) {
-    return { publicUrl: `/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeURIComponent(filePath)}` };
-  }
-}
-
-export function generateFilePathForSite(siteId: number, file: File) {
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  return `sites/${siteId}/${Date.now()}-${safeName}`;
-}
-
-export async function uploadPhoto(file: File, siteId: number) {
-  const bucket = "site-photos";
-  const path = generateFilePathForSite(siteId, file);
-  const result = await uploadToServer(bucket, path, file, { entity_type: "site", entity_id: siteId, file_name: file.name, file_type: file.type });
-  return result;
 }
