@@ -1,8 +1,17 @@
 export async function uploadToServer(bucket: string, filePath: string, file: File) {
   // Upload binary to server route which proxies to Supabase Storage
   const url = `/api/storage/upload?bucket=${encodeURIComponent(bucket)}&path=${encodeURIComponent(filePath)}`;
+  const headers: Record<string,string> = {};
+  if (metadata) {
+    if (metadata.entity_type) headers['x-entity-type'] = String(metadata.entity_type);
+    if (metadata.entity_id) headers['x-entity-id'] = String(metadata.entity_id);
+    if (metadata.file_name) headers['x-file-name'] = String(metadata.file_name);
+    if (metadata.file_type) headers['x-file-type'] = String(metadata.file_type);
+  }
+
   const res = await fetch(url, {
     method: 'PUT',
+    headers,
     // Let browser set Content-Type for file
     body: file,
   });
