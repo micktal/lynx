@@ -209,7 +209,7 @@ router.delete("/:id", async (req, res) => {
 
     // Invalidate cached signed url for this attachment (if any)
     try {
-      signedUrlCache.delete(id);
+      await invalidateCachedSignedUrl(id);
     } catch (e) {
       // ignore
     }
