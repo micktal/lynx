@@ -24,8 +24,9 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "zod": "^3.25.76",
-    "redis": "^4.10.0"
-  },
+    "redis": "^4.10.0",
+    "@supabase/supabase-js": "^2.35.0"
+    },
   "devDependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-accordion": "^1.2.11",
