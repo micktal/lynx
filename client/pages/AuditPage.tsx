@@ -25,6 +25,8 @@ import RiskForm from "../components/RiskForm";
 import EquipmentForm from "../components/EquipmentForm";
 import ActionForm from "../components/ActionForm";
 import ConfirmModal from "../components/ConfirmModal";
+import PhotoUploader from "../components/PhotoUploader";
+import AttachmentsGallery from "../components/AttachmentsGallery";
 
 export default function AuditPage() {
   const { id } = useParams();
