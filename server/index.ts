@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleSupabaseProxy } from "./routes/supabase-proxy";
+import { handleStorageUpload } from "./routes/storage-proxy";
 
 export function createServer() {
   const app = express();
