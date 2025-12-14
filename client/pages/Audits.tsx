@@ -52,8 +52,8 @@ export default function AuditsPage() {
                     <div className="text-sm text-muted">Site: {a.siteId}</div>
                   </div>
                   <div className="flex items-center gap-3 md:justify-end">
-                    <Link to={`/audit/${a.id}`} className="btn-primary btn-sm">Ouvrir</Link>
-                    <Link to={`/audit/${a.id}#details`} className="btn btn-sm">Détails</Link>
+                    <Link aria-label={`Ouvrir audit ${a.title || a.id}`} to={`/audit/${a.id}`} className="btn-primary btn-sm">Ouvrir</Link>
+                    <Link aria-label={`Voir les détails de l'audit ${a.title || a.id}`} to={`/audit/${a.id}#details`} className="btn btn-sm">Détails</Link>
                   </div>
                 </div>
               </div>
