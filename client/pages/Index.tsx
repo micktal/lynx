@@ -150,7 +150,7 @@ export default function Index() {
       <section>
         {visible.length === 0 ? (
           <div className="card text-center py-10">
-            <img src="/placeholder.svg" alt="empty" className="mx-auto w-48 opacity-60" />
+            <img src="/placeholder.svg" alt="empty" loading="lazy" className="mx-auto w-48 opacity-60" />
             <h3 className="text-lg font-semibold mt-4">Aucun site pour le moment</h3>
             <p className="text-sm text-muted mt-2">Vous pouvez créer votre premier site pour commencer vos audits.</p>
             <div className="mt-4">
