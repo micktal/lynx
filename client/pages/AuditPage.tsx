@@ -336,7 +336,7 @@ export default function AuditPage() {
               <AttachmentsGallery entityType="audit" entityId={auditId} />
             </div>
             <div>
-              <PhotoUploader siteId={Number(audit.siteId)} onUploaded={(att)=>console.log('uploaded',att)} />
+              <PhotoUploader entityType="audit" entityId={Number(auditId)} onUploaded={(att)=>console.log('uploaded',att)} />
             </div>
           </div>
         </div>
