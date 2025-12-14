@@ -405,6 +405,18 @@ export default function SitePage() {
             Actions du site
           </button>
         </div>
+
+        <div className="mt-6">
+          <h3 className="font-semibold mb-2">Galerie & Upload</h3>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <AttachmentsGallery entityType="site" entityId={siteId} />
+            </div>
+            <div className="w-full sm:w-64">
+              <PhotoUploader siteId={Number(siteId)} onUploaded={(att)=>console.log('uploaded',att)} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ONGLET NAV */}
