@@ -56,4 +56,59 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET /api/attachments/:id/url -> returns signed URL for private storage
+router.get('/:id/url', async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ error: 'Missing id' });
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'Server not configured' });
+
+    // fetch attachment record
+    const selectUrl = `${SUPABASE_URL}/rest/v1/attachments?id=eq.${encodeURIComponent(id)}&select=*`;
+    const r = await fetch(selectUrl, {
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      },
+    });
+    if (!r.ok) {
+      const txt = await r.text();
+      return res.status(r.status).send(txt);
+    }
+    const arr = await r.json();
+    const att = Array.isArray(arr) && arr.length ? arr[0] : null;
+    if (!att) return res.status(404).json({ error: 'Attachment not found' });
+
+    const bucket = att.bucket;
+    const file_path = att.file_path;
+    if (!bucket || !file_path) return res.status(400).json({ error: 'Attachment missing bucket or file_path' });
+
+    // call supabase storage sign endpoint
+    const signUrl = `${SUPABASE_URL}/storage/v1/object/sign/${encodeURIComponent(bucket)}/${encodeURIComponent(file_path)}`;
+    const signResp = await fetch(signUrl, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ expiresIn: 3600 }),
+    });
+
+    if (!signResp.ok) {
+      const txt = await signResp.text();
+      console.error('Failed to create signed url', signResp.status, txt);
+      return res.status(signResp.status).send(txt);
+    }
+
+    const signData = await signResp.json();
+    // supabase may return { signedURL } or { signed_url }
+    const url = signData.signedURL || signData.signed_url || signData.signedUrl || signData?.url || signData;
+    return res.json({ url });
+  } catch (err) {
+    console.error('Error generating signed url', err);
+    return res.status(500).json({ error: 'Failed to generate signed url' });
+  }
+});
+
 export default router;
