@@ -38,7 +38,7 @@ export default function AuditsPage() {
 
       <section>
         {loading ? (
-          <div className="card">Chargement...</div>
+          <div className="card"><div className="text-sm text-muted">Chargement...</div><div className="mt-3"><LoadingSkeleton lines={4} /></div></div>
         ) : audits.length === 0 ? (
           <div className="card text-center">Aucun audit trouvé</div>
         ) : (
