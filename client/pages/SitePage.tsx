@@ -7,6 +7,8 @@ import KpiCard from "../components/KpiCard";
 import BuildingCard from "../components/BuildingCard";
 import BuildingForm from "../components/BuildingForm";
 import ConfirmModal from "../components/ConfirmModal";
+import PhotoUploader from "../components/PhotoUploader";
+import AttachmentsGallery from "../components/AttachmentsGallery";
 
 /* -------------------------
    Onglet — Composant generic
