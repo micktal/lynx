@@ -12,9 +12,15 @@ export async function uploadToServer(bucket: string, filePath: string, file: Fil
     throw new Error(`Upload failed: ${res.status} ${text}`);
   }
 
-  const SUPABASE_URL = (window as any).__SUPABASE_URL || '';
-  const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeURIComponent(filePath)}`;
-  return publicUrl;
+  try {
+    const data = await res.json();
+    if (data && data.publicUrl) return data.publicUrl;
+  } catch (e) {
+    // fallthrough
+  }
+
+  // fallback (not ideal)
+  return `/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeURIComponent(filePath)}`;
 }
 
 export function generateFilePathForSite(siteId: number, file: File) {
