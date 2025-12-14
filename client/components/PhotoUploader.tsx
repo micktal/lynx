@@ -63,14 +63,17 @@ export default function PhotoUploader({
       const result = await uploadPhoto(file, entityType, entityId, (p) => setProgress(Math.min(90, p)));
 
       const publicUrl = (result as any).publicUrl || (result as any);
+      const bucket = (result as any).bucket;
+      const file_path = (result as any).file_path;
 
       setProgress(92);
 
-      // 2️⃣ Création de l’attachment en DB via server route
+      // 2️⃣ Création de l’attachment en DB via server route (store bucket + file_path)
       const attachment = await createAttachment({
         entity_type: entityType,
         entity_id: entityId,
-        file_url: publicUrl,
+        bucket,
+        file_path,
         file_name: file.name,
         file_type: file.type,
       });
