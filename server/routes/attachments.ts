@@ -88,8 +88,7 @@ router.get('/:id/url', async (req, res) => {
   if (cached && (cached as any).url) {
     return res.json({ url: (cached as any).url, cached: true, expiresAt: (cached as any).expiresAt });
   }
-  const id = req.params.id;
-  if (!id) return res.status(400).json({ error: 'Missing attachment ID' });
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     console.error('SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured');
     return res.status(500).json({ error: 'Server not configured' });
