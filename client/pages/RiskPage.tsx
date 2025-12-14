@@ -111,6 +111,9 @@ export default function RiskPage() {
   }, [riskId]);
 
 
+  // after load, attachments/gallery will be shown in UI
+
+
   /* ---------------------------------------------------
      BADGE STYLE
   --------------------------------------------------- */
