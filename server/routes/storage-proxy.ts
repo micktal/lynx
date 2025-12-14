@@ -36,51 +36,8 @@ export const handleStorageUpload: RequestHandler = async (req, res) => {
 
     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeURIComponent(path)}`;
 
-    // If the client provided entity metadata via headers, insert record into attachments table using service role key
-    const entityType = (req.headers['x-entity-type'] || req.query.entity_type) as string | undefined;
-    const entityIdRaw = (req.headers['x-entity-id'] || req.query.entity_id) as string | undefined;
-    const fileName = (req.headers['x-file-name'] || req.query.file_name) as string | undefined;
-    const fileType = (req.headers['x-file-type'] || req.query.file_type) as string | undefined;
-
-    let attachmentRecord: any = null;
-    const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (SERVICE_KEY && entityType && entityIdRaw) {
-      const entityId = isNaN(Number(entityIdRaw)) ? entityIdRaw : Number(entityIdRaw);
-      try {
-        const insertUrl = `${SUPABASE_URL}/rest/v1/attachments`;
-        const body = {
-          entity_type: entityType,
-          entity_id: entityId,
-          file_url: publicUrl,
-          file_name: fileName || path.split('/').pop(),
-          file_type: fileType || (req.headers['content-type'] || undefined),
-        };
-
-        const r = await fetch(insertUrl, {
-          method: 'POST',
-          headers: {
-            apikey: SERVICE_KEY,
-            Authorization: `Bearer ${SERVICE_KEY}`,
-            'Content-Type': 'application/json',
-            Prefer: 'return=representation',
-          },
-          body: JSON.stringify(body),
-        });
-
-        if (r.ok) {
-          const data = await r.json();
-          // Supabase returns an array when using return=representation
-          attachmentRecord = Array.isArray(data) ? data[0] : data;
-        } else {
-          const txt = await r.text();
-          console.error('Failed to insert attachment record', r.status, txt);
-        }
-      } catch (err) {
-        console.error('Error inserting attachment record', err);
-      }
-    }
-
-    return res.json({ publicUrl, attachment: attachmentRecord });
+    // Return file metadata (do not auto-insert). The client should call /api/attachments to persist DB record.
+    return res.json({ publicUrl, bucket, file_path: path });
   } catch (err: any) {
     console.error('Storage proxy error:', err && err.stack ? err.stack : err);
     return res.status(500).json({ error: 'Failed to upload to storage', details: err?.message || String(err) });
