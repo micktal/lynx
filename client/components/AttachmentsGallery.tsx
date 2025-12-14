@@ -5,6 +5,8 @@ export default function AttachmentsGallery({ entityType, entityId }:{ entityType
   const [attachments, setAttachments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<any|null>(null);
+  const [signedUrls, setSignedUrls] = useState<Record<string,string>>({});
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(()=>{
     let mounted = true;
@@ -37,6 +39,22 @@ export default function AttachmentsGallery({ entityType, entityId }:{ entityType
     return ()=>controller.abort();
   },[attachments]);
 
+  const handleDelete = async (id: string) => {
+    if(!confirm('Supprimer cette photo ?')) return;
+    try{
+      setDeletingId(id);
+      await builder.deleteAttachment(id);
+      setAttachments((prev) => prev.filter((a) => a.id !== id));
+      setSignedUrls((s) => { const c = { ...s }; delete c[id]; return c; });
+      if(selected && selected.id === id) setSelected(null);
+    }catch(e){
+      console.error('Failed to delete attachment', e);
+      alert('Impossible de supprimer la photo');
+    }finally{
+      setDeletingId(null);
+    }
+  };
+
   if(loading) return <div className="text-sm text-muted">Chargement photos...</div>;
   if(attachments.length===0) return <div className="text-sm text-muted">Aucune photo</div>;
 
@@ -44,9 +62,12 @@ export default function AttachmentsGallery({ entityType, entityId }:{ entityType
     <div>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
         {attachments.map((att)=> (
-          <button key={att.id || att.file_url} onClick={()=>setSelected(att)} className="rounded overflow-hidden">
-            <img src={signedUrls[att.id] || '/placeholder.svg'} alt={att.file_name || att.fileName || ''} className="w-full h-24 object-cover" />
-          </button>
+          <div key={att.id || att.file_url} className="relative rounded overflow-hidden">
+            <button onClick={()=>setSelected(att)} className="block w-full">
+              <img src={signedUrls[att.id] || att.file_url || att.fileUrl || '/placeholder.svg'} alt={att.file_name || att.fileName || ''} className="w-full h-24 object-cover" />
+            </button>
+            <button onClick={()=>handleDelete(att.id)} disabled={deletingId===att.id} className="absolute top-1 right-1 bg-white rounded p-1 text-sm">{deletingId===att.id ? '...' : '🗑️'}</button>
+          </div>
         ))}
       </div>
 
@@ -54,7 +75,7 @@ export default function AttachmentsGallery({ entityType, entityId }:{ entityType
         <div className="fixed inset-0 z-60 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60" onClick={()=>setSelected(null)} />
           <div className="z-70 max-w-3xl p-4">
-            <img src={signedUrls[selected.id] || selected.file_url || selected.fileUrl || selected.publicUrl} alt={selected.file_name || ''} className="rounded" />
+            <img src={signedUrls[selected.id] || selected.file_url || selected.fileUrl || selected.publicUrl} alt={selected.file_name || ''} className="rounded max-h-[80vh]" />
           </div>
         </div>
       )}
