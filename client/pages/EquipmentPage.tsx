@@ -77,10 +77,6 @@ export default function EquipmentPage() {
       const myRisks = allRisks.filter((r) => r.equipmentId === eq.id);
       setRisks(myRisks);
 
-      const atts = (await builder.fetchAttachments()).filter(
-        (a) => a.equipmentId === eq.id
-      );
-      setAttachments(atts);
 
       const acts = await builder.fetchActionsForRisks(
         myRisks.map((r) => r.id)
