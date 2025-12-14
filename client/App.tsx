@@ -12,6 +12,7 @@ import Synthese from "./pages/Synthese";
 import SitePage from "./pages/SitePage";
 import SpacePage from "./pages/SpacePage";
 import AuditPage from "./pages/AuditPage";
+import AuditsPage from "./pages/Audits";
 import EquipmentPage from "./pages/EquipmentPage";
 import RiskPage from "./pages/RiskPage";
 import ActionPage from "./pages/ActionPage";
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/synthese" element={<Synthese />} />
           <Route path="/site/:id" element={<SitePage />} />
           <Route path="/space/:id" element={<SpacePage />} />
+          <Route path="/audit" element={<AuditsPage />} />
           <Route path="/audit/:id" element={<AuditPage />} />
           <Route path="/equipment/:id" element={<EquipmentPage />} />
           <Route path="/risk/:id" element={<RiskPage />} />
