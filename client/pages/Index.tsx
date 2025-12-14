@@ -112,19 +112,20 @@ export default function Index() {
 
   return (
     <Layout>
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Sites & Bâtiments – Gestion Sécurité</h1>
-          <p className="text-sm text-muted mt-1">Accédez aux différents sites pour consulter les bâtiments, espaces, équipements et risques.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button onClick={handleCreate} className="brand-btn">
-            Créer un site
-          </button>
-        </div>
-      </div>
+      <div className="mb-6">
+        <div className="card mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold">Sites & Bâtiments – Gestion Sécurité</h1>
+            <p className="text-sm text-muted mt-2">Accédez aux sites pour consulter bâtiments, espaces, équipements et gérer vos audits.</p>
+          </div>
 
-      <div className="mb-4">
+          <div className="flex items-center gap-3">
+            <button onClick={handleCreate} className="btn-primary px-4 py-2 rounded-md text-sm">Créer un site</button>
+            <button onClick={exportCsv} className="btn px-3 py-2 rounded-md text-sm border border-border">Exporter CSV</button>
+            <Link to="/map-france" className="btn-ghost px-3 py-2 rounded-md text-sm">Voir la carte</Link>
+          </div>
+        </div>
+
         <FiltersBar
           sites={sites}
           country={country}
