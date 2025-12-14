@@ -5,6 +5,47 @@ import Busboy from "busboy";
 
 export const handler: Handler = async (event) => {
   try {
+    // Health-check endpoint for GET
+    if (event.httpMethod === "GET") {
+      const results: any = { ok: true };
+      // Supabase check
+      try {
+        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          results.supabase = { ok: false, error: 'env missing' };
+        } else {
+          const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+          const { data, error } = await supabase.from('attachments').select('id').limit(1);
+          results.supabase = { ok: !error, error: error ? String(error) : null, sample: Array.isArray(data) ? data.length : 0 };
+        }
+      } catch (e: any) {
+        results.supabase = { ok: false, error: String(e?.message || e) };
+      }
+
+      // Redis check (optional)
+      try {
+        const redisUrl = process.env.REDIS_URL || process.env.REDIS_TLS_URL;
+        if (!redisUrl) {
+          results.redis = { ok: false, error: 'no REDIS_URL' };
+        } else {
+          try {
+            const redisModule = await import('redis');
+            const client = redisModule.createClient({ url: redisUrl });
+            client.on('error', () => {});
+            await client.connect();
+            const pong = await client.ping();
+            await client.disconnect();
+            results.redis = { ok: pong === 'PONG' || pong === 'OK', pong };
+          } catch (re) {
+            results.redis = { ok: false, error: String(re) };
+          }
+        }
+      } catch (e: any) {
+        results.redis = { ok: false, error: String(e?.message || e) };
+      }
+
+      return { statusCode: 200, body: JSON.stringify(results) };
+    }
+
     if (event.httpMethod !== "POST") {
       return { statusCode: 405, body: "Method Not Allowed" };
     }
