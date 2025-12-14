@@ -5,6 +5,53 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const router = express.Router();
 
+// GET /api/attachments/:id/url -> generate signed URL for private bucket
+router.get('/:id/url', async (req, res) => {
+  const id = req.params.id;
+  if (!id) return res.status(400).json({ error: 'Missing attachment ID' });
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured');
+    return res.status(500).json({ error: 'Server not configured' });
+  }
+
+  try {
+    const selectUrl = `${SUPABASE_URL}/rest/v1/attachments?id=eq.${encodeURIComponent(id)}&select=id,bucket,file_path`;
+    const r = await fetch(selectUrl, { headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}` } });
+    const text = await r.text();
+    if (!r.ok) {
+      console.error('Supabase error fetching attachment for signed url:', r.status, text);
+      return res.status(r.status).send(text);
+    }
+    const attachments = JSON.parse(text);
+    const attachment = Array.isArray(attachments) && attachments.length ? attachments[0] : null;
+    if (!attachment || !attachment.bucket || !attachment.file_path) return res.status(404).json({ error: 'Attachment not found or missing storage info' });
+
+    // request signed url from Supabase Storage REST
+    const signUrl = `${SUPABASE_URL}/storage/v1/object/sign/${encodeURIComponent(attachment.bucket)}/${encodeURIComponent(attachment.file_path)}`;
+    const signResp = await fetch(signUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      },
+      body: JSON.stringify({ expires_in: 3600 }),
+    });
+
+    const signText = await signResp.text();
+    if (!signResp.ok) {
+      console.error('Failed to get signed url:', signResp.status, signText);
+      return res.status(signResp.status).send(signText);
+    }
+
+    const signJson = JSON.parse(signText);
+    return res.json({ url: signJson.signedURL || signJson.signed_url || signJson.url || signJson });
+  } catch (err: any) {
+    console.error('Signed url generation failed:', err && err.stack ? err.stack : err);
+    return res.status(500).json({ error: 'Internal server error generating signed url', details: err?.message || String(err) });
+  }
+});
+
 // DELETE /api/attachments/:id
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
