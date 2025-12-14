@@ -413,7 +413,7 @@ export default function SitePage() {
               <AttachmentsGallery entityType="site" entityId={siteId} />
             </div>
             <div className="w-full sm:w-64">
-              <PhotoUploader siteId={Number(siteId)} onUploaded={(att)=>console.log('uploaded',att)} />
+              <PhotoUploader entityType="site" entityId={Number(siteId)} onUploaded={(att)=>console.log('uploaded',att)} />
             </div>
           </div>
         </div>
