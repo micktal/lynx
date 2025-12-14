@@ -1,10 +1,12 @@
-import { RequestHandler } from "express";
+import express from "express";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
+const router = express.Router();
+
 // DELETE /api/attachments/:id
-export const handleAttachmentsDelete: RequestHandler = async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const id = req.params.id;
 
   if (!id) {
@@ -52,8 +54,6 @@ export const handleAttachmentsDelete: RequestHandler = async (req, res) => {
     if (!storageResp.ok) {
       const storageText = await storageResp.text();
       console.error('Failed to delete file from Supabase Storage:', storageResp.status, storageText);
-      // Decide if we should proceed to delete DB record even if storage delete fails
-      // For now, we'll return an error.
       return res.status(storageResp.status).send(storageText);
     }
 
@@ -70,7 +70,6 @@ export const handleAttachmentsDelete: RequestHandler = async (req, res) => {
     if (!dbResp.ok) {
       const dbText = await dbResp.text();
       console.error('Failed to delete attachment record from DB:', dbResp.status, dbText);
-      // This is a critical failure, as storage delete might have succeeded.
       return res.status(dbResp.status).send(dbText);
     }
 
@@ -80,4 +79,6 @@ export const handleAttachmentsDelete: RequestHandler = async (req, res) => {
     console.error('Attachment deletion failed:', err && err.stack ? err.stack : err);
     return res.status(500).json({ error: 'Internal server error during attachment deletion', details: err?.message || String(err) });
   }
-};
+});
+
+export default router;
