@@ -65,10 +65,7 @@ export default function EquipmentPage() {
       setSpace(sp);
 
       // attachments
-      const atts = (await builder.fetchAttachments()).filter(
-        (a) => a.equipmentId === eq.id
-      );
-      setAttachments(atts);
+      setAttachments((await builder.fetchAttachments()).filter((a) => a.equipmentId === eq.id));
 
       if (sp) {
         const buildings = await builder.fetchBuildings();
