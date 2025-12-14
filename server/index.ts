@@ -26,8 +26,8 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
-  // attachments create route (server-side insert with service role)
-  app.post('/api/attachments', express.json(), handleAttachmentsCreate);
+  // attachments router
+  app.use('/api/attachments', attachmentsRoute);
 
   // Supabase proxy route
   app.all("/api/supabase", handleSupabaseProxy);
