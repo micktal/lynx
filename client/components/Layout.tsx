@@ -84,7 +84,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </aside>
 
-          <main className="flex-1 pb-20 md:pb-0">{children}</main>
+          <main id="main-content" className="flex-1 pb-20 md:pb-0">{children}</main>
         </div>
 
         <footer className="mt-12 border-t pt-6" style={{ borderColor: "var(--border)" }}>
