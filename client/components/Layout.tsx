@@ -78,7 +78,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </aside>
 
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-20 md:pb-0">{children}</main>
         </div>
 
         <footer className="mt-12 border-t pt-6" style={{ borderColor: "var(--border)" }}>
@@ -91,6 +91,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </footer>
+      </div>
+
+      {/* Mobile bottom nav */}
+      <div className="md:hidden">
+        <MobileBottomNav value={mobileNav} onChange={(v) => setMobileNav(v)} />
       </div>
     </div>
   );
