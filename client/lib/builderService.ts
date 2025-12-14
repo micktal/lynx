@@ -22,6 +22,7 @@ import type {
   Department,
 } from "@shared/api";
 import { REGIONS_GEOJSON_CDN, DEPARTMENTS_GEOJSON_CDN } from "./geojsonLoader";
+import { supabaseGet } from "./supabaseService";
 
 // Mocked in-memory data. In production, replace with real Builder SDK calls.
 let MOCK_CLIENTS: any[] = [
