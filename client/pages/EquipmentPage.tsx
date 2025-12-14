@@ -488,11 +488,14 @@ export default function EquipmentPage() {
 
       {/* PHOTOS */}
       <section className="mb-6">
-        <Gallery
-          items={attachments}
-          onDelete={handleDeleteAttachment}
-          onUpload={handleUpload}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2">
+            <AttachmentsGallery entityType="equipment" entityId={equipId} />
+          </div>
+          <div>
+            <PhotoUploader siteId={Number(building?.siteId || 0)} onUploaded={(att)=>setAttachments((prev)=>[att, ...prev])} />
+          </div>
+        </div>
       </section>
 
       {/* HISTORIQUE */}
