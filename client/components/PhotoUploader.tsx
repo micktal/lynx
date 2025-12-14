@@ -10,14 +10,21 @@ export default function PhotoUploader({ siteId, onUploaded }:{ siteId:number, on
     if (!file) return;
     setLoading(true);
     try {
-      const url = await uploadPhoto(file, siteId);
-      // Optionally persist to attachments table via our supabase proxy
-      try {
-        await builder.createAttachment({ entity_type: 'site', entity_id: siteId, file_url: url, file_name: file.name, file_type: file.type });
-      } catch (e) {
-        console.warn('Failed to save attachment record via builder service', e);
+      const result = await uploadPhoto(file, siteId);
+      const publicUrl = result.publicUrl || (result as any);
+      // If server created attachment record, it will be returned
+      if (result.attachment) {
+        onUploaded?.(result.attachment);
+      } else {
+        // fallback: try to persist via builder service (mock)
+        try {
+          const created = await builder.createAttachment({ fileUrl: publicUrl, fileType: file.type, siteId: siteId, fileName: file.name } as any);
+          onUploaded?.(created);
+        } catch (e) {
+          console.warn('Failed to save attachment record via builder service', e);
+          onUploaded?.({ file_url: publicUrl });
+        }
       }
-      onUploaded?.(url);
     } catch (e) {
       console.error('Upload failed', e);
       alert('Échec de l\'upload');
