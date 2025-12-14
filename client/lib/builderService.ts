@@ -558,9 +558,6 @@ export async function updateAudit(
   return structuredClone(MOCK_AUDITS[idx]);
 }
 
-export async function fetchAttachments(): Promise<Attachment[]> {
-  return structuredClone(MOCK_ATTACHMENTS);
-}
 
 export async function fetchActions(): Promise<ActionItem[]> {
   return structuredClone(MOCK_ACTIONS);
