@@ -45,14 +45,15 @@ export default function AuditsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {audits.map((a) => (
               <div key={a.id} className="card card-clickable">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-semibold">{a.title || `Audit ${a.id}`}</h3>
                     <div className="text-sm text-muted mt-1">Statut: {a.status}</div>
                     <div className="text-sm text-muted">Site: {a.siteId}</div>
                   </div>
-                  <div className="text-right">
+                  <div className="flex items-center gap-3 md:justify-end">
                     <Link to={`/audit/${a.id}`} className="btn-primary btn-sm">Ouvrir</Link>
+                    <Link to={`/audit/${a.id}#details`} className="btn btn-sm">Détails</Link>
                   </div>
                 </div>
               </div>
