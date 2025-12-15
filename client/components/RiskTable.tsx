@@ -32,6 +32,67 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
     }
   };
 
+  const [selected, setSelected] = useState<string[]>([]);
+  const [probFilter, setProbFilter] = useState<string>("");
+  const [impactFilter, setImpactFilter] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("");
+
+  const toggleOne = (id: string) => {
+    setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+  };
+  const toggleAll = () => {
+    if (selected.length === filtered.length) setSelected([]);
+    else setSelected(filtered.map((f) => f.id));
+  };
+
+  const exportCSV = () => {
+    const rows = [
+      ["id", "title", "description", "level", "probability", "impact", "recommendation"],
+      ...filtered
+        .filter((r) => selected.length === 0 || selected.includes(r.id))
+        .map((r) => [r.id, r.title, (r.description || '').replace(/\n/g,' '), r.level, String(r.probability), String(r.impact), (r.recommendation || '').replace(/\n/g,' ')]),
+    ];
+    const csv = rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'risks_export.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const bulkCloseActions = async () => {
+    if (selected.length === 0) return;
+    try {
+      // fetch actions for risks and close them
+      const act = await (await import('../lib/builderService')).fetchActionsForRisks(selected);
+      for (const a of act) {
+        try { await (await import('../lib/builderService')).updateAction(a.id, { status: 'CLOTUREE' }); } catch (e) { /* ignore per-action errors */ }
+      }
+      alert('Actions liées fermées (tentative)');
+    } catch (e) {
+      console.error('Bulk close actions failed', e);
+      alert('Échec lors de la fermeture des actions');
+    }
+  };
+
+  const visible = filtered.filter((r) => {
+    if (probFilter && String(r.probability) !== probFilter) return false;
+    if (impactFilter && String(r.impact) !== impactFilter) return false;
+    return true;
+  });
+
+  // apply sorting
+  if (sortBy) {
+    visible.sort((a, b) => {
+      if (sortBy === 'prob') return (b.probability || 0) - (a.probability || 0);
+      if (sortBy === 'impact') return (b.impact || 0) - (a.impact || 0);
+      if (sortBy === 'level') return LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level);
+      return 0;
+    });
+  }
+
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
@@ -43,8 +104,27 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
               <option key={l} value={l}>{l}</option>
             ))}
           </select>
+
+          <select value={probFilter} onChange={(e) => setProbFilter(e.target.value)} className="px-3 py-2 rounded-md border border-border bg-input">
+            <option value="">Toutes probabilités</option>
+            {[5,4,3,2,1].map(p => <option key={p} value={String(p)}>{p}</option>)}
+          </select>
+
+          <select value={impactFilter} onChange={(e) => setImpactFilter(e.target.value)} className="px-3 py-2 rounded-md border border-border bg-input">
+            <option value="">Tous impacts</option>
+            {[5,4,3,2,1].map(p => <option key={p} value={String(p)}>{p}</option>)}
+          </select>
+
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-3 py-2 rounded-md border border-border bg-input">
+            <option value="">Trier par</option>
+            <option value="prob">Probabilité (desc)</option>
+            <option value="impact">Impact (desc)</option>
+            <option value="level">Niveau (critique first)</option>
+          </select>
         </div>
-        <div>
+        <div className="flex items-center gap-2">
+          <button onClick={exportCSV} className="btn">Exporter</button>
+          <button onClick={bulkCloseActions} className="btn">Fermer actions liées</button>
           <button className="brand-btn" onClick={() => { /* create risk action outside */ }}>Ajouter un risque</button>
         </div>
       </div>
@@ -53,6 +133,7 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-muted">
+              <th className="p-2"><input type="checkbox" checked={selected.length===visible.length && visible.length>0} onChange={toggleAll} /></th>
               <th className="p-2">Titre</th>
               <th className="p-2">Description</th>
               <th className="p-2">Niveau</th>
@@ -63,8 +144,9 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((it) => (
+            {visible.map((it) => (
               <tr key={it.id} className="border-t border-border align-top">
+                <td className="p-2"><input type="checkbox" checked={selected.includes(it.id)} onChange={() => toggleOne(it.id)} /></td>
                 <td className="p-2 font-medium">{it.title}</td>
                 <td className="p-2">{it.description}</td>
                 <td className="p-2">{levelBadge(it.level)}</td>
