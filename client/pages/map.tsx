@@ -151,7 +151,7 @@ export default function MapPage() {
           <div className="flex justify-between items-start">
             <div>
               <h3 className="font-semibold">{selectedSite.name}</h3>
-              <div className="text-sm text-muted">{selectedSite.address}</div>
+              <div className="text-sm text-location">{selectedSite.address}</div>
             </div>
             <div>
               <button className="btn-ghost" onClick={()=>setSelectedSite(null)}>Fermer</button>
