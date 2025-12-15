@@ -3,11 +3,25 @@ import { Link } from "react-router-dom";
 import DarkModeToggle from "./ui/DarkModeToggle";
 import MobileBottomNav from "./mobile/MobileBottomNav";
 import MobileDrawer from "./mobile/MobileDrawer";
-import Hero from "./Hero";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileNav, setMobileNav] = React.useState<string>("spaces");
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [HeroComponent, setHeroComponent] = React.useState<React.ComponentType | null>(null);
+
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const mod = await import('./Hero');
+        if (mounted && mod && mod.default) setHeroComponent(() => mod.default);
+      } catch (e) {
+        // failed to load hero - ignore
+        console.warn('Failed to load Hero component', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
