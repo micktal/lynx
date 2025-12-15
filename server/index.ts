@@ -34,6 +34,9 @@ export function createServer() {
   // rules router
   app.use('/api/rules', rulesRoute);
 
+  // actions router (enforcement)
+  app.use('/api/actions', actionsRoute);
+
   // Supabase proxy route
   app.all("/api/supabase", handleSupabaseProxy);
 
