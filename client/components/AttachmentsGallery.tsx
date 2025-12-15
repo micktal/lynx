@@ -55,8 +55,8 @@ export default function AttachmentsGallery({ entityType, entityId }:{ entityType
     }
   };
 
-  if(loading) return <div className="text-sm text-muted">Chargement photos...</div>;
-  if(attachments.length===0) return <div className="text-sm text-muted">Aucune photo</div>;
+  if(loading) return <div className="text-sm" style={{ color: 'var(--text)', fontWeight: 600 }}>Chargement photos...</div>;
+  if(attachments.length===0) return <div className="text-sm" style={{ color: 'var(--text)', fontWeight: 600 }}>Aucune photo</div>;
 
   return (
     <div>
