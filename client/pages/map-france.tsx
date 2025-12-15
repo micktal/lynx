@@ -870,7 +870,7 @@ export default function MapFrancePage(
 
           <div className="mt-4">
             <div className="text-sm text-muted">Adresse</div>
-            <div className="font-medium">
+            <div className="font-medium text-location">
               {selectedSite.address ||
                 `${selectedSite.city || ""} ${selectedSite.country || ""}`}
             </div>
