@@ -58,7 +58,8 @@
     --bg: #f5f7fb;
     --bg-card: #ffffff;
     --text: #0b1220;
-    --text-muted: #59677a;
+    --text-muted: 215 10% 45%; /* h,s,l fallback */
+    --text-muted-hex: #59677a; /* hex for lighter themes */
     --border: #e6eef8;
     --shadow-sm: 0 8px 24px rgba(12, 18, 34, 0.06);
     --shadow-md: 0 16px 48px rgba(12, 18, 34, 0.06);
@@ -68,7 +69,8 @@
     --bg: #071022;
     --bg-card: #071829;
     --text: #e6eef8;
-    --text-muted: #9fb0c9;
+    --text-muted: 215 10% 65%;
+    --text-muted-hex: #9fb0c9;
     --border: rgba(255, 255, 255, 0.05);
     --shadow-sm: 0 8px 24px rgba(2, 6, 23, 0.6);
     --shadow-md: 0 18px 50px rgba(2, 6, 23, 0.65);
