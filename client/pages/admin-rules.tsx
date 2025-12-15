@@ -41,9 +41,9 @@ export default function AdminRulesPage(){
     }
 
     try {
-      const r: Partial<RuleEngineRule> = { resource, action, condition: parsedCondition, onlyRoles: onlyRoles? onlyRoles.split(',').map(s=>s.trim()): undefined, active: true };
+      const r: Partial<RuleEngineRule> = { resource, action, condition: parsedCondition, onlyRoles: (onlyRoles && onlyRoles.length) ? onlyRoles : undefined, active: true };
       await builder.createRule(r);
-      setResource(''); setAction(''); setCondition(''); setOnlyRoles('');
+      setResource('action'); setAction('UPDATE'); setCondition(''); setOnlyRoles([]);
       await load();
       toast({ title: 'Succès', description: 'Règle créée' });
     } catch (e:any) {
