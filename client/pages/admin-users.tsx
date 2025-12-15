@@ -18,6 +18,8 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = React.useState(false);
   const [newUserId, setNewUserId] = React.useState("");
   const [newRoleId, setNewRoleId] = React.useState(ROLES[2].id);
+  const [sites, setSites] = React.useState<any[]>([]);
+  const [newSiteId, setNewSiteId] = React.useState<string>("");
 
   React.useEffect(() => {
     // client-side protection (only ADMIN)
