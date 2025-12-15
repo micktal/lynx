@@ -16,6 +16,7 @@ import type {
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
+  const [mapView, setMapView] = useState<'heat' | 'list'>('heat');
 
   const [sites, setSites] = useState<Site[]>([]);
   const [buildings, setBuildings] = useState<Building[]>([]);
