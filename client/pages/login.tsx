@@ -1,6 +1,4 @@
 import React from "react";
-import Layout from "../components/Layout";
-
 export default function LoginPage() {
   return (
     <div
@@ -9,15 +7,13 @@ export default function LoginPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(180deg,#06203a,#0a84ff)",
+        background: "#ffffff",
       }}
     >
-      <div className="modal-premium" style={{ maxWidth: 420, width: "100%" }}>
+      <div className="modal-premium" style={{ maxWidth: 520, width: "100%", background: 'white', color: 'var(--text)' }}>
         <div className="text-center mb-4">
-          <div className="text-3xl font-bold" style={{ color: "white" }}>
-            ROEH
-          </div>
-          <div className="text-sm text-white/80">
+          <img src="https://cdn.builder.io/api/v1/image/assets%2Fd93d9a0ec7824aa1ac4d890a1f90a2ec%2F9650ed1450a34dc4bedf5709f6cb160f?format=webp&width=800" alt="Logo" style={{ width: 220, height: 'auto', margin: '0 auto 12px', display: 'block' }} />
+          <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
             Security Inspection & Risk Intelligence Platform — Connexion
           </div>
         </div>
