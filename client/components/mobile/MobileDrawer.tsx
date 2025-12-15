@@ -62,7 +62,10 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
         style={{ zIndex: 100, boxShadow: "2px 0 30px rgba(2,6,23,0.12)" }}
       >
         <div className="flex items-center justify-between mb-4">
-          <div className="text-lg font-semibold">ROEH</div>
+          <div className="flex items-center gap-3">
+            <img src="https://cdn.builder.io/api/v1/image/assets%2Fd93d9a0ec7824aa1ac4d890a1f90a2ec%2F55a8c512fb5d4bb38b0292e3757d0114?format=webp&width=200" alt="ROEH" className="w-10 h-10 object-contain" />
+            <div className="text-lg font-semibold">ROEH</div>
+          </div>
           <button ref={closeRef} onClick={onClose} aria-label="Fermer le menu" className="px-2 py-1 rounded-md border border-border">✕</button>
         </div>
 
