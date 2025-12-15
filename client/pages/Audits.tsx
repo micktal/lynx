@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as builder from "../lib/builderService";
 import type { Audit } from "@shared/api";
 import LoadingSkeleton from "../components/LoadingSkeleton";
