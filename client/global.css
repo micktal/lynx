@@ -550,6 +550,6 @@
     animation: pop 1100ms ease forwards;
   }
   .animate-pulse-fast {
-    animation: pulse 1200ms ease-in-out infinite;
+    animation: heat-pulse 1200ms ease-in-out infinite;
   }
 }
