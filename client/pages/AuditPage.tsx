@@ -296,6 +296,7 @@ export default function AuditPage() {
       {/* HEADER */}
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
+          <Link to="/audit" className="btn btn-sm mb-2" aria-label="Retour aux audits">← Retour</Link>
           <h1 className="text-2xl font-bold">{audit.title}</h1>
           <div className="text-sm mt-1" style={{ color: 'var(--text)', fontWeight: 600 }}>
             {site && <Link to={`/site/${site.id}`} className="underline" style={{ color: 'var(--text)' }}>{site.name}</Link>}
