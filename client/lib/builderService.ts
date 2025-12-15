@@ -1784,6 +1784,26 @@ export async function updateAction(
 }
 
 export async function deleteAction(id: string): Promise<boolean> {
+  // try server first
+  try {
+    let role = 'USER';
+    try {
+      const { getCurrentUser } = await import('./auth');
+      const cu: any = getCurrentUser();
+      if (cu && cu.role) role = cu.role;
+    } catch (e) {}
+
+    const resp = await fetch(`/api/actions/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        'x-user-role': role,
+      },
+    });
+    if (resp.ok) return true;
+  } catch (e) {
+    // fallback
+  }
+
   const idx = MOCK_ACTIONS.findIndex((a) => a.id === id);
   if (idx === -1) return false;
   const old = MOCK_ACTIONS[idx];
