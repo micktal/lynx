@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { uploadAttachment } from "../lib/attachmentsService";
+import { toast } from "@/hooks/use-toast";
 
 type EntityType = "site" | "audit" | "risk" | "equipment";
 
