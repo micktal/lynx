@@ -178,6 +178,16 @@ export default function AdminUsersPage() {
                   </select>
                 </div>
                 <div>
+                  <select className="input" value={item.siteId || ''} onChange={(e)=>{
+                    const v = e.target.value || undefined;
+                    setItems(items.map(it=> it.id === item.id ? { ...it, siteId: v } : it));
+                    item.siteId = v as any;
+                  }}>
+                    <option value="">Aucun site</option>
+                    {sites.map(s=> <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div>
                   <button className="btn" onClick={() => save(item)}>
                     Enregistrer
                   </button>
