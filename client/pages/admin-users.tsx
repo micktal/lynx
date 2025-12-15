@@ -35,6 +35,12 @@ export default function AdminUsersPage() {
         return;
       }
     } catch (e) {}
+    (async ()=>{
+      try{
+        const s = await builder.fetchSites();
+        setSites(s);
+      }catch(e){}
+    })();
     load();
   }, []);
 
