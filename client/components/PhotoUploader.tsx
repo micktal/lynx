@@ -128,7 +128,7 @@ export default function PhotoUploader({
       )}
 
       <div className="flex justify-between items-center">
-        <div className="text-xs text-muted">{file ? file.name : "Aucun fichier sélectionné"}</div>
+        <div className="text-xs" style={{ color: 'var(--text)', fontWeight: 600 }}>{file ? file.name : "Aucun fichier sélectionné"}</div>
 
         <div className="flex gap-2">
           {file && !uploading && (
