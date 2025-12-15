@@ -5,7 +5,8 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
   const [query, setQuery] = useState("");
   const [levelFilter, setLevelFilter] = useState("");
 
-  const levels = Array.from(new Set(items.map((i) => i.level)));
+  const LEVELS = ["FAIBLE", "MOYEN", "IMPORTANT", "CRITIQUE"];
+  const levels = LEVELS;
 
   const filtered = useMemo(() => {
     return items.filter((i) => {
