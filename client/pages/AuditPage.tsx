@@ -354,7 +354,7 @@ export default function AuditPage() {
                 className="h-4 bg-primary transition-all"
               ></div>
             </div>
-            <div className="text-sm text-muted mt-2">
+            <div className="text-sm mt-2" style={{ color: 'var(--text)', fontWeight: 600 }}>
               {riskCount} risques • {equipmentCount} équipements • {actionsCount} actions
             </div>
           </div>
