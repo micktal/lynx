@@ -89,10 +89,22 @@ export default function AdminRulesPage(){
 
       <div className="card p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-          <input className="input" placeholder="Resource (ex: action)" value={resource} onChange={(e)=>setResource(e.target.value)} />
-          <input className="input" placeholder="Action (ex: UPDATE)" value={action} onChange={(e)=>setAction(e.target.value)} />
+          <select className="input" value={resource} onChange={(e)=>setResource(e.target.value)}>
+            {RESOURCES.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+
+          <select className="input" value={action} onChange={(e)=>setAction(e.target.value)}>
+            {ACTIONS.map(a => <option key={a} value={a}>{a}</option>)}
+          </select>
+
           <textarea rows={2} className="input font-mono text-sm" placeholder='Condition JSON (ex: {"field":"risk.level","operator":"==","value":"CRITIQUE"})' value={condition} onChange={(e)=>setCondition(e.target.value)} />
-          <input className="input" placeholder="onlyRoles (comma)" value={onlyRoles} onChange={(e)=>setOnlyRoles(e.target.value)} />
+
+          <select multiple className="input" value={onlyRoles} onChange={(e:any)=>{
+            const opts = Array.from(e.target.selectedOptions).map((o: any) => o.value);
+            setOnlyRoles(opts);
+          }}>
+            {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
         </div>
         <div className="mt-3">
           <button className="btn" onClick={create}>Créer la règle</button>
