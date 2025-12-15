@@ -79,7 +79,7 @@ export default function LoginPage() {
             type="password"
           />
           <button
-            className="btn-premium w-full"
+            className="btn-success w-full"
             onClick={submit}
             disabled={loading}
           >
