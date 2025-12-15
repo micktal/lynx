@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import React, { useState, useMemo } from "react";
 import type { Risk } from "@shared/api";
 import ConfirmModal from "./ConfirmModal";
 
