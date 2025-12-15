@@ -1726,6 +1726,33 @@ export async function updateAction(
   id: string,
   patch: Partial<ActionItem>,
 ): Promise<ActionItem | null> {
+  // try server first
+  try {
+    // get mocked current user role if available
+    let role = 'USER';
+    try {
+      const { getCurrentUser } = await import('./auth');
+      const cu: any = getCurrentUser();
+      if (cu && cu.role) role = cu.role;
+    } catch (e) {}
+
+    const resp = await fetch(`/api/actions/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-user-role': role,
+      },
+      body: JSON.stringify(patch),
+    });
+    if (resp.ok) {
+      const json = await resp.json();
+      return json as ActionItem;
+    }
+    // fallback to mock if server returns not implemented or error
+  } catch (e) {
+    // ignore and fallback to mock
+  }
+
   const idx = MOCK_ACTIONS.findIndex((a) => a.id === id);
   if (idx === -1) return null;
   const old = MOCK_ACTIONS[idx];
