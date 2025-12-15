@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as builder from "../lib/builderService";
+import { toast } from "@/hooks/use-toast";
 
 export default function AttachmentsGallery({ entityType, entityId }:{ entityType:string, entityId:string|number }){
   const [attachments, setAttachments] = useState<any[]>([]);
