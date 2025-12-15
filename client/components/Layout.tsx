@@ -40,7 +40,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto flex items-center justify-between gap-4 py-3">
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-3">
-              <img src="https://cdn.builder.io/api/v1/image/assets%2Fd93d9a0ec7824aa1ac4d890a1f90a2ec%2F55a8c512fb5d4bb38b0292e3757d0114?format=webp&width=200" alt="ROEH logo" className="w-10 h-10 rounded-md object-contain" style={{ background: 'transparent' }} />
+              <img src="https://cdn.builder.io/api/v1/image/assets%2Fd93d9a0ec7824aa1ac4d890a1f90a2ec%2F55a8c512fb5d4bb38b0292e3757d0114?format=webp&width=400" alt="ROEH logo" className="w-14 h-14 rounded-md object-contain" style={{ background: 'transparent' }} />
               <div>
                 <div className="text-lg font-semibold" style={{ color: "hsl(var(--brand))" }}>ROEH</div>
                 <div className="text-xs" style={{ color: "var(--text-muted)" }}>Security Inspection & Risk Intelligence Platform</div>
