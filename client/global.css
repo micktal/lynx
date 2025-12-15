@@ -9,51 +9,37 @@
   /*
    * Premium Design System variables (hex-based for clarity)
    */
-  :root {
-    /* Core colors - Light default */
-    --bg: #f5f7fb; /* soft light */
-    --bg-card: #ffffff; /* cards */
-    --text: #0b1220; /* dark text */
-    --text-muted: #59677a; /* muted slate */
-    --border: #e6eef8;
-
-    /* Primary palette */
-    --primary: #0a84ff; /* vivid blue */
-    --primary-dark: #06345a; /* deep blue */
-    --primary-light: linear-gradient(90deg, rgba(10,132,255,0.12), rgba(6,52,90,0.06));
-
-    /* Accent palettes */
-    --accent-teal: #0fbf7f;
-    --accent-rose: #ff6b6b;
-    --accent-amber: #ffb020;
-
-    /* Neutral scale */
-    --neutral-900: #0d1117;
-    --neutral-700: #2d3748;
-    --neutral-500: #718096;
-    --neutral-300: #cbd5e0;
-    --neutral-100: #edf2f7;
-
-    /* Success / warning / danger */
-    --success: #0fbf7f;
-    --warning: #ffb020;
-    --danger: #e02424;
-    --info: #3182ce;
-
-    /* Radii & shadows */
-    --radius: 12px;
-    --card-radius: 16px;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.05);
-    --shadow-lg: 0 30px 60px rgba(2, 6, 23, 0.06);
-
-    /* Animations */
-    --transition-fast: all 0.18s ease;
-    --transition: all 0.25s ease;
-
-    /* Layout */
-    --sidebar-width: 240px;
-    --content-max-width: 1320px;
+  :root{
+    --background: 0 0% 100%;
+    --foreground: 222 15% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 15% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 15% 12%;
+    --primary: 150 60% 28%; /* FPSG green */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --muted: 220 14% 96%;
+    --accent: 150 35% 94%;
+    --destructive: 0 72% 45%;
+    --border: 220 14% 90%;
+    --input: 220 14% 90%;
+    --ring: 150 60% 28%;
+    --radius: 0.75rem;
+    --brand: 150 60% 28%;
+    --brand-foreground: 0 0% 100%;
+    --brand-subtle: 150 35% 94%;
+  }
+  .dark{
+    --background: 220 15% 10%;
+    --foreground: 210 40% 98%;
+    --card: 220 15% 12%;
+    --card-foreground: 210 40% 98%;
+    --primary: 150 55% 48%;
+    --primary-foreground: 221 39% 11%;
+    --border: 220 12% 22%;
+    --input: 220 12% 22%;
+    --ring: 150 55% 48%;
   }
 
   .light {
