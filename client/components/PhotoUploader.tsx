@@ -60,7 +60,12 @@ export default function PhotoUploader({
       setProgress(5);
 
       // Upload via Netlify function which handles storage + DB insert
-      const attachment = await uploadAttachment(file, entityType, entityId, (p) => setProgress(p));
+      const attachment = await uploadAttachment(
+        file,
+        entityType,
+        entityId,
+        (p) => setProgress(p),
+      );
 
       setProgress(100);
 
@@ -107,7 +112,10 @@ export default function PhotoUploader({
         {!preview && (
           <>
             <div className="text-3xl">📷</div>
-            <div className="text-sm mt-2" style={{ color: 'var(--text)', fontWeight: 600 }}>
+            <div
+              className="text-sm mt-2"
+              style={{ color: "var(--text)", fontWeight: 600 }}
+            >
               Glissez-déposez une photo ici
               <br />
               ou cliquez pour sélectionner
@@ -116,7 +124,11 @@ export default function PhotoUploader({
         )}
 
         {preview && (
-          <img src={preview} alt="preview" className="max-h-48 rounded-lg shadow" />
+          <img
+            src={preview}
+            alt="preview"
+            className="max-h-48 rounded-lg shadow"
+          />
         )}
       </div>
 
@@ -124,15 +136,27 @@ export default function PhotoUploader({
 
       {uploading && (
         <div className="w-full bg-muted/40 rounded h-2 overflow-hidden">
-          <div className="h-2 bg-primary transition-all" style={{ width: `${progress}%` }} />
+          <div
+            className="h-2 bg-primary transition-all"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       )}
 
       <div className="flex justify-between items-center">
-        <div className="text-xs" style={{ color: 'var(--text)', fontWeight: 600 }}>{file ? file.name : "Aucun fichier sélectionné"}</div>
+        <div
+          className="text-xs"
+          style={{ color: "var(--text)", fontWeight: 600 }}
+        >
+          {file ? file.name : "Aucun fichier sélectionné"}
+        </div>
 
         <div className="flex gap-2">
-          <button className="btn-ghost" onClick={() => inputRef.current?.click()} disabled={uploading}>
+          <button
+            className="btn-ghost"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+          >
             Ajouter depuis appareil
           </button>
 
@@ -142,14 +166,21 @@ export default function PhotoUploader({
             </button>
           )}
 
-          <button className="btn" disabled={!file || uploading} onClick={async ()=>{
-            try{
-              await handleUpload();
-              toast({ title: 'Succès', description: 'Photo uploadée' });
-            }catch(e:any){
-              toast({ title: 'Erreur', description: e?.message || 'Upload échoué' });
-            }
-          }}>
+          <button
+            className="btn"
+            disabled={!file || uploading}
+            onClick={async () => {
+              try {
+                await handleUpload();
+                toast({ title: "Succès", description: "Photo uploadée" });
+              } catch (e: any) {
+                toast({
+                  title: "Erreur",
+                  description: e?.message || "Upload échoué",
+                });
+              }
+            }}
+          >
             {uploading ? "Upload..." : "Uploader"}
           </button>
         </div>

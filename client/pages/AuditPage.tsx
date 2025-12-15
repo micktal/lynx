@@ -57,7 +57,9 @@ export default function AuditPage() {
   const [editingAction, setEditingAction] = useState<ActionItem | null>(null);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [toDelete, setToDelete] = useState<{ type: string; id: string } | null>(null);
+  const [toDelete, setToDelete] = useState<{ type: string; id: string } | null>(
+    null,
+  );
 
   // -----------------------------------------
   // LOAD EVERYTHING
@@ -78,20 +80,28 @@ export default function AuditPage() {
         setBuilding(b);
 
         const allSpaces = await builder.fetchSpaces();
-        const bSpaces = allSpaces.filter((sp) => sp.buildingId === a.buildingId);
+        const bSpaces = allSpaces.filter(
+          (sp) => sp.buildingId === a.buildingId,
+        );
         setSpaces(bSpaces);
 
         const allEquip = await builder.fetchEquipments();
-        setEquipments(allEquip.filter((e) => bSpaces.some((s) => s.id === e.spaceId)));
+        setEquipments(
+          allEquip.filter((e) => bSpaces.some((s) => s.id === e.spaceId)),
+        );
 
         const allRisks = await builder.fetchRisks();
         const auditRisks = allRisks.filter((r) => r.auditId === a.id);
         setRisks(auditRisks);
 
-        const atts = (await builder.fetchAttachments()).filter((at) => at.auditId === a.id);
+        const atts = (await builder.fetchAttachments()).filter(
+          (at) => at.auditId === a.id,
+        );
         setAttachments(atts);
 
-        const acts = await builder.fetchActionsForRisks(auditRisks.map((r) => r.id));
+        const acts = await builder.fetchActionsForRisks(
+          auditRisks.map((r) => r.id),
+        );
         setActions(acts);
 
         const logs = await builder.fetchActivityLogsForEntity("audit", a.id);
@@ -113,7 +123,10 @@ export default function AuditPage() {
     if (!audit) return 0;
     if (audit.status === "completed") return 100;
     if (audit.status === "in_progress")
-      return Math.min(95, Math.round((riskCount / Math.max(1, riskCount + equipmentCount)) * 100));
+      return Math.min(
+        95,
+        Math.round((riskCount / Math.max(1, riskCount + equipmentCount)) * 100),
+      );
     return 10;
   }, [audit, riskCount, equipmentCount]);
 
@@ -126,7 +139,8 @@ export default function AuditPage() {
       status: "completed",
       completedAt: new Date().toISOString(),
     } as any);
-    const updated = (await builder.fetchAudits()).find((a) => a.id === audit.id) || null;
+    const updated =
+      (await builder.fetchAudits()).find((a) => a.id === audit.id) || null;
     setAudit(updated);
   };
 
@@ -138,7 +152,10 @@ export default function AuditPage() {
 
     if (editingRisk) {
       const updated = await builder.updateRisk(editingRisk.id, payload);
-      if (updated) setRisks((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+      if (updated)
+        setRisks((prev) =>
+          prev.map((r) => (r.id === updated.id ? updated : r)),
+        );
     } else {
       const created = await builder.createRisk({
         ...payload,
@@ -163,7 +180,10 @@ export default function AuditPage() {
   const handleSaveEquipment = async (payload: Partial<Equipment>) => {
     if (editingEquip) {
       const updated = await builder.updateEquipment(editingEquip.id, payload);
-      if (updated) setEquipments((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+      if (updated)
+        setEquipments((prev) =>
+          prev.map((e) => (e.id === updated.id ? updated : e)),
+        );
     } else {
       const created = await builder.createEquipment({
         ...payload,
@@ -187,7 +207,10 @@ export default function AuditPage() {
   const handleSaveAction = async (payload: Partial<ActionItem>) => {
     if (editingAction) {
       const updated = await builder.updateAction(editingAction.id, payload);
-      if (updated) setActions((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+      if (updated)
+        setActions((prev) =>
+          prev.map((a) => (a.id === updated.id ? updated : a)),
+        );
     } else {
       const created = await builder.createAction({
         ...payload,
@@ -217,7 +240,8 @@ export default function AuditPage() {
           : "CLOTUREE";
 
     const updated = await builder.updateAction(id, { status: next });
-    if (updated) setActions((prev) => prev.map((a) => (a.id === id ? updated : a)));
+    if (updated)
+      setActions((prev) => prev.map((a) => (a.id === id ? updated : a)));
   };
 
   // -----------------------------------------
@@ -268,11 +292,23 @@ export default function AuditPage() {
   const statusBadge = (s: Audit["status"]) => {
     switch (s) {
       case "draft":
-        return <span className="px-2 py-1 rounded bg-gray-300 text-sm">Brouillon</span>;
+        return (
+          <span className="px-2 py-1 rounded bg-gray-300 text-sm">
+            Brouillon
+          </span>
+        );
       case "in_progress":
-        return <span className="px-2 py-1 rounded bg-blue-600 text-white text-sm">En cours</span>;
+        return (
+          <span className="px-2 py-1 rounded bg-blue-600 text-white text-sm">
+            En cours
+          </span>
+        );
       case "completed":
-        return <span className="px-2 py-1 rounded bg-green-600 text-white text-sm">Terminé</span>;
+        return (
+          <span className="px-2 py-1 rounded bg-green-600 text-white text-sm">
+            Terminé
+          </span>
+        );
     }
   };
 
@@ -284,7 +320,9 @@ export default function AuditPage() {
       <Layout>
         <div className="card p-6">
           <h1 className="text-2xl font-bold">Audit introuvable</h1>
-          <p className="text-sm text-muted mt-2">Cet audit n'existe pas ou a été supprimé.</p>
+          <p className="text-sm text-muted mt-2">
+            Cet audit n'existe pas ou a été supprimé.
+          </p>
         </div>
       </Layout>
     );
@@ -292,26 +330,49 @@ export default function AuditPage() {
 
   return (
     <Layout>
-
       {/* HEADER */}
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <Link to="/audit" className="btn btn-sm mb-2" aria-label="Retour aux audits">← Retour</Link>
+          <Link
+            to="/audit"
+            className="btn btn-sm mb-2"
+            aria-label="Retour aux audits"
+          >
+            ← Retour
+          </Link>
           <h1 className="text-2xl font-bold">{audit.title}</h1>
-          <div className="text-sm mt-1" style={{ color: 'var(--text)', fontWeight: 600 }}>
-            {site && <Link to={`/site/${site.id}`} className="underline" style={{ color: 'var(--text)' }}>{site.name}</Link>}
+          <div
+            className="text-sm mt-1"
+            style={{ color: "var(--text)", fontWeight: 600 }}
+          >
+            {site && (
+              <Link
+                to={`/site/${site.id}`}
+                className="underline"
+                style={{ color: "var(--text)" }}
+              >
+                {site.name}
+              </Link>
+            )}
             {building && <> • {building.name}</>}
           </div>
 
-          <div className="mt-2 text-sm" style={{ color: 'var(--text)', fontWeight: 500 }}>
-            Date prévue: {audit.scheduledAt || "-"} • Auditeur: {audit.auditorId || "-"}
+          <div
+            className="mt-2 text-sm"
+            style={{ color: "var(--text)", fontWeight: 500 }}
+          >
+            Date prévue: {audit.scheduledAt || "-"} • Auditeur:{" "}
+            {audit.auditorId || "-"}
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           {statusBadge(audit.status)}
 
-          <button onClick={() => alert("Modifier audit (TODO)")} className="px-3 py-2 rounded-md border">
+          <button
+            onClick={() => alert("Modifier audit (TODO)")}
+            className="px-3 py-2 rounded-md border"
+          >
             Modifier
           </button>
 
@@ -337,7 +398,11 @@ export default function AuditPage() {
               <AttachmentsGallery entityType="audit" entityId={auditId} />
             </div>
             <div>
-              <PhotoUploader entityType="audit" entityId={Number(auditId)} onUploaded={(att)=>console.log('uploaded',att)} />
+              <PhotoUploader
+                entityType="audit"
+                entityId={Number(auditId)}
+                onUploaded={(att) => console.log("uploaded", att)}
+              />
             </div>
           </div>
         </div>
@@ -354,16 +419,28 @@ export default function AuditPage() {
                 className="h-4 bg-primary transition-all"
               ></div>
             </div>
-            <div className="text-sm mt-2" style={{ color: 'var(--text)', fontWeight: 600 }}>
-              {riskCount} risques • {equipmentCount} équipements • {actionsCount} actions
+            <div
+              className="text-sm mt-2"
+              style={{ color: "var(--text)", fontWeight: 600 }}
+            >
+              {riskCount} risques • {equipmentCount} équipements •{" "}
+              {actionsCount} actions
             </div>
           </div>
 
           {/* KPI CARDS - placed below the progress bar to avoid overflow on the right */}
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <KpiCard title="Risques" value={riskCount} icon={<span>⚠️</span>} />
-            <KpiCard title="Équipements" value={equipmentCount} icon={<span>🔧</span>} />
-            <KpiCard title="Actions" value={actionsCount} icon={<span>📋</span>} />
+            <KpiCard
+              title="Équipements"
+              value={equipmentCount}
+              icon={<span>🔧</span>}
+            />
+            <KpiCard
+              title="Actions"
+              value={actionsCount}
+              icon={<span>📋</span>}
+            />
           </div>
         </div>
       </section>
@@ -418,7 +495,11 @@ export default function AuditPage() {
 
       {/* ATTACHMENTS */}
       <section className="mb-6">
-        <Gallery items={attachments} onDelete={deleteAttachment} onUpload={uploadPhoto} />
+        <Gallery
+          items={attachments}
+          onDelete={deleteAttachment}
+          onUpload={uploadPhoto}
+        />
       </section>
 
       {/* TIMELINE */}
@@ -427,10 +508,17 @@ export default function AuditPage() {
 
         <div className="card p-4">
           {logs.length === 0 ? (
-            <div className="text-center py-6" style={{ color: 'var(--text)', fontWeight: 600 }}>Aucun événement enregistré.</div>
+            <div
+              className="text-center py-6"
+              style={{ color: "var(--text)", fontWeight: 600 }}
+            >
+              Aucun événement enregistré.
+            </div>
           ) : (
             <div>
-              {React.createElement(require("../components/Timeline").default, { items: logs })}
+              {React.createElement(require("../components/Timeline").default, {
+                items: logs,
+              })}
             </div>
           )}
         </div>
@@ -468,10 +556,22 @@ export default function AuditPage() {
         <div className="card p-4">
           <h3 className="text-lg font-semibold">Synthèse & Export</h3>
 
-          <div className="mt-2 text-sm" style={{ color: 'var(--text)', fontWeight: 600 }}>
-            <div>⚠️ {risks.filter(r => r.level === "CRITIQUE").length} risques critiques</div>
-            <div>🔧 {equipments.filter(e => e.state === "NON_CONFORME").length} équipements non conformes</div>
-            <div>📝 {actions.filter(a => a.status === "OUVERTE").length} actions ouvertes</div>
+          <div
+            className="mt-2 text-sm"
+            style={{ color: "var(--text)", fontWeight: 600 }}
+          >
+            <div>
+              ⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques
+              critiques
+            </div>
+            <div>
+              🔧 {equipments.filter((e) => e.state === "NON_CONFORME").length}{" "}
+              équipements non conformes
+            </div>
+            <div>
+              📝 {actions.filter((a) => a.status === "OUVERTE").length} actions
+              ouvertes
+            </div>
           </div>
 
           <div className="mt-4 flex gap-2">
@@ -479,8 +579,18 @@ export default function AuditPage() {
               onClick={() => {
                 const rows = [
                   ["audit", audit.title],
-                  ["risques_critique", risks.filter(r => r.level === "CRITIQUE").length.toString()],
-                  ["equipements_nc", equipments.filter(e => e.state === "NON_CONFORME").length.toString()],
+                  [
+                    "risques_critique",
+                    risks
+                      .filter((r) => r.level === "CRITIQUE")
+                      .length.toString(),
+                  ],
+                  [
+                    "equipements_nc",
+                    equipments
+                      .filter((e) => e.state === "NON_CONFORME")
+                      .length.toString(),
+                  ],
                 ];
                 const csv = rows.map((r) => r.join(",")).join("\n");
                 const blob = new Blob([csv], { type: "text/csv" });
@@ -515,16 +625,34 @@ export default function AuditPage() {
         )}
 
         {building && (
-          <Link to={`/building/${building.id}`} className="px-3 py-2 rounded-md border">
+          <Link
+            to={`/building/${building.id}`}
+            className="px-3 py-2 rounded-md border"
+          >
             Accéder au bâtiment
           </Link>
         )}
       </div>
 
       {/* FORMS MODALS */}
-      <RiskForm initial={editingRisk} open={riskFormOpen} onClose={() => setRiskFormOpen(false)} onSave={handleSaveRisk} />
-      <EquipmentForm initial={editingEquip} open={equipFormOpen} onClose={() => setEquipFormOpen(false)} onSave={handleSaveEquipment} />
-      <ActionForm initial={editingAction} open={actionFormOpen} onClose={() => setActionFormOpen(false)} onSave={handleSaveAction} />
+      <RiskForm
+        initial={editingRisk}
+        open={riskFormOpen}
+        onClose={() => setRiskFormOpen(false)}
+        onSave={handleSaveRisk}
+      />
+      <EquipmentForm
+        initial={editingEquip}
+        open={equipFormOpen}
+        onClose={() => setEquipFormOpen(false)}
+        onSave={handleSaveEquipment}
+      />
+      <ActionForm
+        initial={editingAction}
+        open={actionFormOpen}
+        onClose={() => setActionFormOpen(false)}
+        onSave={handleSaveAction}
+      />
 
       <ConfirmModal
         open={confirmOpen}

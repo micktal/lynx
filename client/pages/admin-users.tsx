@@ -35,11 +35,11 @@ export default function AdminUsersPage() {
         return;
       }
     } catch (e) {}
-    (async ()=>{
-      try{
+    (async () => {
+      try {
         const s = await builder.fetchSites();
         setSites(s);
-      }catch(e){}
+      } catch (e) {}
     })();
     load();
   }, []);
@@ -128,9 +128,17 @@ export default function AdminUsersPage() {
             ))}
           </select>
 
-          <select className="input" value={newSiteId} onChange={(e)=>setNewSiteId(e.target.value)}>
+          <select
+            className="input"
+            value={newSiteId}
+            onChange={(e) => setNewSiteId(e.target.value)}
+          >
             <option value="">Aucun site</option>
-            {sites.map(s=> <option key={s.id} value={s.id}>{s.name}</option>)}
+            {sites.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
           </select>
 
           <button className="btn" onClick={create}>
@@ -179,13 +187,25 @@ export default function AdminUsersPage() {
                   </select>
                 </div>
                 <div>
-                  <select className="input" value={item.siteId || ''} onChange={(e)=>{
-                    const v = e.target.value || undefined;
-                    setItems(items.map(it=> it.id === item.id ? { ...it, siteId: v } : it));
-                    item.siteId = v as any;
-                  }}>
+                  <select
+                    className="input"
+                    value={item.siteId || ""}
+                    onChange={(e) => {
+                      const v = e.target.value || undefined;
+                      setItems(
+                        items.map((it) =>
+                          it.id === item.id ? { ...it, siteId: v } : it,
+                        ),
+                      );
+                      item.siteId = v as any;
+                    }}
+                  >
                     <option value="">Aucun site</option>
-                    {sites.map(s=> <option key={s.id} value={s.id}>{s.name}</option>)}
+                    {sites.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>

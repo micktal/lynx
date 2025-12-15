@@ -52,106 +52,115 @@ import ChantierPage from "./pages/chantier";
 
 const queryClient = new QueryClient();
 
-import React from 'react';
+import React from "react";
 const App = () => {
-  React.useEffect(()=>{
-    (async ()=>{
-      try{
-        const r = await fetch('/api/health');
-        if (r.ok){
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const r = await fetch("/api/health");
+        if (r.ok) {
           const j = await r.json();
           if (j.supabase && !j.supabase.ok) {
-            const { toast } = await import('@/hooks/use-toast');
-            toast({ title: 'Alerte infra', description: 'Proxy Supabase non configuré ou indisponible' });
+            const { toast } = await import("@/hooks/use-toast");
+            toast({
+              title: "Alerte infra",
+              description: "Proxy Supabase non configuré ou indisponible",
+            });
           }
         }
-      }catch(e){
-        const { toast } = await import('@/hooks/use-toast');
-        toast({ title: 'Alerte', description: 'Impossible de joindre le serveur API' });
+      } catch (e) {
+        const { toast } = await import("@/hooks/use-toast");
+        toast({
+          title: "Alerte",
+          description: "Impossible de joindre le serveur API",
+        });
       }
     })();
   }, []);
 
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/home" element={<Navigate to="/" replace />} />
-          <Route path="/synthese" element={<Synthese />} />
-          <Route path="/site/:id" element={<SitePage />} />
-          <Route path="/space/:id" element={<SpacePage />} />
-          <Route path="/audit" element={<AuditsPage />} />
-          <Route path="/audit/:id" element={<AuditPage />} />
-          <Route path="/equipment/:id" element={<EquipmentPage />} />
-          <Route path="/risk/:id" element={<RiskPage />} />
-          <Route path="/action/:id" element={<ActionPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/workflow" element={<WorkflowPage />} />
-          <Route path="/workflow-dashboard" element={<WorkflowDashboard />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/journal" element={<JournalPage />} />
-          <Route path="/building/:id" element={<BuildingPage />} />
-          <Route path="/building/:id/plans" element={<BuildingPlansAdmin />} />
-          <Route path="/audit-mobile/:auditId" element={<AuditMobile />} />
-          <Route
-            path="/audit-mobile/:auditId/space/:spaceId"
-            element={<AuditMobileSpace />}
-          />
-          <Route
-            path="/audit-mobile/:auditId/equipment/:equipmentId"
-            element={<AuditMobileEquipment />}
-          />
-          <Route path="/referentiels" element={<Referentiels />} />
-          <Route
-            path="/referentiels/preview/:templateId"
-            element={<ReferentielsPreview />}
-          />
-          <Route path="/supervision" element={<Supervision />} />
-          <Route path="/clients" element={<ClientsPage />} />
-          <Route path="/clients/:id" element={<ClientDetail />} />
-          <Route path="/client-portal" element={<ClientPortal />} />
-          <Route path="/reporting" element={<ReportingPage />} />
-          <Route
-            path="/reporting/comparatif"
-            element={<ReportingComparatifPage />}
-          />
-          <Route
-            path="/reporting/timeline"
-            element={<ReportingTimelinePage />}
-          />
-          <Route
-            path="/reporting/designer"
-            element={<ReportingDesignerPage />}
-          />
-          <Route path="/datalake-admin" element={<DataLakeAdminPage />} />
-          <Route
-            path="/datalake/replay/:entityType/:entityId"
-            element={<DataLakeReplayPage />}
-          />
-          <Route
-            path="/admin/security-log"
-            element={<AdminSecurityLogPage />}
-          />
-          <Route path="/admin/rules" element={<AdminRulesPage />} />
-          <Route path="/admin/users" element={<AdminUsersPage />} />
-          <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/map-france" element={<MapFrancePage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/project/:id" element={<ProjectPage />} />
-          <Route path="/chantiers" element={<ChantiersPage />} />
-          <Route path="/chantier/:id" element={<ChantierPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/home" element={<Navigate to="/" replace />} />
+            <Route path="/synthese" element={<Synthese />} />
+            <Route path="/site/:id" element={<SitePage />} />
+            <Route path="/space/:id" element={<SpacePage />} />
+            <Route path="/audit" element={<AuditsPage />} />
+            <Route path="/audit/:id" element={<AuditPage />} />
+            <Route path="/equipment/:id" element={<EquipmentPage />} />
+            <Route path="/risk/:id" element={<RiskPage />} />
+            <Route path="/action/:id" element={<ActionPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/workflow" element={<WorkflowPage />} />
+            <Route path="/workflow-dashboard" element={<WorkflowDashboard />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/journal" element={<JournalPage />} />
+            <Route path="/building/:id" element={<BuildingPage />} />
+            <Route
+              path="/building/:id/plans"
+              element={<BuildingPlansAdmin />}
+            />
+            <Route path="/audit-mobile/:auditId" element={<AuditMobile />} />
+            <Route
+              path="/audit-mobile/:auditId/space/:spaceId"
+              element={<AuditMobileSpace />}
+            />
+            <Route
+              path="/audit-mobile/:auditId/equipment/:equipmentId"
+              element={<AuditMobileEquipment />}
+            />
+            <Route path="/referentiels" element={<Referentiels />} />
+            <Route
+              path="/referentiels/preview/:templateId"
+              element={<ReferentielsPreview />}
+            />
+            <Route path="/supervision" element={<Supervision />} />
+            <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/clients/:id" element={<ClientDetail />} />
+            <Route path="/client-portal" element={<ClientPortal />} />
+            <Route path="/reporting" element={<ReportingPage />} />
+            <Route
+              path="/reporting/comparatif"
+              element={<ReportingComparatifPage />}
+            />
+            <Route
+              path="/reporting/timeline"
+              element={<ReportingTimelinePage />}
+            />
+            <Route
+              path="/reporting/designer"
+              element={<ReportingDesignerPage />}
+            />
+            <Route path="/datalake-admin" element={<DataLakeAdminPage />} />
+            <Route
+              path="/datalake/replay/:entityType/:entityId"
+              element={<DataLakeReplayPage />}
+            />
+            <Route
+              path="/admin/security-log"
+              element={<AdminSecurityLogPage />}
+            />
+            <Route path="/admin/rules" element={<AdminRulesPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/unauthorized" element={<UnauthorizedPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/map-france" element={<MapFrancePage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/project/:id" element={<ProjectPage />} />
+            <Route path="/chantiers" element={<ChantiersPage />} />
+            <Route path="/chantier/:id" element={<ChantierPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
 

@@ -51,7 +51,7 @@ export async function supabaseFetch<T = any>(
     response = await fetch(url, fetchOptions);
   } catch (networkErr: any) {
     // Network failure (server down, proxy missing) — log and return null so callers can fallback to mocks
-    console.warn('Network error when contacting Supabase proxy:', networkErr);
+    console.warn("Network error when contacting Supabase proxy:", networkErr);
     return null as any;
   }
 
@@ -61,7 +61,10 @@ export async function supabaseFetch<T = any>(
       const text = await response.text();
       try {
         const data = JSON.parse(text);
-        errorMessage = (data && (data.message || data.error || data.description)) || text || errorMessage;
+        errorMessage =
+          (data && (data.message || data.error || data.description)) ||
+          text ||
+          errorMessage;
       } catch (e) {
         errorMessage = text || errorMessage;
       }
