@@ -304,8 +304,8 @@
     color: hsl(var(--text));
   }
 
-  /* utility for muted text */
-  .text-muted { color: hsl(var(--text-muted)); }
+  /* utility for muted text — make slightly darker for better readability */
+  .text-muted { color: hsl(var(--text)); opacity: 0.85; }
 
   /* Stronger styling for location/city labels (e.g., "Lyon, France") */
   .text-location { color: hsl(var(--text)); font-weight: 600; }
