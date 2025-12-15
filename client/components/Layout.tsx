@@ -63,6 +63,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Link to="/map-france" className="text-sm" style={{ color: "var(--text-muted)" }}>Carte</Link>
               <Link to="/synthese" className="text-sm" style={{ color: "var(--text-muted)" }}>Synthèse</Link>
               <Link to="/audit" className="text-sm" style={{ color: "var(--text-muted)" }}>Audits</Link>
+              {(() => { const u = getCurrentUser(); return (u && u.role === 'ADMIN') ? <Link to="/admin/rules" className="text-sm" style={{ color: "var(--text-muted)" }}>Admin</Link> : null })()}
             </nav>
 
             <div className="flex items-center gap-3">
