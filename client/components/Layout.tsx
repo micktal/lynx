@@ -70,32 +70,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* Global hero banner */}
-      <div className="w-full" style={{ position: 'relative' }}>
-        <div
-          style={{
-            backgroundImage: "url('https://cdn.builder.io/api/v1/image/assets%2Fd93d9a0ec7824aa1ac4d890a1f90a2ec%2Fe068e642a89f4c3db7162fd51924e596?format=webp&width=1800')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            height: 220,
-            filter: 'brightness(0.85) contrast(1.02)'
-          }}
-        />
-        <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 220, display: 'flex', alignItems: 'center' }}>
-          <div className="container mx-auto px-4" style={{ maxWidth: 'var(--content-max-width)' }}>
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-white">SecureBase — Prospection & Gestion</h2>
-                <p className="text-sm text-white/90 mt-1">Plateforme interne pour la gestion des sites, audits et équipements.</p>
-              </div>
-              <div className="hidden sm:flex gap-3">
-                <button className="btn-primary px-4 py-2 rounded-md">Démarrer une recherche</button>
-                <button className="btn-ghost px-4 py-2 rounded-md">Ouvrir le dashboard</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Decorative hero (gradient + shapes) shown only on home */}
+      <Hero />
 
       <div className="container mx-auto py-8" style={{ maxWidth: "var(--content-max-width)" }}>
         <div className="md:flex md:gap-6">
