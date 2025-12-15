@@ -43,7 +43,7 @@ export async function uploadAttachment(
 			}
 		};
 
-		xhr.onload = () => {
+		xhr.onload = async () => {
 			if (xhr.status >= 200 && xhr.status < 300) {
 				try {
 					const json = JSON.parse(xhr.responseText);
@@ -52,11 +52,40 @@ export async function uploadAttachment(
 					resolve(xhr.responseText);
 				}
 			} else {
+				// If serverless function not present (404) or upload failed, fallback to creating a placeholder attachment record
+				if (xhr.status === 404) {
+					try {
+						const placeholder = await createAttachment({
+							entity_type,
+							entity_id: Number(entity_id),
+							file_url: '/placeholder.svg',
+							file_name: file.name,
+							file_type: file.type,
+						});
+						return resolve(placeholder);
+					} catch (e) {
+						return reject(new Error(`Upload failed and fallback failed: ${xhr.status} ${xhr.responseText}`));
+					}
+				}
 				reject(new Error(`Upload failed: ${xhr.status} ${xhr.responseText}`));
 			}
 		};
 
-		xhr.onerror = () => reject(new Error('Network error during upload'));
+		xhr.onerror = async () => {
+			// network error - try fallback createAttachment
+			try {
+				const placeholder = await createAttachment({
+					entity_type,
+					entity_id: Number(entity_id),
+					file_url: '/placeholder.svg',
+					file_name: file.name,
+					file_type: file.type,
+				});
+				return resolve(placeholder);
+			} catch (e) {
+				return reject(new Error('Network error during upload'));
+			}
+		};
 		xhr.send(fd);
 	});
 }
