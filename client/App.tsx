@@ -52,7 +52,27 @@ import ChantierPage from "./pages/chantier";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+import React from 'react';
+const App = () => {
+  React.useEffect(()=>{
+    (async ()=>{
+      try{
+        const r = await fetch('/api/health');
+        if (r.ok){
+          const j = await r.json();
+          if (j.supabase && !j.supabase.ok) {
+            const { toast } = await import('@/hooks/use-toast');
+            toast({ title: 'Alerte infra', description: 'Proxy Supabase non configuré ou indisponible' });
+          }
+        }
+      }catch(e){
+        const { toast } = await import('@/hooks/use-toast');
+        toast({ title: 'Alerte', description: 'Impossible de joindre le serveur API' });
+      }
+    })();
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -132,7 +152,8 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 const container = document.getElementById("root")!;
 const g = globalThis as any;
