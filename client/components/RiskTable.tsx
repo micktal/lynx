@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
+import React, { useState, useMemo } from "react";
 import type { Risk } from "@shared/api";
+import ConfirmModal from "./ConfirmModal";
 
 export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: { items: Risk[]; onEdit: (r: Risk) => void; onDelete: (id: string) => void; onCreateAction: (riskId: string) => void; }) {
   const [query, setQuery] = useState("");
