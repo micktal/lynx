@@ -1572,6 +1572,32 @@ export async function updateRisk(
   id: string,
   patch: Partial<Risk>,
 ): Promise<Risk | null> {
+  // Try server first (will enforce rules server-side)
+  try {
+    let role = 'USER';
+    try {
+      const { getCurrentUser } = await import('./auth');
+      const cu: any = getCurrentUser();
+      if (cu && cu.role) role = cu.role;
+    } catch (e) {}
+
+    const resp = await fetch(`/api/risks/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-user-role': role,
+      },
+      body: JSON.stringify(patch),
+    });
+    if (resp.ok) {
+      const json = await resp.json();
+      return json as Risk;
+    }
+    // if server returns non-ok, fall through to mock
+  } catch (e) {
+    // ignore and fallback to mock
+  }
+
   const idx = MOCK_RISKS.findIndex((r) => r.id === id);
   if (idx === -1) return null;
   const old = MOCK_RISKS[idx];
@@ -1604,6 +1630,28 @@ export async function updateRisk(
 }
 
 export async function deleteRisk(id: string): Promise<boolean> {
+  // Try server first (server will enforce rules)
+  try {
+    let role = 'USER';
+    try {
+      const { getCurrentUser } = await import('./auth');
+      const cu: any = getCurrentUser();
+      if (cu && cu.role) role = cu.role;
+    } catch (e) {}
+
+    const resp = await fetch(`/api/risks/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        'x-user-role': role,
+      },
+    });
+    if (resp.ok) return true;
+    if (resp.status === 404) return false;
+    // otherwise fall back to mock
+  } catch (e) {
+    // fallback to mock
+  }
+
   const idx = MOCK_RISKS.findIndex((r) => r.id === id);
   if (idx === -1) return false;
   const old = MOCK_RISKS[idx];
