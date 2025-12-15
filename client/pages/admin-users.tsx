@@ -80,6 +80,7 @@ export default function AdminUsersPage() {
       await builder.upsertUserExtended({
         userId: newUserId,
         roleId: newRoleId,
+        siteId: newSiteId || undefined,
       });
       setNewUserId("");
       setNewRoleId(ROLES[2].id);
