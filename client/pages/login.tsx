@@ -17,6 +17,9 @@ export default function LoginPage() {
             Security Inspection & Risk Intelligence Platform — Connexion
           </div>
         </div>
+      </div>
+      </div>
+      </div>
         <div>
           <input className="input w-full mb-3" placeholder="Email" />
           <input
