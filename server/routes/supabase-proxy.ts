@@ -20,6 +20,11 @@ export const handleSupabaseProxy: RequestHandler = async (req, res) => {
 
   const method = (req.method || "GET").toUpperCase();
 
+  // Ensure Supabase env vars exist
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return res.status(500).json({ error: 'Supabase not configured on server' });
+  }
+
   // Support either a simple path (e.g. "sites?select=*") or a full URL
   let targetUrl: string;
   try {
