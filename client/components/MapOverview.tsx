@@ -1,5 +1,5 @@
 import React from "react";
-import React, { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Site } from "@shared/api";
 
 export default function MapOverview({ sites, onOpen, stats, mode = 'heat' }: { sites: Site[]; onOpen: (id: string) => void; stats?: { siteId: string; score?: number; nonConform?: number; criticalRisks?: number; actionsOpen?: number }[]; mode?: 'heat' | 'list' }) {
