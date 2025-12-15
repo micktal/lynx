@@ -19,7 +19,7 @@ export default function Hero(){
         <div className="container mx-auto px-4" style={{ maxWidth: 'var(--content-max-width)' }}>
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--text)' }}>SecureBase — Prospection & Gestion</h2>
+              <h2 className="text-2xl md:text-3xl font-bold" style={{ color: 'hsl(var(--brand))' }}>ROEH — Security Inspection & Risk Intelligence</h2>
               <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Plateforme interne pour la gestion des sites, audits et équipements.</p>
             </div>
             <div className="hidden sm:flex gap-3">
