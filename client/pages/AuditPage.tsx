@@ -344,10 +344,9 @@ export default function AuditPage() {
 
       {/* PROGRESS + KPIS */}
       <section className="mb-6">
-        <div className="flex items-center gap-6">
-
+        <div>
           {/* PROGRESS BAR */}
-          <div className="flex-1">
+          <div className="">
             <div className="h-4 bg-gray-200 rounded overflow-hidden">
               <div
                 style={{ width: `${progressPercent}%` }}
@@ -359,13 +358,12 @@ export default function AuditPage() {
             </div>
           </div>
 
-          {/* KPI CARDS */}
-          <div className="grid grid-cols-3 gap-3 w-96">
+          {/* KPI CARDS - placed below the progress bar to avoid overflow on the right */}
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <KpiCard title="Risques" value={riskCount} icon={<span>⚠️</span>} />
             <KpiCard title="Équipements" value={equipmentCount} icon={<span>🔧</span>} />
             <KpiCard title="Actions" value={actionsCount} icon={<span>📋</span>} />
           </div>
-
         </div>
       </section>
 
