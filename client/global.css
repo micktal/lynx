@@ -433,9 +433,9 @@
     color: hsl(var(--text));
   }
 
-  /* utility for muted text — replaced to black across the platform as requested */
+  /* utility for muted text — theme-aware: uses hex var when provided, otherwise HSL fallback */
   .text-muted {
-    color: #000000;
+    color: var(--text-muted-hex, hsl(var(--text-muted)));
     opacity: 1;
   }
 
