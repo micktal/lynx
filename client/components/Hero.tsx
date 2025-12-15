@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom';
 
 export default function Hero(){
   const loc = useLocation();
-  // show only on root
-  if (loc.pathname !== '/' && loc.pathname !== '/index' && loc.pathname !== '/home') return null;
+  // show only on index or dashboard
+  if (loc.pathname !== '/index' && loc.pathname !== '/dashboard') return null;
 
   return (
     <div className="w-full" style={{ position: 'relative', marginBottom: 12 }}>
