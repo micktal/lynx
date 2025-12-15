@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import projectService from "../lib/projectService";
 import { Link, useNavigate } from "react-router-dom";
