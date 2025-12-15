@@ -15,7 +15,7 @@ export default function AttachmentsGallery({ entityType, entityId }:{ entityType
       try{
         const a = await builder.fetchAttachmentsForEntity(entityType, entityId);
         if(mounted) setAttachments(a || []);
-      }catch(e){ console.error(e); }
+      }catch(e){ console.error(e); toast({ title: 'Erreur', description: 'Impossible de charger les pièces' }); }
       finally{ if(mounted) setLoading(false); }
     })();
     return ()=>{ mounted=false; };
