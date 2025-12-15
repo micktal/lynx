@@ -125,6 +125,12 @@ export default function AdminUsersPage() {
               </option>
             ))}
           </select>
+
+          <select className="input" value={newSiteId} onChange={(e)=>setNewSiteId(e.target.value)}>
+            <option value="">Aucun site</option>
+            {sites.map(s=> <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+
           <button className="btn" onClick={create}>
             Ajouter
           </button>
