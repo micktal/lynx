@@ -194,6 +194,14 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
           </tbody>
         </table>
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title={"Confirmer fermeture des actions"}
+        description={`Vous allez fermer ${actionsToCloseCount ?? 0} action(s) liées à ${selected.length} risque(s). Voulez-vous continuer ?`}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={confirmBulkClose}
+      />
     </div>
   );
 }
