@@ -46,7 +46,11 @@ export async function login(email: string, password: string) {
     };
   } else {
     // try matching by email only for convenience (dev)
-    if (email === "admin" || email === "admin@example.com" || email === "Admin") {
+    if (
+      email === "admin" ||
+      email === "admin@example.com" ||
+      email === "Admin"
+    ) {
       user = { id: "u_admin", name: "Admin Demo", email, role: "ADMIN" };
     } else if (email === "user" || email === "user@example.com") {
       user = { id: "u_1", name: "User Demo", email, role: "AUDITEUR" };
