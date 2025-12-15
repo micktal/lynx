@@ -26,7 +26,7 @@ export function logout() {
 // Simple mock login for dev/testing
 export async function login(email: string, password: string) {
   // generic test credentials
-  const adminCred = { email: "admin@example.com", password: "Password123!" };
+  const adminCred = { email: "Admin", password: "Mot de passe" };
   const userCred = { email: "user@example.com", password: "Password123!" };
 
   let user: CurrentUser | null = null;
@@ -46,7 +46,7 @@ export async function login(email: string, password: string) {
     };
   } else {
     // try matching by email only for convenience (dev)
-    if (email === "admin" || email === "admin@example.com") {
+    if (email === "admin" || email === "admin@example.com" || email === "Admin") {
       user = { id: "u_admin", name: "Admin Demo", email, role: "ADMIN" };
     } else if (email === "user" || email === "user@example.com") {
       user = { id: "u_1", name: "User Demo", email, role: "AUDITEUR" };
