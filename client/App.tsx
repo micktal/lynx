@@ -59,6 +59,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LoginPage />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/synthese" element={<Synthese />} />
           <Route path="/site/:id" element={<SitePage />} />
           <Route path="/space/:id" element={<SpacePage />} />
