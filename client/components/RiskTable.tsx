@@ -62,18 +62,45 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
     URL.revokeObjectURL(url);
   };
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [actionsToCloseCount, setActionsToCloseCount] = useState<number | null>(null);
+
   const bulkCloseActions = async () => {
     if (selected.length === 0) return;
     try {
-      // fetch actions for risks and close them
-      const act = await (await import('../lib/builderService')).fetchActionsForRisks(selected);
-      for (const a of act) {
-        try { await (await import('../lib/builderService')).updateAction(a.id, { status: 'CLOTUREE' }); } catch (e) { /* ignore per-action errors */ }
-      }
-      alert('Actions liées fermées (tentative)');
+      const { fetchActionsForRisks } = await import('../lib/builderService');
+      const acts = await fetchActionsForRisks(selected);
+      setActionsToCloseCount(acts.length);
+      setConfirmOpen(true);
     } catch (e) {
       console.error('Bulk close actions failed', e);
-      alert('Échec lors de la fermeture des actions');
+      const { toast } = await import('@/hooks/use-toast');
+      toast({ title: 'Erreur', description: 'Impossible de préparer la fermeture des actions' });
+    }
+  };
+
+  const confirmBulkClose = async () => {
+    setConfirmOpen(false);
+    try {
+      const { fetchActionsForRisks, updateAction } = await import('../lib/builderService');
+      const acts = await fetchActionsForRisks(selected);
+      let closed = 0;
+      for (const a of acts) {
+        try {
+          await updateAction(a.id, { status: 'CLOTUREE' });
+          closed++;
+        } catch (e) {
+          // ignore individual failures
+        }
+      }
+      const { toast } = await import('@/hooks/use-toast');
+      toast({ title: 'Bulk close', description: `Tentative effectuée: ${closed} actions fermées` });
+      // clear selection
+      setSelected([]);
+    } catch (e) {
+      console.error('Bulk close confirm failed', e);
+      const { toast } = await import('@/hooks/use-toast');
+      toast({ title: 'Erreur', description: 'Échec lors de la fermeture des actions' });
     }
   };
 
