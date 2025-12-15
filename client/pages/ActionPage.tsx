@@ -198,7 +198,7 @@ export default function ActionPage() {
           {/* Timeline component */}
           {/* import Timeline dynamically to avoid circular issues */}
           {logs.length === 0 ? (
-            <div className="text-center py-6">Aucun événement enregistré pour cette action.</div>
+            <div className="text-center py-6" style={{ color: 'var(--text)', fontWeight: 600 }}>Aucun événement enregistré pour cette action.</div>
           ) : (
             <div>
               {/* render timeline */}
