@@ -19,8 +19,8 @@ export default function SiteRanking({ items, onOpen }: { items: { site: Site; no
             </tr>
           </thead>
           <tbody>
-            {items.map((it) => (
-              <tr key={it.site.id} className="border-t border-border align-top hover:bg-muted/10">
+            {items.map((it, idx) => (
+              <tr key={`${it.site.id}-${idx}`} className="border-t border-border align-top hover:bg-muted/10">
                 <td className="p-2 font-medium">{it.site.name}</td>
                 <td className="p-2">{it.site.country}</td>
                 <td className="p-2 text-destructive">{it.nonConform}</td>
