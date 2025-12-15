@@ -162,7 +162,7 @@ export default function Index() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {visible.map((site) => (
-              <div key={site.id} className="card flex flex-col justify-between">
+              <div key={site.id} className="card-elevated flex flex-col justify-between" style={{ borderRadius: 12, padding: 16 }}>
                 <div>
                   <div className="flex items-start justify-between">
                     <div>
