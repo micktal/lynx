@@ -372,7 +372,7 @@ export default function SitePage() {
       <div className="mb-6 p-4 bg-card rounded-xl shadow border border-border">
         <h1 className="text-2xl font-bold">{site.name}</h1>
 
-        <div className="text-sm text-muted mt-1">
+        <div className="text-sm text-location mt-1">
           {site.address} • {site.city}, {site.regionName} ({site.departmentName})
         </div>
 
