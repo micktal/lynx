@@ -2381,37 +2381,83 @@ export async function fetchSecurityLogs(
 
 // Rules engine CRUD
 export async function fetchRules(): Promise<RuleEngineRule[]> {
-  return structuredClone(MOCK_RULES);
+  try {
+    const r = await fetch('/api/rules');
+    if (!r.ok) throw new Error(`Server returned ${r.status}`);
+    const json = await r.json();
+    return json as RuleEngineRule[];
+  } catch (e) {
+    // fallback to mock
+    return structuredClone(MOCK_RULES);
+  }
 }
 export async function createRule(
   r: Partial<RuleEngineRule>,
 ): Promise<RuleEngineRule> {
-  const newR: RuleEngineRule = {
-    id: `rule_${Date.now()}`,
-    resource: r.resource || "",
-    action: r.action || "",
-    condition: r.condition,
-    onlyRoles: r.onlyRoles,
-    description: r.description,
-    active: typeof r.active === "boolean" ? r.active : true,
-  };
-  MOCK_RULES.unshift(newR);
-  return structuredClone(newR);
+  try {
+    const payload: any = {
+      resource: r.resource,
+      action: r.action,
+      condition: r.condition,
+      only_roles: r.onlyRoles || [],
+      enabled: typeof r.active === 'boolean' ? r.active : true,
+      description: r.description,
+    };
+    const resp = await fetch('/api/rules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
+    const json = await resp.json();
+    return json as RuleEngineRule;
+  } catch (e) {
+    // fallback to mock
+    const newR: RuleEngineRule = {
+      id: `rule_${Date.now()}`,
+      resource: r.resource || "",
+      action: r.action || "",
+      condition: r.condition,
+      onlyRoles: r.onlyRoles,
+      description: r.description,
+      active: typeof r.active === "boolean" ? r.active : true,
+    };
+    MOCK_RULES.unshift(newR);
+    return structuredClone(newR);
+  }
 }
 export async function updateRule(
   id: string,
   patch: Partial<RuleEngineRule>,
 ): Promise<RuleEngineRule | null> {
-  const idx = MOCK_RULES.findIndex((x) => x.id === id);
-  if (idx === -1) return null;
-  MOCK_RULES[idx] = { ...MOCK_RULES[idx], ...patch };
-  return structuredClone(MOCK_RULES[idx]);
+  try {
+    // Not implemented on server yet - optimistic local update
+    const resp = await fetch(`/api/rules/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    });
+    if (!resp.ok) throw new Error('update failed');
+    const json = await resp.json();
+    return json as RuleEngineRule;
+  } catch (e) {
+    const idx = MOCK_RULES.findIndex((x) => x.id === id);
+    if (idx === -1) return null;
+    MOCK_RULES[idx] = { ...MOCK_RULES[idx], ...patch };
+    return structuredClone(MOCK_RULES[idx]);
+  }
 }
 export async function deleteRule(id: string): Promise<boolean> {
-  const idx = MOCK_RULES.findIndex((x) => x.id === id);
-  if (idx === -1) return false;
-  MOCK_RULES.splice(idx, 1);
-  return true;
+  try {
+    const resp = await fetch(`/api/rules/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    if (!resp.ok) throw new Error('delete failed');
+    return true;
+  } catch (e) {
+    const idx = MOCK_RULES.findIndex((x) => x.id === id);
+    if (idx === -1) return false;
+    MOCK_RULES.splice(idx, 1);
+    return true;
+  }
 }
 
 // Permission evaluation helper
