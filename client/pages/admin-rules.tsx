@@ -78,7 +78,7 @@ export default function AdminRulesPage(){
               {r.condition ? (
                 <div className="mt-2">
                   <div className="text-xs text-muted mb-1">Condition:</div>
-                  <pre className="whitespace-pre-wrap bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs overflow-auto">{r.condition}</pre>
+                  <pre className="whitespace-pre-wrap bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs overflow-auto">{typeof r.condition === 'string' ? r.condition : JSON.stringify(r.condition, null, 2)}</pre>
                 </div>
               ) : null}
             </div>
