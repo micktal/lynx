@@ -117,6 +117,7 @@ const App = () => (
             element={<AdminSecurityLogPage />}
           />
           <Route path="/admin/rules" element={<AdminRulesPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/map" element={<MapPage />} />
