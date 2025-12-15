@@ -50,7 +50,7 @@ export default function AdminSecurityLogPage(){
                   <td>{l.userId}</td>
                   <td>{l.action}</td>
                   <td>{l.entityType} / {l.entityId}</td>
-                  <td><pre className="text-xs max-w-lg overflow-auto">{l.details}</pre></td>
+                  <td><pre className="text-xs max-w-lg overflow-auto">{typeof l.details === 'string' ? l.details : JSON.stringify(l.details, null, 2)}</pre></td>
                 </tr>
               ))}
             </tbody>
