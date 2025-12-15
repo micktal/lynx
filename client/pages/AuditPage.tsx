@@ -467,7 +467,7 @@ export default function AuditPage() {
         <div className="card p-4">
           <h3 className="text-lg font-semibold">Synthèse & Export</h3>
 
-          <div className="mt-2 text-sm text-muted">
+          <div className="mt-2 text-sm" style={{ color: 'var(--text)', fontWeight: 600 }}>
             <div>⚠️ {risks.filter(r => r.level === "CRITIQUE").length} risques critiques</div>
             <div>🔧 {equipments.filter(e => e.state === "NON_CONFORME").length} équipements non conformes</div>
             <div>📝 {actions.filter(a => a.status === "OUVERTE").length} actions ouvertes</div>
