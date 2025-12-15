@@ -38,21 +38,24 @@ export default function DataLakeAdminPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Data Lake & Historisation</h1>
-          <div className="text-sm text-muted">Supervision et administration du Data Lake</div>
+          <div className="text-sm" style={{ color: 'var(--text)' }}>Supervision et administration du Data Lake</div>
+          <div className="text-sm mt-2" style={{ color: 'var(--text)' }}>
+            Le Data Lake centralise les événements et historiques (logs, mesures, uploads) destinés à l'analyse et au reporting. Cette page permet d'inspecter les volumes, d'exporter des dumps et de purger des données anciennes. En production, la purge doit être lancée via des jobs serveur planifiés et audités.
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="card p-4">
-          <div className="text-sm text-muted">Volume total</div>
+          <div className="text-sm" style={{ color: 'var(--text)' }}>Volume total</div>
           <div className="text-2xl font-bold">{stats ? stats.totalRecords : '—'}</div>
         </div>
         <div className="card p-4">
-          <div className="text-sm text-muted">Points time-series</div>
+          <div className="text-sm" style={{ color: 'var(--text)' }}>Points time-series</div>
           <div className="text-2xl font-bold">{stats ? stats.timeSeriesPoints : '—'}</div>
         </div>
         <div className="card p-4">
-          <div className="text-sm text-muted">Vues matérialisées</div>
+          <div className="text-sm" style={{ color: 'var(--text)' }}>Vues matérialisées</div>
           <div className="text-2xl font-bold">{stats ? stats.materializedViews : '—'}</div>
         </div>
       </div>
@@ -69,7 +72,7 @@ export default function DataLakeAdminPage() {
           <button className="btn" onClick={handlePurge} disabled={loading}>{loading ? 'Purge en cours...' : 'Purger maintenant'}</button>
           <button className="btn-ghost" onClick={async ()=>{await loadStats();}}>Rafraîchir</button>
         </div>
-        <div className="text-sm text-muted mt-3">Note: cette interface simule la purge. En production, mettre en place jobs serveur sécurisés.</div>
+        <div className="text-sm mt-3" style={{ color: 'var(--text)' }}>Note: cette interface simule la purge. En production, mettre en place jobs serveur sécurisés.</div>
       </div>
 
       <div className="card p-4 mb-6">
