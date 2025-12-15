@@ -10,13 +10,13 @@ const ACTIONS = ['CREATE','READ','UPDATE','DELETE'];
 const ROLES = ['ADMIN','MANAGER','AUDITEUR','USER'];
 
 export default function AdminRulesPage(){
-  const [rules, setRules] = useState<RuleEngineRule[]>([]);
-  const [resource, setResource] = useState('action');
-  const [action, setAction] = useState('UPDATE');
-  const [condition, setCondition] = useState('');
-  const [onlyRoles, setOnlyRoles] = useState<string[]>([]);
+  const [rules, setRules] = React.useState<RuleEngineRule[]>([]);
+  const [resource, setResource] = React.useState('action');
+  const [action, setAction] = React.useState('UPDATE');
+  const [condition, setCondition] = React.useState('');
+  const [onlyRoles, setOnlyRoles] = React.useState<string[]>([]);
 
-  useEffect(()=>{ load(); },[]);
+  React.useEffect(()=>{ load(); },[]);
   async function load(){
     try {
       const r = await builder.fetchRules();
