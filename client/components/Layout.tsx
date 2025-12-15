@@ -81,7 +81,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             <nav className="hidden md:flex items-center gap-4">
               <Link
-                to="/login"
+                to="/"
                 className="text-sm"
                 style={{ color: "var(--text)" }}
               >
