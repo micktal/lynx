@@ -41,7 +41,6 @@ import DataLakeReplayPage from "./pages/datalake-replay";
 import AdminSecurityLogPage from "./pages/admin-security-log";
 import AdminRulesPage from "./pages/admin-rules";
 import UnauthorizedPage from "./pages/unauthorized";
-import HomePage from "./pages/home";
 import LoginPage from "./pages/login";
 import MapPage from "./pages/map";
 import MapFrancePage from "./pages/map-france";
@@ -59,7 +58,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/synthese" element={<Synthese />} />
           <Route path="/site/:id" element={<SitePage />} />
           <Route path="/space/:id" element={<SpacePage />} />
@@ -117,7 +116,6 @@ const App = () => (
           />
           <Route path="/admin/rules" element={<AdminRulesPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/map-france" element={<MapFrancePage />} />
