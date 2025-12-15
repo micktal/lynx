@@ -29,6 +29,14 @@ export function createServer() {
   // attachments router
   app.use('/api/attachments', attachmentsRoute);
 
+  // rules router
+  try {
+    const rulesRoute = (await import('./routes/rules')).default;
+    app.use('/api/rules', rulesRoute);
+  } catch (e) {
+    console.warn('Rules route not available', e);
+  }
+
   // Supabase proxy route
   app.all("/api/supabase", handleSupabaseProxy);
 
