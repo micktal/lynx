@@ -106,7 +106,7 @@ export default function PhotoUploader({
         {!preview && (
           <>
             <div className="text-3xl">📷</div>
-            <div className="text-sm text-muted mt-2">
+            <div className="text-sm mt-2" style={{ color: 'var(--text)', fontWeight: 600 }}>
               Glissez-déposez une photo ici
               <br />
               ou cliquez pour sélectionner
