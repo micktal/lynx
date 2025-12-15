@@ -13,7 +13,7 @@ export default function SiteCard({ site }: { site: Site }) {
           <div>
             <h3 className="text-lg font-semibold">{site.name}</h3>
             <p className="text-sm text-muted mt-1">{site.address || "Adresse non renseignée"}</p>
-            <p className="text-sm text-muted">{site.city ? `${site.city}, ${site.country}` : site.country}</p>
+            <p className="text-sm text-location">{site.city ? `${site.city}, ${site.country}` : site.country}</p>
           </div>
         </div>
 
