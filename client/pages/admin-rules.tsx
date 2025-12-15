@@ -57,6 +57,32 @@ export default function AdminRulesPage(){
       </div>
 
       <div className="card p-4 mb-6">
+        <h2 className="font-semibold mb-2">Mode d'emploi rapide</h2>
+        <p className="text-sm text-muted mb-3">Utilisez ce panneau pour définir des règles conditionnelles qui contrôlent l'autorisation d'opérations sensibles (ex: modification ou suppression d'actions/risques). Créez une règle en indiquant la ressource, l'action, une condition JSON simple et la liste des rôles autorisés.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-medium">Mini-lexique</h3>
+            <ul className="text-sm mt-2 space-y-2">
+              <li><strong>Ressource</strong>: l'entité ciblée par la règle (ex: <code>action</code>, <code>risk</code>).</li>
+              <li><strong>Action</strong>: l'opération autorisée ou bloquée (ex: <code>UPDATE</code>, <code>DELETE</code>).</li>
+              <li><strong>Condition</strong>: objet JSON évalué sur la ressource (ex: <code>{"field\":\"risk.level\",\"operator\":\"==\",\"value\":\"CRITIQUE"}</code>).</li>
+              <li><strong>onlyRoles</strong>: liste de rôles autorisés (ex: <code>MANAGER,ADMIN</code>).</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-medium">Qui fait quoi</h3>
+            <ul className="text-sm mt-2 space-y-2">
+              <li><strong>Front-end</strong>: envoie l'en-tête <code>x-user-role</code> sur les requêtes sensibles ; UI pour créer/éditer/supprimer des règles.</li>
+              <li><strong>API serveur</strong>: stocke les règles (table <code>rules</code>) et applique le middleware d'enforcement avant d'exécuter l'opération.</li>
+              <li><strong>Enforcement</strong>: vérifie le rôle et évalue la condition JSON ; renvoie <code>403</code> si la règle bloque.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="card p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
           <input className="input" placeholder="Resource (ex: action)" value={resource} onChange={(e)=>setResource(e.target.value)} />
           <input className="input" placeholder="Action (ex: UPDATE)" value={action} onChange={(e)=>setAction(e.target.value)} />
