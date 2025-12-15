@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useEffect, useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import Layout from "../components/Layout";
 import * as builder from "../lib/builderService";
 import type { RuleEngineRule } from "@shared/api";
@@ -12,13 +13,39 @@ export default function AdminRulesPage(){
   const [onlyRoles, setOnlyRoles] = useState('');
 
   useEffect(()=>{ load(); },[]);
-  async function load(){ const r = await builder.fetchRules(); setRules(r); }
+  async function load(){
+    try {
+      const r = await builder.fetchRules();
+      setRules(r);
+    } catch (e:any) {
+      toast({ title: 'Erreur', description: 'Impossible de charger les règles' });
+    }
+  }
 
   async function create(){
-    const r: Partial<RuleEngineRule> = { resource, action, condition: condition || undefined, onlyRoles: onlyRoles? onlyRoles.split(',').map(s=>s.trim()): undefined, active: true };
-    await builder.createRule(r);
-    setResource(''); setAction(''); setCondition(''); setOnlyRoles('');
-    await load();
+    // validate
+    if (!resource || !action) {
+      toast({ title: 'Validation', description: 'Resource et Action sont requis' });
+      return;
+    }
+    let parsedCondition: any = null;
+    try {
+      parsedCondition = condition ? JSON.parse(condition) : {};
+    } catch (e:any) {
+      toast({ title: 'JSON invalide', description: 'La condition JSON est invalide' });
+      return;
+    }
+
+    try {
+      const r: Partial<RuleEngineRule> = { resource, action, condition: parsedCondition, onlyRoles: onlyRoles? onlyRoles.split(',').map(s=>s.trim()): undefined, active: true };
+      await builder.createRule(r);
+      setResource(''); setAction(''); setCondition(''); setOnlyRoles('');
+      await load();
+      toast({ title: 'Succès', description: 'Règle créée' });
+    } catch (e:any) {
+      console.error('create rule failed', e);
+      toast({ title: 'Erreur', description: 'Impossible de créer la règle' });
+    }
   }
 
   return (
