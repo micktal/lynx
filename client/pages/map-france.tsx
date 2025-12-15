@@ -853,7 +853,7 @@ export default function MapFrancePage(
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-lg font-semibold">{selectedSite.name}</h3>
-              <div className="text-sm text-muted">
+              <div className="text-sm text-location">
                 {clients.find((c) => c.id === selectedSite.clientId)?.name ||
                   "—"}
               </div>
