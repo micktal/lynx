@@ -62,7 +62,7 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
         style={{ zIndex: 100, boxShadow: "2px 0 30px rgba(2,6,23,0.12)" }}
       >
         <div className="flex items-center justify-between mb-4">
-          <div className="text-lg font-semibold">SecureBase</div>
+          <div className="text-lg font-semibold">ROEH</div>
           <button ref={closeRef} onClick={onClose} aria-label="Fermer le menu" className="px-2 py-1 rounded-md border border-border">✕</button>
         </div>
 
