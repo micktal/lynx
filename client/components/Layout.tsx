@@ -96,6 +96,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link to="/synthese" className="text-sm" style={{ color: "var(--text)" }}>Synthèse</Link>
                 <Link to="/audit" className="text-sm" style={{ color: "var(--text)" }}>Audits</Link>
                 <Link to="/reporting" className="text-sm" style={{ color: "var(--text)" }}>Reporting</Link>
+                {(() => { const u = getCurrentUser(); return (u && u.role === 'ADMIN') ? <Link to="/admin/rules" className="text-sm" style={{ color: "var(--text)" }}>Admin</Link> : null })()}
               </nav>
             </div>
           </aside>
