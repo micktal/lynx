@@ -26,7 +26,7 @@ export default function LoginPage() {
             placeholder="Mot de passe"
             type="password"
           />
-          <button className="btn-premium w-full">Se connecter</button>
+          <button className="btn-premium w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--brand)), hsl(var(--primary)))', color: '#fff', border: 'none', boxShadow: '0 8px 20px rgba(32, 121, 255, 0.12)' }}>Se connecter</button>
         </div>
       </div>
     </div>
