@@ -65,6 +65,7 @@ export default function AdminUsersPage() {
         id: item.id,
         userId: item.userId,
         roleId: item.roleId,
+        siteId: item.siteId || undefined,
       });
       toast({ title: "Succès", description: "Rôle mis à jour" });
       await load();
