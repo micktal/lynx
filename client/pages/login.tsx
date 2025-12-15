@@ -19,7 +19,6 @@ export default function LoginPage() {
         </div>
       </div>
       </div>
-      </div>
         <div>
           <input className="input w-full mb-3" placeholder="Email" />
           <input
