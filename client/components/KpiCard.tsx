@@ -16,7 +16,7 @@ export default function KpiCard({
           <div style={{ fontSize: 26 }}>{icon}</div>
         </div>
         <div>
-          <div className="text-sm" style={{ color: "var(--text-muted)", fontWeight: 700 }}>
+          <div className="text-sm" style={{ color: "var(--text)", fontWeight: 700 }}>
             {title}
           </div>
           <div className="text-2xl font-bold" style={{ marginTop: 6 }}>{value}</div>
