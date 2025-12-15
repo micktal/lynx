@@ -156,6 +156,11 @@ export default function Dashboard() {
           <button onClick={exportCSV} className="brand-btn">
             Exporter la synthèse
           </button>
+
+          <div className="ml-4 inline-flex items-center gap-2">
+            <button onClick={() => setMapView('heat')} className={`px-2 py-1 rounded ${mapView==='heat' ? 'bg-primary text-white' : 'bg-transparent border border-border'}`}>Heatmap</button>
+            <button onClick={() => setMapView('list')} className={`px-2 py-1 rounded ${mapView==='list' ? 'bg-primary text-white' : 'bg-transparent border border-border'}`}>Liste</button>
+          </div>
         </div>
       </div>
 
