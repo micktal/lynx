@@ -3,9 +3,13 @@ import { RequestHandler } from "express";
 // Prefer using global fetch for simplicity and better TLS handling.
 // Node 18+ provides global fetch. If not available, the runtime will error and the proxy will fall back to the previous implementation.
 
-const SUPABASE_URL = process.env.SUPABASE_URL || "https://juyownedgwfbigbwofxx.supabase.com";
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1eW93bmVkZ3dmYmlnYndvZnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MzM4MTgsImV4cCI6MjA4MTEwOTgxOH0.4LOp1KHJH2pY6SHXjvRVLcicbENe5-EUH16yIxGD-HI";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
+// Ensure Supabase is configured on the server; fail fast with explicit error to aid debugging
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('Supabase proxy not configured: SUPABASE_URL or SUPABASE_ANON_KEY missing');
+}
 
 export const handleSupabaseProxy: RequestHandler = async (req, res) => {
   const { path } = req.query;
