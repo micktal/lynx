@@ -50,7 +50,7 @@ export default function AttachmentsGallery({ entityType, entityId }:{ entityType
       if(selected && selected.id === id) setSelected(null);
     }catch(e){
       console.error('Failed to delete attachment', e);
-      alert('Impossible de supprimer la photo');
+      toast({ title: 'Erreur', description: 'Impossible de supprimer la photo' });
     }finally{
       setDeletingId(null);
     }
