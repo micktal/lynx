@@ -199,7 +199,7 @@
     border: none;
   }
   .btn-primary {
-    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(90deg, hsl(var(--brand)), hsl(var(--primary)));
     color: white;
     padding: 8px 12px;
     border-radius: 8px;
