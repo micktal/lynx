@@ -426,7 +426,7 @@ export default function AuditPage() {
 
         <div className="card p-4">
           {logs.length === 0 ? (
-            <div className="text-center py-6 text-muted">Aucun événement enregistré.</div>
+            <div className="text-center py-6" style={{ color: 'var(--text)', fontWeight: 600 }}>Aucun événement enregistré.</div>
           ) : (
             <div>
               {React.createElement(require("../components/Timeline").default, { items: logs })}
