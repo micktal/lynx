@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import DarkModeToggle from "./ui/DarkModeToggle";
 import MobileBottomNav from "./mobile/MobileBottomNav";
 import MobileDrawer from "./mobile/MobileDrawer";
+import Hero from "./Hero";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileNav, setMobileNav] = React.useState<string>("spaces");
