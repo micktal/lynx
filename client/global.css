@@ -166,6 +166,21 @@
     filter: brightness(1.03);
   }
 
+  /* Success / green button */
+  .btn-success {
+    background: linear-gradient(90deg, #10B981, #059669);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.12);
+    transition: var(--transition);
+    border: none;
+  }
+  .btn-success:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+  }
+
   /* General buttons */
   .btn {
     background: var(--bg-card);
