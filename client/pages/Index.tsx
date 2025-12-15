@@ -167,7 +167,7 @@ export default function Index() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-semibold">{site.name}</h3>
-                      <div className="text-sm text-muted">{site.city ? `${site.city}, ${site.country}` : site.country}</div>
+                      <div className="text-sm text-location">{site.city ? `${site.city}, ${site.country}` : site.country}</div>
                       <div className="mt-2 inline-block text-xs px-2 py-1 rounded-md bg-green-100 text-green-800">Actif</div>
                     </div>
                     <div className="text-right">
