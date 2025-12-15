@@ -132,13 +132,24 @@ export default function PhotoUploader({
         <div className="text-xs" style={{ color: 'var(--text)', fontWeight: 600 }}>{file ? file.name : "Aucun fichier sélectionné"}</div>
 
         <div className="flex gap-2">
+          <button className="btn-ghost" onClick={() => inputRef.current?.click()} disabled={uploading}>
+            Ajouter depuis appareil
+          </button>
+
           {file && !uploading && (
             <button className="btn-ghost" onClick={reset}>
               Annuler
             </button>
           )}
 
-          <button className="btn" disabled={!file || uploading} onClick={handleUpload}>
+          <button className="btn" disabled={!file || uploading} onClick={async ()=>{
+            try{
+              await handleUpload();
+              toast({ title: 'Succès', description: 'Photo uploadée' });
+            }catch(e:any){
+              toast({ title: 'Erreur', description: e?.message || 'Upload échoué' });
+            }
+          }}>
             {uploading ? "Upload..." : "Uploader"}
           </button>
         </div>
