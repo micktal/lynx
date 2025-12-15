@@ -49,10 +49,22 @@ export default function RiskTable({ items, onEdit, onDelete, onCreateAction }: {
 
   const exportCSV = () => {
     const rows = [
-      ["id", "title", "description", "level", "probability", "impact", "recommendation"],
+      ["id", "title", "description", "level", "probability", "impact", "recommendation", "siteId", "buildingId", "auditId", "createdAt"],
       ...filtered
         .filter((r) => selected.length === 0 || selected.includes(r.id))
-        .map((r) => [r.id, r.title, (r.description || '').replace(/\n/g,' '), r.level, String(r.probability), String(r.impact), (r.recommendation || '').replace(/\n/g,' ')]),
+        .map((r) => [
+          r.id,
+          r.title,
+          (r.description || "").replace(/\n/g, " "),
+          r.level,
+          String(r.probability),
+          String(r.impact),
+          (r.recommendation || "").replace(/\n/g, " "),
+          r.siteId || "",
+          r.buildingId || "",
+          (r.auditId || ""),
+          (r.createdAt || ""),
+        ]),
     ];
     const csv = rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
