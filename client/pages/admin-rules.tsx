@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import Layout from "../components/Layout";
 import * as builder from "../lib/builderService";
 import type { RuleEngineRule } from "@shared/api";
 
+const RESOURCES = ['action','risk','site','building','space','equipment','user'];
+const ACTIONS = ['CREATE','READ','UPDATE','DELETE'];
+const ROLES = ['ADMIN','MANAGER','AUDITEUR','USER'];
+
 export default function AdminRulesPage(){
   const [rules, setRules] = useState<RuleEngineRule[]>([]);
-  const [resource, setResource] = useState('');
-  const [action, setAction] = useState('');
+  const [resource, setResource] = useState('action');
+  const [action, setAction] = useState('UPDATE');
   const [condition, setCondition] = useState('');
-  const [onlyRoles, setOnlyRoles] = useState('');
+  const [onlyRoles, setOnlyRoles] = useState<string[]>([]);
 
   useEffect(()=>{ load(); },[]);
   async function load(){
