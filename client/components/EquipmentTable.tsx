@@ -6,7 +6,17 @@ export default function EquipmentTable({ items, onEdit, onDelete, onAdd }: { ite
   const [category, setCategory] = useState("");
   const [state, setState] = useState("");
 
-  const categories = Array.from(new Set(items.map((i) => i.category || "Autre")));
+  const DEFAULT_CATEGORIES = [
+    'alarme',
+    'vidéo',
+    'incendie',
+    'éclairage',
+    'clim',
+    'électrique',
+    'sécurité',
+    'autre',
+  ];
+  const categories = Array.from(new Set([...(DEFAULT_CATEGORIES || []), ...items.map((i) => (i.category || 'autre'))]));
 
   const filtered = useMemo(() => {
     return items.filter((i) => {
