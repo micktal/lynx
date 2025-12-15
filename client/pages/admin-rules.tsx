@@ -34,7 +34,7 @@ export default function AdminRulesPage(){
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
           <input className="input" placeholder="Resource (ex: action)" value={resource} onChange={(e)=>setResource(e.target.value)} />
           <input className="input" placeholder="Action (ex: UPDATE)" value={action} onChange={(e)=>setAction(e.target.value)} />
-          <input className="input" placeholder='Condition JSON (ex: {"field":"risk.level","operator":"==","value":"CRITIQUE"})' value={condition} onChange={(e)=>setCondition(e.target.value)} />
+          <textarea rows={2} className="input font-mono text-sm" placeholder='Condition JSON (ex: {"field":"risk.level","operator":"==","value":"CRITIQUE"})' value={condition} onChange={(e)=>setCondition(e.target.value)} />
           <input className="input" placeholder="onlyRoles (comma)" value={onlyRoles} onChange={(e)=>setOnlyRoles(e.target.value)} />
         </div>
         <div className="mt-3">
@@ -46,10 +46,15 @@ export default function AdminRulesPage(){
         <h3 className="font-semibold mb-3">Règles existantes</h3>
         <div className="space-y-2">
           {rules.map(r=> (
-            <div key={r.id} className="p-2 border rounded">
-              <div className="font-medium">{r.resource} • {r.action} {r.onlyRoles? `• Roles: ${r.onlyRoles.join(',')}`:''}</div>
-              <div className="text-sm text-muted">{r.description}</div>
-              <div className="text-xs mt-2">Condition: <pre className="inline">{r.condition}</pre></div>
+            <div key={r.id} className="p-3 border rounded bg-card-2">
+              <div className="font-medium break-words">{r.resource} • {r.action} {r.onlyRoles? `• Roles: ${r.onlyRoles.join(',')}`:''}</div>
+              {r.description ? <div className="text-sm text-muted mt-1">{r.description}</div> : null}
+              {r.condition ? (
+                <div className="mt-2">
+                  <div className="text-xs text-muted mb-1">Condition:</div>
+                  <pre className="whitespace-pre-wrap bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs overflow-auto">{r.condition}</pre>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
