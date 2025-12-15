@@ -50,9 +50,9 @@ export async function supabaseFetch<T = any>(
   try {
     response = await fetch(url, fetchOptions);
   } catch (networkErr: any) {
-    const err = new Error(`Network error when contacting Supabase proxy: ${networkErr?.message || String(networkErr)}`);
-    (err as any).status = 0;
-    throw err;
+    // Network failure (server down, proxy missing) — log and return null so callers can fallback to mocks
+    console.warn('Network error when contacting Supabase proxy:', networkErr);
+    return null as any;
   }
 
   if (!response.ok) {
