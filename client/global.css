@@ -338,4 +338,22 @@
   /* Skip link helper (visible on focus) */
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
   .sr-only.focus\:not-sr-only:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
+
+  /* Heatmap & UI animations */
+  @keyframes heat-pulse {
+    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.85; }
+    50% { transform: translate(-50%, -50%) scale(1.04); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.8; }
+  }
+  .heat-spot.pulse { animation: heat-pulse 2200ms ease-in-out infinite; }
+
+  @keyframes pop {
+    0% { transform: scale(0.96); opacity: 0.9 }
+    50% { transform: scale(1.06); opacity: 1 }
+    100% { transform: scale(1); opacity: 1 }
+  }
+  .animate-pop { animation: pop 700ms ease forwards; }
+  .animate-pop-slow { animation: pop 1100ms ease forwards; }
+  .animate-pulse-fast { animation: pulse 1200ms ease-in-out infinite; }
+
 }
