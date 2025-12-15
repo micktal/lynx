@@ -15,19 +15,19 @@ export default function MapPage() {
 
   useEffect(() => {
     // load leaflet css and script dynamically
-    const cssId = 'leaflet-css';
+    const cssId = "leaflet-css";
     if (!document.getElementById(cssId)) {
-      const link = document.createElement('link');
+      const link = document.createElement("link");
       link.id = cssId;
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
       document.head.appendChild(link);
     }
-    const scriptId = 'leaflet-js';
+    const scriptId = "leaflet-js";
     if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script');
+      const script = document.createElement("script");
       script.id = scriptId;
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
       script.onload = () => initMap();
       document.body.appendChild(script);
     } else {
@@ -46,10 +46,10 @@ export default function MapPage() {
       if (mapRef.current) {
         mapRef.current.remove();
       }
-      mapRef.current = L.map('map-root').setView([48.8566, 2.3522], 5);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      mapRef.current = L.map("map-root").setView([48.8566, 2.3522], 5);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: "&copy; OpenStreetMap contributors",
       }).addTo(mapRef.current);
 
       renderLayers(s);
@@ -68,15 +68,15 @@ export default function MapPage() {
   }
 
   function colorForStatus(status?: string) {
-    if (status === 'IN_PROGRESS') return '#FFB020';
-    if (status === 'FINISHED') return '#0FBF7F';
-    return '#CBD5E0';
+    if (status === "IN_PROGRESS") return "#FFB020";
+    if (status === "FINISHED") return "#0FBF7F";
+    return "#CBD5E0";
   }
 
   function colorForScore(score = 0) {
-    if (score >= 20) return 'rgba(220,38,38,0.8)'; // red
-    if (score >= 8) return 'rgba(255,160,0,0.7)'; // orange
-    return 'rgba(34,197,94,0.6)'; // green
+    if (score >= 20) return "rgba(220,38,38,0.8)"; // red
+    if (score >= 8) return "rgba(255,160,0,0.7)"; // orange
+    return "rgba(34,197,94,0.6)"; // green
   }
 
   function renderLayers(sitesData: Site[]) {
@@ -84,11 +84,14 @@ export default function MapPage() {
     const L = (window as any).L;
     if (!L || !mapRef.current) return;
     // clear existing layers
-    (mapRef.current as any)._layers && Object.values((mapRef.current as any)._layers).forEach((layer: any) => {
-      try { if (layer && layer._latlng) mapRef.current.removeLayer(layer); } catch (e) {}
-    });
+    (mapRef.current as any)._layers &&
+      Object.values((mapRef.current as any)._layers).forEach((layer: any) => {
+        try {
+          if (layer && layer._latlng) mapRef.current.removeLayer(layer);
+        } catch (e) {}
+      });
 
-    const filtered = sitesData.filter(site => {
+    const filtered = sitesData.filter((site) => {
       if (!site.lat || !site.lng) return false;
       if (site.scoreCriticite === undefined) site.scoreCriticite = 0;
       if (site.scoreCriticite < minScore) return false;
@@ -96,24 +99,38 @@ export default function MapPage() {
         // approximate by checking if site has a non-zero criticity score (actions late typically increase score)
         if (!(site.scoreCriticite && site.scoreCriticite > 0)) return false;
       }
-      if (site.status==='IN_PROGRESS' && !showInProgress) return false;
-      if (site.status==='FINISHED' && !showFinished) return false;
-      if (site.status==='NOT_STARTED' && !showNotStarted) return false;
+      if (site.status === "IN_PROGRESS" && !showInProgress) return false;
+      if (site.status === "FINISHED" && !showFinished) return false;
+      if (site.status === "NOT_STARTED" && !showNotStarted) return false;
       return true;
     });
 
     for (const site of filtered) {
-      const marker = L.circleMarker([site.lat!, site.lng!], { radius: 8, color: colorForStatus(site.status), fillColor: colorForStatus(site.status), fillOpacity: 1 }).addTo(mapRef.current);
-      marker.bindTooltip(`<strong>${site.name}</strong><br/>Progression: ${site.progressionTravaux || 0}%<br/>Score: ${site.scoreCriticite || 0}`);
-      marker.on('click', ()=> setSelectedSite(site));
+      const marker = L.circleMarker([site.lat!, site.lng!], {
+        radius: 8,
+        color: colorForStatus(site.status),
+        fillColor: colorForStatus(site.status),
+        fillOpacity: 1,
+      }).addTo(mapRef.current);
+      marker.bindTooltip(
+        `<strong>${site.name}</strong><br/>Progression: ${site.progressionTravaux || 0}%<br/>Score: ${site.scoreCriticite || 0}`,
+      );
+      marker.on("click", () => setSelectedSite(site));
 
       // circle proportional to score
       const rad = Math.min(20000, (site.scoreCriticite || 0) * 2000);
-      const circle = L.circle([site.lat!, site.lng!], { radius: rad, color: colorForScore(site.scoreCriticite), fillColor: colorForScore(site.scoreCriticite), fillOpacity: 0.2 }).addTo(mapRef.current);
+      const circle = L.circle([site.lat!, site.lng!], {
+        radius: rad,
+        color: colorForScore(site.scoreCriticite),
+        fillColor: colorForScore(site.scoreCriticite),
+        fillOpacity: 0.2,
+      }).addTo(mapRef.current);
     }
 
     // fit bounds
-    const group = L.featureGroup(filtered.map(s=> L.marker([s.lat!, s.lng!])));
+    const group = L.featureGroup(
+      filtered.map((s) => L.marker([s.lat!, s.lng!])),
+    );
     if (filtered.length) mapRef.current.fitBounds(group.getBounds().pad(0.5));
   }
 
@@ -121,40 +138,90 @@ export default function MapPage() {
     <Layout>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold">Vue géographique des sites & chantiers</h1>
-          <div className="text-sm text-muted">Carte interactive avec heatmap de criticité</div>
+          <h1 className="text-2xl font-bold">
+            Vue géographique des sites & chantiers
+          </h1>
+          <div className="text-sm text-muted">
+            Carte interactive avec heatmap de criticité
+          </div>
         </div>
         <div className="flex gap-2">
-          <button className="btn" onClick={refresh}>Rafraîchir</button>
+          <button className="btn" onClick={refresh}>
+            Rafraîchir
+          </button>
           <button className="btn">Plein écran</button>
         </div>
       </div>
 
       <div className="card mb-4">
         <div className="flex gap-3 flex-wrap items-center">
-          <label><input type="checkbox" checked={showInProgress} onChange={(e)=>setShowInProgress(e.target.checked)} /> En cours</label>
-          <label><input type="checkbox" checked={showFinished} onChange={(e)=>setShowFinished(e.target.checked)} /> Terminés</label>
-          <label><input type="checkbox" checked={showNotStarted} onChange={(e)=>setShowNotStarted(e.target.checked)} /> Non démarrés</label>
-          <label><input type="checkbox" checked={onlyWithActionsLate} onChange={(e)=>setOnlyWithActionsLate(e.target.checked)} /> Actions en retard</label>
+          <label>
+            <input
+              type="checkbox"
+              checked={showInProgress}
+              onChange={(e) => setShowInProgress(e.target.checked)}
+            />{" "}
+            En cours
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={showFinished}
+              onChange={(e) => setShowFinished(e.target.checked)}
+            />{" "}
+            Terminés
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={showNotStarted}
+              onChange={(e) => setShowNotStarted(e.target.checked)}
+            />{" "}
+            Non démarrés
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={onlyWithActionsLate}
+              onChange={(e) => setOnlyWithActionsLate(e.target.checked)}
+            />{" "}
+            Actions en retard
+          </label>
           <div className="flex items-center gap-2">
             <div>Criticité min:</div>
-            <input type="range" min={0} max={50} value={minScore} onChange={(e)=>setMinScore(Number(e.target.value))} />
+            <input
+              type="range"
+              min={0}
+              max={50}
+              value={minScore}
+              onChange={(e) => setMinScore(Number(e.target.value))}
+            />
             <div className="text-sm text-muted">{minScore}</div>
           </div>
         </div>
       </div>
 
-      <div id="map-root" style={{height: '600px', borderRadius: 12, overflow: 'hidden'}} />
+      <div
+        id="map-root"
+        style={{ height: "600px", borderRadius: 12, overflow: "hidden" }}
+      />
 
       {selectedSite && (
         <div className="card mt-4">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="font-semibold">{selectedSite.name}</h3>
-              <div className="text-sm text-location">{selectedSite.address}</div>
+              <div className="text-sm text-location">
+                {selectedSite.address}
+              </div>
             </div>
             <div>
-              <button className="btn-ghost" onClick={()=>setSelectedSite(null)}>Fermer</button>
+              <button
+                className="btn-ghost"
+                onClick={() => setSelectedSite(null)}
+              >
+                Fermer
+              </button>
             </div>
           </div>
 
@@ -162,7 +229,9 @@ export default function MapPage() {
             <div>
               <div className="text-sm text-muted">État</div>
               <div className="font-medium">{selectedSite.status}</div>
-              <div className="text-sm text-muted">Progression: {selectedSite.progressionTravaux}%</div>
+              <div className="text-sm text-muted">
+                Progression: {selectedSite.progressionTravaux}%
+              </div>
             </div>
             <div>
               <div className="text-sm text-muted">Score criticité</div>

@@ -224,10 +224,10 @@ export default function MapFrancePage(
         if (!L) return;
 
         // Create map instance
-        mapRef.current = L.map("map-france-root", { preferCanvas: true, maxZoom: 19 }).setView(
-          [46.5, 2.5],
-          6,
-        );
+        mapRef.current = L.map("map-france-root", {
+          preferCanvas: true,
+          maxZoom: 19,
+        }).setView([46.5, 2.5], 6);
 
         L.tileLayer(
           "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
@@ -344,7 +344,12 @@ export default function MapFrancePage(
 
   useEffect(() => {
     if (!mapRef.current) return;
-    console.log("Rendering layers. Sites data:", sitesData?.length || 0, "Filtered sites:", filteredSites.length);
+    console.log(
+      "Rendering layers. Sites data:",
+      sitesData?.length || 0,
+      "Filtered sites:",
+      filteredSites.length,
+    );
     renderLayers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -397,7 +402,14 @@ export default function MapFrancePage(
     const regionsGeo = (mapRef as any).regionsGeo;
     const departmentsGeo = (mapRef as any).departmentsGeo;
 
-    console.log("renderLayers - zoom:", zoom, "regions geo:", !!regionsGeo, "departments geo:", !!departmentsGeo);
+    console.log(
+      "renderLayers - zoom:",
+      zoom,
+      "regions geo:",
+      !!regionsGeo,
+      "departments geo:",
+      !!departmentsGeo,
+    );
 
     // prepare unified site dataset (Supabase or fallback mocks)
     const inputSites =
@@ -461,8 +473,13 @@ export default function MapFrancePage(
                       .split(" ")[0],
                   ) !== -1),
           );
-          if (feature.properties?.nom === "Île-de-France" || sitesInRegion.length > 0) {
-            console.log(`Region: ${feature.properties?.nom}, sites: ${sitesInRegion.length}`);
+          if (
+            feature.properties?.nom === "Île-de-France" ||
+            sitesInRegion.length > 0
+          ) {
+            console.log(
+              `Region: ${feature.properties?.nom}, sites: ${sitesInRegion.length}`,
+            );
           }
           const count = sitesInRegion.length;
           const avg = count

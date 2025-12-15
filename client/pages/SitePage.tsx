@@ -18,8 +18,9 @@ function Tab({ id, tab, setTab, label }: any) {
   return (
     <button
       onClick={() => setTab(id)}
-      className={`px-4 py-2 rounded-md ${active ? "bg-primary text-white" : "bg-card text-muted"
-        }`}
+      className={`px-4 py-2 rounded-md ${
+        active ? "bg-primary text-white" : "bg-card text-muted"
+      }`}
     >
       {label}
     </button>
@@ -39,9 +40,18 @@ function OverviewTab({ site }: any) {
         </p>
 
         <div className="mt-4 grid grid-cols-2 gap-4">
-          <KpiCard title="Risques critiques" value={site.nbRisquesCritiques || 0} />
-          <KpiCard title="Actions en retard" value={site.nbActionsEnRetard || 0} />
-          <KpiCard title="Incidents ouverts" value={site.nbIncidentsOuverts || 0} />
+          <KpiCard
+            title="Risques critiques"
+            value={site.nbRisquesCritiques || 0}
+          />
+          <KpiCard
+            title="Actions en retard"
+            value={site.nbActionsEnRetard || 0}
+          />
+          <KpiCard
+            title="Incidents ouverts"
+            value={site.nbIncidentsOuverts || 0}
+          />
           <KpiCard title="Score criticité" value={site.score_criticite || 0} />
         </div>
       </div>
@@ -253,7 +263,10 @@ export default function SitePage() {
   const [siteConfirmOpen, setSiteConfirmOpen] = useState(false);
 
   const [perBuildingStats, setPerBuildingStats] = useState<
-    Record<string, { spaces: number; equipments: number; risks: number; lastAudit?: any }>
+    Record<
+      string,
+      { spaces: number; equipments: number; risks: number; lastAudit?: any }
+    >
   >({});
 
   /* -------------------------------------------------
@@ -289,14 +302,19 @@ export default function SitePage() {
   -------------------------------------------------- */
   const usages = useMemo(
     () => Array.from(new Set(buildings.map((b) => b.mainUse || "Autre"))),
-    [buildings]
+    [buildings],
   );
 
   const filteredBuildings = useMemo(() => {
     return buildings.filter((b) => {
       if (query) {
         const q = query.toLowerCase();
-        if (!(b.name.toLowerCase().includes(q) || (b.code || "").toLowerCase().includes(q)))
+        if (
+          !(
+            b.name.toLowerCase().includes(q) ||
+            (b.code || "").toLowerCase().includes(q)
+          )
+        )
           return false;
       }
       if (usageFilter && b.mainUse !== usageFilter) return false;
@@ -316,7 +334,9 @@ export default function SitePage() {
     if (editing) {
       const updated = await builder.updateBuilding(editing.id, payload);
       if (updated)
-        setBuildings((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
+        setBuildings((prev) =>
+          prev.map((b) => (b.id === updated.id ? updated : b)),
+        );
     } else {
       const created = await builder.createBuilding({ ...payload, siteId });
       setBuildings((prev) => [created, ...prev]);
@@ -373,34 +393,46 @@ export default function SitePage() {
         <h1 className="text-2xl font-bold">{site.name}</h1>
 
         <div className="text-sm text-location mt-1">
-          {site.address} • {site.city}, {site.regionName} ({site.departmentName})
+          {site.address} • {site.city}, {site.regionName} ({site.departmentName}
+          )
         </div>
 
         <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <KpiCard title="Risques critiques" value={site.nbRisquesCritiques || 0} />
-          <KpiCard title="Actions en retard" value={site.nbActionsEnRetard || 0} />
-          <KpiCard title="Incidents ouverts" value={site.nbIncidentsOuverts || 0} />
+          <KpiCard
+            title="Risques critiques"
+            value={site.nbRisquesCritiques || 0}
+          />
+          <KpiCard
+            title="Actions en retard"
+            value={site.nbActionsEnRetard || 0}
+          />
+          <KpiCard
+            title="Incidents ouverts"
+            value={site.nbIncidentsOuverts || 0}
+          />
           <KpiCard title="Score criticité" value={site.score_criticite || 0} />
         </div>
 
         <div className="mt-4 flex flex-col sm:flex-row gap-2">
           <button
             className="btn w-full sm:w-auto"
-            onClick={() => window.location.href = `/map-france?site=${siteId}`}
+            onClick={() =>
+              (window.location.href = `/map-france?site=${siteId}`)
+            }
           >
             Voir sur la carte
           </button>
 
           <button
             className="btn-secondary w-full sm:w-auto"
-            onClick={() => window.location.href = `/audit/${siteId}`}
+            onClick={() => (window.location.href = `/audit/${siteId}`)}
           >
             Dernier audit
           </button>
 
           <button
             className="btn-secondary w-full sm:w-auto"
-            onClick={() => window.location.href = `/actions?site=${siteId}`}
+            onClick={() => (window.location.href = `/actions?site=${siteId}`)}
           >
             Actions du site
           </button>
@@ -413,7 +445,11 @@ export default function SitePage() {
               <AttachmentsGallery entityType="site" entityId={siteId} />
             </div>
             <div className="w-full sm:w-64">
-              <PhotoUploader entityType="site" entityId={Number(siteId)} onUploaded={(att)=>console.log('uploaded',att)} />
+              <PhotoUploader
+                entityType="site"
+                entityId={Number(siteId)}
+                onUploaded={(att) => console.log("uploaded", att)}
+              />
             </div>
           </div>
         </div>
@@ -457,7 +493,9 @@ export default function SitePage() {
                 >
                   <option value="">Tous usages</option>
                   {usages.map((u) => (
-                    <option key={u} value={u}>{u}</option>
+                    <option key={u} value={u}>
+                      {u}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -473,12 +511,17 @@ export default function SitePage() {
           <section>
             {filteredBuildings.length === 0 ? (
               <div className="card text-center py-10">
-                <img src="/placeholder.svg" alt="empty" className="mx-auto w-48 opacity-60" />
+                <img
+                  src="/placeholder.svg"
+                  alt="empty"
+                  className="mx-auto w-48 opacity-60"
+                />
                 <h3 className="text-lg font-semibold mt-4">
                   Aucun bâtiment encore enregistré
                 </h3>
                 <p className="text-sm text-muted mt-2">
-                  Ajoutez votre premier bâtiment pour commencer l’analyse de ce site.
+                  Ajoutez votre premier bâtiment pour commencer l’analyse de ce
+                  site.
                 </p>
                 <div className="mt-4">
                   <button onClick={handleAdd} className="brand-btn">
@@ -492,7 +535,13 @@ export default function SitePage() {
                   <BuildingCard
                     key={b.id}
                     building={b}
-                    stats={perBuildingStats[b.id] || { spaces: 0, equipments: 0, risks: 0 }}
+                    stats={
+                      perBuildingStats[b.id] || {
+                        spaces: 0,
+                        equipments: 0,
+                        risks: 0,
+                      }
+                    }
                     onEdit={() => {
                       setEditing(b);
                       setFormOpen(true);

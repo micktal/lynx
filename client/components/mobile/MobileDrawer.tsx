@@ -1,7 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-export default function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function MobileDrawer({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
 
@@ -18,10 +24,12 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
       if (e.key === "Tab") {
         // simple focus trap: keep focus within drawer
         const focusable = Array.from(
-          (document.querySelectorAll(
+          document.querySelectorAll(
             'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-          ) as NodeListOf<HTMLElement>),
-        ).filter((el) => el.offsetParent !== null && el.closest("aside[data-drawer]") );
+          ) as NodeListOf<HTMLElement>,
+        ).filter(
+          (el) => el.offsetParent !== null && el.closest("aside[data-drawer]"),
+        );
         // if no focusable, return
         if (focusable.length === 0) return;
         const first = focusable[0];
@@ -63,19 +71,73 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <img src="https://cdn.builder.io/api/v1/image/assets%2Fd93d9a0ec7824aa1ac4d890a1f90a2ec%2F55a8c512fb5d4bb38b0292e3757d0114?format=webp&width=200" alt="ROEH" className="w-10 h-10 object-contain" />
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2Fd93d9a0ec7824aa1ac4d890a1f90a2ec%2F55a8c512fb5d4bb38b0292e3757d0114?format=webp&width=200"
+              alt="ROEH"
+              className="w-10 h-10 object-contain"
+            />
             <div className="text-lg font-semibold">ROEH</div>
           </div>
-          <button ref={closeRef} onClick={onClose} aria-label="Fermer le menu" className="px-2 py-1 rounded-md border border-border">✕</button>
+          <button
+            ref={closeRef}
+            onClick={onClose}
+            aria-label="Fermer le menu"
+            className="px-2 py-1 rounded-md border border-border"
+          >
+            ✕
+          </button>
         </div>
 
         <nav className="flex flex-col gap-3">
-          <Link ref={firstLinkRef} to="/" onClick={onClose} className="py-2 px-2 rounded-md text-sm" style={{ color: "var(--text)" }}>Sites</Link>
-          <Link to="/map-france" onClick={onClose} className="py-2 px-2 rounded-md text-sm" style={{ color: "var(--text)" }}>Carte France</Link>
-          <Link to="/synthese" onClick={onClose} className="py-2 px-2 rounded-md text-sm" style={{ color: "var(--text)" }}>Synthèse</Link>
-          <Link to="/audit" onClick={onClose} className="py-2 px-2 rounded-md text-sm" style={{ color: "var(--text)" }}>Audits</Link>
-          <Link to="/reporting" onClick={onClose} className="py-2 px-2 rounded-md text-sm" style={{ color: "var(--text)" }}>Reporting</Link>
-          <Link to="/notifications" onClick={onClose} className="py-2 px-2 rounded-md text-sm" style={{ color: "var(--text)" }}>Notifications</Link>
+          <Link
+            ref={firstLinkRef}
+            to="/"
+            onClick={onClose}
+            className="py-2 px-2 rounded-md text-sm"
+            style={{ color: "var(--text)" }}
+          >
+            Sites
+          </Link>
+          <Link
+            to="/map-france"
+            onClick={onClose}
+            className="py-2 px-2 rounded-md text-sm"
+            style={{ color: "var(--text)" }}
+          >
+            Carte France
+          </Link>
+          <Link
+            to="/synthese"
+            onClick={onClose}
+            className="py-2 px-2 rounded-md text-sm"
+            style={{ color: "var(--text)" }}
+          >
+            Synthèse
+          </Link>
+          <Link
+            to="/audit"
+            onClick={onClose}
+            className="py-2 px-2 rounded-md text-sm"
+            style={{ color: "var(--text)" }}
+          >
+            Audits
+          </Link>
+          <Link
+            to="/reporting"
+            onClick={onClose}
+            className="py-2 px-2 rounded-md text-sm"
+            style={{ color: "var(--text)" }}
+          >
+            Reporting
+          </Link>
+          <Link
+            to="/notifications"
+            onClick={onClose}
+            className="py-2 px-2 rounded-md text-sm"
+            style={{ color: "var(--text)" }}
+          >
+            Notifications
+          </Link>
         </nav>
 
         <div className="mt-6">

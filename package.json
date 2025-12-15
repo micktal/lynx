@@ -28,7 +28,7 @@
     "@supabase/supabase-js": "^2.35.0",
     "busboy": "^1.6.0",
     "form-data": "^4.0.0"
-    },
+  },
   "devDependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-accordion": "^1.2.11",

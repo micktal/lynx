@@ -558,7 +558,6 @@ export async function updateAudit(
   return structuredClone(MOCK_AUDITS[idx]);
 }
 
-
 export async function fetchActions(): Promise<ActionItem[]> {
   return structuredClone(MOCK_ACTIONS);
 }
@@ -1574,18 +1573,18 @@ export async function updateRisk(
 ): Promise<Risk | null> {
   // Try server first (will enforce rules server-side)
   try {
-    let role = 'USER';
+    let role = "USER";
     try {
-      const { getCurrentUser } = await import('./auth');
+      const { getCurrentUser } = await import("./auth");
       const cu: any = getCurrentUser();
       if (cu && cu.role) role = cu.role;
     } catch (e) {}
 
     const resp = await fetch(`/api/risks/${encodeURIComponent(id)}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'x-user-role': role,
+        "Content-Type": "application/json",
+        "x-user-role": role,
       },
       body: JSON.stringify(patch),
     });
@@ -1632,17 +1631,17 @@ export async function updateRisk(
 export async function deleteRisk(id: string): Promise<boolean> {
   // Try server first (server will enforce rules)
   try {
-    let role = 'USER';
+    let role = "USER";
     try {
-      const { getCurrentUser } = await import('./auth');
+      const { getCurrentUser } = await import("./auth");
       const cu: any = getCurrentUser();
       if (cu && cu.role) role = cu.role;
     } catch (e) {}
 
     const resp = await fetch(`/api/risks/${encodeURIComponent(id)}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'x-user-role': role,
+        "x-user-role": role,
       },
     });
     if (resp.ok) return true;
@@ -1677,9 +1676,9 @@ export async function createAttachment(
   a: Partial<Attachment>,
 ): Promise<Attachment> {
   // POST to server-side endpoint which uses service role to insert into Supabase
-  const res = await fetch('/api/attachments', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const res = await fetch("/api/attachments", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(a),
   });
   if (!res.ok) {
@@ -1693,17 +1692,22 @@ export async function createAttachment(
 
 export async function fetchAttachments(): Promise<Attachment[]> {
   try {
-    const data = await supabaseGet<Attachment[]>('attachments?select=*');
+    const data = await supabaseGet<Attachment[]>("attachments?select=*");
     return Array.isArray(data) ? data : [];
   } catch (e) {
-    console.warn('Failed to fetch attachments from Supabase, falling back to mocks', e);
+    console.warn(
+      "Failed to fetch attachments from Supabase, falling back to mocks",
+      e,
+    );
     return structuredClone(MOCK_ATTACHMENTS);
   }
 }
 
 export async function deleteAttachment(id: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/attachments/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    const res = await fetch(`/api/attachments/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
     if (!res.ok) {
       // If server returned not found, reflect that
       if (res.status === 404) return false;
@@ -1777,18 +1781,18 @@ export async function updateAction(
   // try server first
   try {
     // get mocked current user role if available
-    let role = 'USER';
+    let role = "USER";
     try {
-      const { getCurrentUser } = await import('./auth');
+      const { getCurrentUser } = await import("./auth");
       const cu: any = getCurrentUser();
       if (cu && cu.role) role = cu.role;
     } catch (e) {}
 
     const resp = await fetch(`/api/actions/${encodeURIComponent(id)}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'x-user-role': role,
+        "Content-Type": "application/json",
+        "x-user-role": role,
       },
       body: JSON.stringify(patch),
     });
@@ -1834,17 +1838,17 @@ export async function updateAction(
 export async function deleteAction(id: string): Promise<boolean> {
   // try server first
   try {
-    let role = 'USER';
+    let role = "USER";
     try {
-      const { getCurrentUser } = await import('./auth');
+      const { getCurrentUser } = await import("./auth");
       const cu: any = getCurrentUser();
       if (cu && cu.role) role = cu.role;
     } catch (e) {}
 
     const resp = await fetch(`/api/actions/${encodeURIComponent(id)}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'x-user-role': role,
+        "x-user-role": role,
       },
     });
     if (resp.ok) return true;
@@ -1968,20 +1972,33 @@ export async function fetchAttachmentsForSpace(
   spaceId: string,
 ): Promise<Attachment[]> {
   try {
-    const data = await supabaseGet<Attachment[]>(`attachments?space_id=eq.${spaceId}&select=*` as any);
+    const data = await supabaseGet<Attachment[]>(
+      `attachments?space_id=eq.${spaceId}&select=*` as any,
+    );
     return Array.isArray(data) ? data : [];
   } catch (e) {
-    return structuredClone(MOCK_ATTACHMENTS.filter((a) => a.spaceId === spaceId));
+    return structuredClone(
+      MOCK_ATTACHMENTS.filter((a) => a.spaceId === spaceId),
+    );
   }
 }
 
-export async function fetchAttachmentsForEntity(entityType: string, entityId: string | number): Promise<Attachment[]> {
+export async function fetchAttachmentsForEntity(
+  entityType: string,
+  entityId: string | number,
+): Promise<Attachment[]> {
   try {
     const encoded = `attachments?entity_type=eq.${encodeURIComponent(entityType)}&entity_id=eq.${encodeURIComponent(String(entityId))}&select=*`;
     const data = await supabaseGet<Attachment[]>(encoded as any);
     return Array.isArray(data) ? data : [];
   } catch (e) {
-    return structuredClone(MOCK_ATTACHMENTS.filter((a) => (a as any).entity_type === entityType && String((a as any).entity_id) === String(entityId)));
+    return structuredClone(
+      MOCK_ATTACHMENTS.filter(
+        (a) =>
+          (a as any).entity_type === entityType &&
+          String((a as any).entity_id) === String(entityId),
+      ),
+    );
   }
 }
 
@@ -2477,7 +2494,7 @@ export async function fetchSecurityLogs(
 // Rules engine CRUD
 export async function fetchRules(): Promise<RuleEngineRule[]> {
   try {
-    const r = await fetch('/api/rules');
+    const r = await fetch("/api/rules");
     if (!r.ok) throw new Error(`Server returned ${r.status}`);
     const json = await r.json();
     return json as RuleEngineRule[];
@@ -2495,12 +2512,12 @@ export async function createRule(
       action: r.action,
       condition: r.condition,
       only_roles: r.onlyRoles || [],
-      enabled: typeof r.active === 'boolean' ? r.active : true,
+      enabled: typeof r.active === "boolean" ? r.active : true,
       description: r.description,
     };
-    const resp = await fetch('/api/rules', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const resp = await fetch("/api/rules", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
@@ -2528,11 +2545,11 @@ export async function updateRule(
   try {
     // Not implemented on server yet - optimistic local update
     const resp = await fetch(`/api/rules/${encodeURIComponent(id)}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(patch),
     });
-    if (!resp.ok) throw new Error('update failed');
+    if (!resp.ok) throw new Error("update failed");
     const json = await resp.json();
     return json as RuleEngineRule;
   } catch (e) {
@@ -2544,8 +2561,10 @@ export async function updateRule(
 }
 export async function deleteRule(id: string): Promise<boolean> {
   try {
-    const resp = await fetch(`/api/rules/${encodeURIComponent(id)}`, { method: 'DELETE' });
-    if (!resp.ok) throw new Error('delete failed');
+    const resp = await fetch(`/api/rules/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    if (!resp.ok) throw new Error("delete failed");
     return true;
   } catch (e) {
     const idx = MOCK_RULES.findIndex((x) => x.id === id);

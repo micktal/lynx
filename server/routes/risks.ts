@@ -1,6 +1,6 @@
-import express from 'express';
-import fetch from 'node-fetch';
-import { enforceRules } from '../middleware/enforceRules';
+import express from "express";
+import fetch from "node-fetch";
+import { enforceRules } from "../middleware/enforceRules";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -8,24 +8,24 @@ const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const router = express.Router();
 
 // Update risk
-router.put('/:id', enforceRules('risk', 'UPDATE'), async (req, res) => {
+router.put("/:id", enforceRules("risk", "UPDATE"), async (req, res) => {
   const id = req.params.id;
   const payload = req.body;
-  if (!id) return res.status(400).json({ error: 'Missing id' });
+  if (!id) return res.status(400).json({ error: "Missing id" });
 
   if (!SUPABASE_URL || !SERVICE_KEY) {
-    return res.status(501).json({ error: 'Supabase not configured on server' });
+    return res.status(501).json({ error: "Supabase not configured on server" });
   }
 
   try {
     const url = `${SUPABASE_URL}/rest/v1/risks?id=eq.${encodeURIComponent(id)}`;
     const r = await fetch(url, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         apikey: SERVICE_KEY,
         Authorization: `Bearer ${SERVICE_KEY}`,
-        Prefer: 'return=representation',
+        Prefer: "return=representation",
       },
       body: JSON.stringify(payload),
     });
@@ -34,27 +34,27 @@ router.put('/:id', enforceRules('risk', 'UPDATE'), async (req, res) => {
     const json = JSON.parse(text);
     return res.json(Array.isArray(json) ? json[0] : json);
   } catch (e: any) {
-    console.error('PUT /api/risks/:id failed', e);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error("PUT /api/risks/:id failed", e);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // Delete risk
-router.delete('/:id', enforceRules('risk', 'DELETE'), async (req, res) => {
+router.delete("/:id", enforceRules("risk", "DELETE"), async (req, res) => {
   const id = req.params.id;
-  if (!id) return res.status(400).json({ error: 'Missing id' });
+  if (!id) return res.status(400).json({ error: "Missing id" });
   if (!SUPABASE_URL || !SERVICE_KEY) {
-    return res.status(501).json({ error: 'Supabase not configured on server' });
+    return res.status(501).json({ error: "Supabase not configured on server" });
   }
 
   try {
     const url = `${SUPABASE_URL}/rest/v1/risks?id=eq.${encodeURIComponent(id)}`;
     const r = await fetch(url, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         apikey: SERVICE_KEY,
         Authorization: `Bearer ${SERVICE_KEY}`,
-        Prefer: 'return=minimal',
+        Prefer: "return=minimal",
       },
     });
     if (!r.ok) {
@@ -63,8 +63,8 @@ router.delete('/:id', enforceRules('risk', 'DELETE'), async (req, res) => {
     }
     return res.status(204).send();
   } catch (e: any) {
-    console.error('DELETE /api/risks/:id failed', e);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error("DELETE /api/risks/:id failed", e);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
