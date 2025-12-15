@@ -6,6 +6,7 @@ import { handleSupabaseProxy } from "./routes/supabase-proxy";
 import { handleStorageUpload } from "./routes/storage-proxy";
 import attachmentsRoute from "./routes/attachments";
 import rulesRoute from "./routes/rules";
+import actionsRoute from "./routes/actions";
 
 export function createServer() {
   const app = express();
