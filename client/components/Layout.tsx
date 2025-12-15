@@ -103,7 +103,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <footer className="mt-12 border-t pt-6" style={{ borderColor: "var(--border)" }}>
           <div className="flex flex-col md:flex-row md:justify-between gap-6 text-sm" style={{ color: "var(--text-muted)" }}>
-            <div>© {new Date().getFullYear()} SecureBase — Gestion d’audits de sécurité</div>
+            <div>© {new Date().getFullYear()} ROEH — Security Inspection & Risk Intelligence Platform</div>
             <div className="flex gap-4">
               <Link to="/privacy" style={{ color: "var(--text-muted)" }}>Confidentialité</Link>
               <Link to="/terms" style={{ color: "var(--text-muted)" }}>Conditions</Link>
