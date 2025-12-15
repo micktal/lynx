@@ -1,6 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../lib/auth";
+import { toast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const submit = async () => {
+    try {
+      setLoading(true);
+      const user = await login(email, password);
+      toast({ title: 'Succès', description: `Connecté en tant que ${user?.role || 'user'}` });
+      if (user?.role === 'ADMIN') navigate('/admin/users');
+      else navigate('/projects');
+    } catch (e: any) {
+      toast({ title: 'Erreur', description: e?.message || 'Connexion échouée' });
+    } finally { setLoading(false); }
+  };
+
   return (
     <div
       style={{
@@ -20,13 +40,15 @@ export default function LoginPage() {
         </div>
 
         <div>
-          <input className="input w-full mb-3" placeholder="Email" />
+          <input value={email} onChange={(e)=>setEmail(e.target.value)} className="input w-full mb-3" placeholder="Email" />
           <input
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
             className="input w-full mb-3"
             placeholder="Mot de passe"
             type="password"
           />
-          <button className="btn-premium w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--brand)), hsl(var(--primary)))', color: '#fff', border: 'none', boxShadow: '0 8px 20px rgba(32, 121, 255, 0.12)' }}>Se connecter</button>
+          <button className="btn-premium w-full" onClick={submit} disabled={loading}>{loading ? 'Connexion...' : 'Se connecter'}</button>
         </div>
       </div>
     </div>
