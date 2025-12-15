@@ -9,14 +9,29 @@ const RESOURCES = ['action','risk','site','building','space','equipment','user']
 const ACTIONS = ['CREATE','READ','UPDATE','DELETE'];
 const ROLES = ['ADMIN','MANAGER','AUDITEUR','USER'];
 
+import { useNavigate } from 'react-router-dom';
+
 export default function AdminRulesPage(){
+  const navigate = useNavigate();
   const [rules, setRules] = React.useState<RuleEngineRule[]>([]);
   const [resource, setResource] = React.useState('action');
   const [action, setAction] = React.useState('UPDATE');
   const [condition, setCondition] = React.useState('');
   const [onlyRoles, setOnlyRoles] = React.useState<string[]>([]);
 
-  React.useEffect(()=>{ load(); },[]);
+  React.useEffect(()=>{
+    // protect client-side: only ADMIN can access
+    try {
+      const { getCurrentUser } = require('../lib/auth');
+      const cu = getCurrentUser();
+      if (!cu || cu.role !== 'ADMIN') {
+        toast({ title: 'Accès refusé', description: 'Vous n\'êtes pas autorisé à accéder à cette page' });
+        navigate('/');
+        return;
+      }
+    } catch (e) {}
+    load();
+  },[]);
   async function load(){
     try {
       const r = await builder.fetchRules();
