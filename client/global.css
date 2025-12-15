@@ -512,6 +512,14 @@
     white-space: normal;
   }
 
+  /* Table headers: force strong contrast and weight for readability */
+  .card table thead tr th,
+  table thead tr th {
+    color: hsl(var(--text));
+    font-weight: 700;
+    opacity: 1;
+  }
+
   /* Heatmap & UI animations */
   @keyframes heat-pulse {
     0% {
