@@ -40,6 +40,7 @@ import DataLakeAdminPage from "./pages/datalake-admin";
 import DataLakeReplayPage from "./pages/datalake-replay";
 import AdminSecurityLogPage from "./pages/admin-security-log";
 import AdminRulesPage from "./pages/admin-rules";
+import AdminUsersPage from "./pages/admin-users";
 import UnauthorizedPage from "./pages/unauthorized";
 import LoginPage from "./pages/login";
 import MapPage from "./pages/map";
