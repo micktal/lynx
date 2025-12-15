@@ -86,7 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Decorative hero (gradient + shapes) shown only on home */}
-      <Hero />
+      {HeroComponent ? <HeroComponent /> : null}
 
       <div className="container mx-auto py-8" style={{ maxWidth: "var(--content-max-width)" }}>
         <div className="md:flex md:gap-6">
