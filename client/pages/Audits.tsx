@@ -32,16 +32,16 @@ export default function AuditsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Audits</h1>
-            <p className="text-sm text-muted mt-1">Liste des audits disponibles</p>
+            <p className="text-sm" style={{ color: "var(--text)" }}>Liste des audits disponibles</p>
           </div>
         </div>
       </div>
 
       <section>
         {loading ? (
-          <div className="card"><div className="text-sm text-muted">Chargement...</div><div className="mt-3"><LoadingSkeleton lines={4} /></div></div>
+          <div className="card"><div className="text-sm" style={{ color: "var(--text)" }}>Chargement...</div><div className="mt-3"><LoadingSkeleton lines={4} /></div></div>
         ) : audits.length === 0 ? (
-          <div className="card text-center">Aucun audit trouvé</div>
+          <div className="card text-center" style={{ color: "var(--text)" }}>Aucun audit trouvé</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {audits.map((a) => (
@@ -49,8 +49,8 @@ export default function AuditsPage() {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-semibold">{a.title || `Audit ${a.id}`}</h3>
-                    <div className="text-sm text-muted mt-1">Statut: {a.status}</div>
-                    <div className="text-sm text-muted">Site: {a.siteId}</div>
+                    <div className="text-sm" style={{ color: "var(--text)", marginTop: 4 }}>Statut: {a.status}</div>
+                    <div className="text-sm" style={{ color: "var(--text)" }}>Site: {a.siteId}</div>
                   </div>
                   <div className="flex items-center gap-3 md:justify-end">
                     <Link aria-label={`Ouvrir audit ${a.title || a.id}`} to={`/audit/${a.id}`} className="btn-primary btn-sm">Ouvrir</Link>
