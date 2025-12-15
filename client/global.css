@@ -12,6 +12,8 @@
   :root{
     --background: 0 0% 100%;
     --foreground: 222 15% 12%;
+    --text: 215 14% 18%; /* primary body text - neutral gray */
+    --text-muted: 215 10% 45%; /* muted / secondary text */
     --card: 0 0% 100%;
     --card-foreground: 222 15% 12%;
     --popover: 0 0% 100%;
