@@ -297,12 +297,12 @@ export default function AuditPage() {
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">{audit.title}</h1>
-          <div className="text-sm text-muted mt-1">
-            {site && <Link to={`/site/${site.id}`} className="underline">{site.name}</Link>}
+          <div className="text-sm mt-1" style={{ color: 'var(--text)', fontWeight: 600 }}>
+            {site && <Link to={`/site/${site.id}`} className="underline" style={{ color: 'var(--text)' }}>{site.name}</Link>}
             {building && <> • {building.name}</>}
           </div>
 
-          <div className="mt-2 text-sm text-muted">
+          <div className="mt-2 text-sm" style={{ color: 'var(--text)', fontWeight: 500 }}>
             Date prévue: {audit.scheduledAt || "-"} • Auditeur: {audit.auditorId || "-"}
           </div>
         </div>
