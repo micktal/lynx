@@ -177,7 +177,7 @@ export default function Dashboard() {
       {/* MAP + RANKING */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         <div className="lg:col-span-2">
-          <MapOverview sites={sites} onOpen={handleOpenSite} stats={siteStats} />
+          <MapOverview sites={sites} onOpen={handleOpenSite} stats={siteStats} mode={mapView} />
         </div>
         <div className="lg:col-span-1">
           <SiteRanking items={rankingList} onOpen={handleOpenSite} />
