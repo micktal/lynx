@@ -1,22 +1,7 @@
 [build]
-  command = "npm run build:client"
-  functions = "netlify/functions"
+  command = "pnpm install --frozen-lockfile && pnpm run build:client"
   publish = "dist/spa"
 
-
-[functions]
-  external_node_modules = ["express"]
-  node_bundler = "esbuild"
-  
-[[redirects]]
-  force = true
-  from = "/api/*"
-  status = 200
-  to = "/.netlify/functions/api/:splat"
-
-# SPA fallback: redirect all non-API routes to index.html so client-side router can handle them
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
+[build.environment]
+  NODE_VERSION = "18"
+  PNPM_VERSION = "10"
