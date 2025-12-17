@@ -9,7 +9,7 @@ import rulesRoute from "./routes/rules";
 import actionsRoute from "./routes/actions";
 import risksRoute from "./routes/risks";
 
-export function createServer() {
+export async function createServer() {
   const app = express();
 
   // Middleware
