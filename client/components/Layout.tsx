@@ -41,7 +41,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         className="border-b"
         style={{
           borderColor: "var(--border)",
-          background: "#ffffff",
           backgroundColor: "#ffffff",
           backgroundImage: "none",
           backdropFilter: "none",
