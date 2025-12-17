@@ -24,7 +24,7 @@ export async function createAttachment(payload: {
 
 export async function uploadAttachment(
   file: File,
-  entity_type: "site" | "audit" | "risk" | "equipment",
+  entity_type: "site" | "audit" | "risk" | "equipment" | "project" | "chantier" | "action",
   entity_id: number | string,
   onProgress?: (p: number) => void,
 ) {
