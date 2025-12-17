@@ -1,12 +1,21 @@
 import React, { useRef, useState } from "react";
 import { uploadAttachment } from "../lib/attachmentsService";
 import { toast } from "@/hooks/use-toast";
+import * as builder from "../lib/builderService";
+import * as projectService from "../lib/projectService";
 
-type EntityType = "site" | "audit" | "risk" | "equipment";
+type EntityType =
+  | "site"
+  | "audit"
+  | "risk"
+  | "equipment"
+  | "project"
+  | "chantier"
+  | "action";
 
 interface PhotoUploaderProps {
-  entityType: EntityType;
-  entityId: number;
+  entityType?: EntityType; // optional default
+  entityId?: number | string;
   onUploaded?: (attachment: any) => void;
   maxSizeMb?: number;
 }
