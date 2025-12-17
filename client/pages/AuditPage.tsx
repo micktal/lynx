@@ -408,213 +408,202 @@ export default function AuditPage() {
         </div>
       </div>
 
-      {/* PROGRESS + KPIS */}
+      {/* PROGRESS BAR (full width) */}
       <section className="mb-6">
         <div>
-          {/* PROGRESS BAR */}
-          <div className="">
-            <div className="h-4 bg-gray-200 rounded overflow-hidden">
-              <div
-                style={{ width: `${progressPercent}%` }}
-                className="h-4 bg-primary transition-all"
-              ></div>
-            </div>
+          <div className="h-4 bg-gray-200 rounded overflow-hidden">
             <div
-              className="text-sm mt-2"
-              style={{ color: "var(--text)", fontWeight: 600 }}
-            >
-              {riskCount} risques • {equipmentCount} équipements •{" "}
-              {actionsCount} actions
-            </div>
+              style={{ width: `${progressPercent}%` }}
+              className="h-4 bg-primary transition-all"
+            ></div>
           </div>
-
-          {/* KPI CARDS - placed below the progress bar to avoid overflow on the right */}
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <KpiCard title="Risques" value={riskCount} icon={<span>⚠️</span>} />
-            <KpiCard
-              title="Équipements"
-              value={equipmentCount}
-              icon={<span>🔧</span>}
-            />
-            <KpiCard
-              title="Actions"
-              value={actionsCount}
-              icon={<span>📋</span>}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* RISKS */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Risques liés à l'audit</h2>
-
-        <div className="mb-3 flex justify-end">
-          <button
-            onClick={() => {
-              setEditingRisk(null);
-              setRiskFormOpen(true);
-            }}
-            className="brand-btn"
-          >
-            Ajouter un risque
-          </button>
-        </div>
-
-        <RiskTable
-          items={risks}
-          onEdit={(r) => {
-            setEditingRisk(r);
-            setRiskFormOpen(true);
-          }}
-          onDelete={(id) => handleDeleteRisk(id)}
-          onCreateAction={(riskId) => {
-            setEditingAction(null);
-            setActionFormOpen(true);
-          }}
-        />
-      </section>
-
-      {/* EQUIPMENTS */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Équipements concernés</h2>
-
-        <EquipmentTable
-          items={equipments}
-          onEdit={(e) => {
-            setEditingEquip(e);
-            setEquipFormOpen(true);
-          }}
-          onDelete={(id) => handleDeleteEquipment(id)}
-          onAdd={() => {
-            setEditingEquip(null);
-            setEquipFormOpen(true);
-          }}
-        />
-      </section>
-
-      {/* ATTACHMENTS */}
-      <section className="mb-6">
-        <Gallery
-          items={attachments}
-          onDelete={deleteAttachment}
-          onUpload={uploadPhoto}
-        />
-      </section>
-
-      {/* TIMELINE */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Timeline de l'audit</h2>
-
-        <div className="card p-4">
-          {logs.length === 0 ? (
-            <div
-              className="text-center py-6"
-              style={{ color: "var(--text)", fontWeight: 600 }}
-            >
-              Aucun événement enregistré.
-            </div>
-          ) : (
-            <div>
-              {React.createElement(require("../components/Timeline").default, {
-                items: logs,
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ACTION PLAN */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Plan d'actions</h2>
-
-        <div className="mb-3 flex justify-end">
-          <button
-            onClick={() => {
-              setEditingAction(null);
-              setActionFormOpen(true);
-            }}
-            className="brand-btn"
-          >
-            Ajouter une action
-          </button>
-        </div>
-
-        <ActionList
-          items={actions}
-          onEdit={(a) => {
-            setEditingAction(a);
-            setActionFormOpen(true);
-          }}
-          onDelete={(id) => handleDeleteAction(id)}
-          onToggleStatus={(id) => toggleAction(id)}
-        />
-      </section>
-
-      {/* SYNTHESIS */}
-      <section className="mb-6">
-        <div className="card p-4">
-          <h3 className="text-lg font-semibold">Synthèse & Export</h3>
-
           <div
-            className="mt-2 text-sm"
+            className="text-sm mt-2"
             style={{ color: "var(--text)", fontWeight: 600 }}
           >
-            <div>
-              ⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques
-              critiques
-            </div>
-            <div>
-              🔧 {equipments.filter((e) => e.state === "NON_CONFORME").length}{" "}
-              équipements non conformes
-            </div>
-            <div>
-              📝 {actions.filter((a) => a.status === "OUVERTE").length} actions
-              ouvertes
-            </div>
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            <button
-              onClick={() => {
-                const rows = [
-                  ["audit", audit.title],
-                  [
-                    "risques_critique",
-                    risks
-                      .filter((r) => r.level === "CRITIQUE")
-                      .length.toString(),
-                  ],
-                  [
-                    "equipements_nc",
-                    equipments
-                      .filter((e) => e.state === "NON_CONFORME")
-                      .length.toString(),
-                  ],
-                ];
-                const csv = rows.map((r) => r.join(",")).join("\n");
-                const blob = new Blob([csv], { type: "text/csv" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "audit_summary.csv";
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-              className="px-3 py-2 rounded-md border"
-            >
-              Exporter Excel
-            </button>
-
-            <button
-              onClick={() => alert("Synthèse IA (à implémenter)")}
-              className="px-3 py-2 rounded-md border"
-            >
-              Synthèse IA
-            </button>
+            {riskCount} risques • {equipmentCount} équipements • {actionsCount} actions
           </div>
         </div>
       </section>
+
+      {/* MAIN GRID: left = main content, right = sidebar */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        {/* LEFT COLUMN - main content */}
+        <div className="md:col-span-2 space-y-6">
+          {/* RISKS */}
+          <section>
+            <h2 className="text-lg font-semibold mb-3">Risques liés à l'audit</h2>
+
+            <div className="mb-3 flex justify-end">
+              <button
+                onClick={() => {
+                  setEditingRisk(null);
+                  setRiskFormOpen(true);
+                }}
+                className="brand-btn"
+              >
+                Ajouter un risque
+              </button>
+            </div>
+
+            <RiskTable
+              items={risks}
+              onEdit={(r) => {
+                setEditingRisk(r);
+                setRiskFormOpen(true);
+              }}
+              onDelete={(id) => handleDeleteRisk(id)}
+              onCreateAction={(riskId) => {
+                setEditingAction(null);
+                setActionFormOpen(true);
+              }}
+            />
+          </section>
+
+          {/* EQUIPMENTS */}
+          <section>
+            <h2 className="text-lg font-semibold mb-3">Équipements concernés</h2>
+
+            <EquipmentTable
+              items={equipments}
+              onEdit={(e) => {
+                setEditingEquip(e);
+                setEquipFormOpen(true);
+              }}
+              onDelete={(id) => handleDeleteEquipment(id)}
+              onAdd={() => {
+                setEditingEquip(null);
+                setEquipFormOpen(true);
+              }}
+            />
+          </section>
+
+          {/* ATTACHMENTS / GALLERY */}
+          <section>
+            <Gallery
+              items={attachments}
+              onDelete={deleteAttachment}
+              onUpload={uploadPhoto}
+            />
+          </section>
+
+          {/* TIMELINE */}
+          <section>
+            <h2 className="text-lg font-semibold mb-3">Timeline de l'audit</h2>
+
+            <div className="card p-4">
+              {logs.length === 0 ? (
+                <div
+                  className="text-center py-6"
+                  style={{ color: "var(--text)", fontWeight: 600 }}
+                >
+                  Aucun événement enregistré.
+                </div>
+              ) : (
+                <div>
+                  {React.createElement(require("../components/Timeline").default, {
+                    items: logs,
+                  })}
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        {/* RIGHT COLUMN - sidebar */}
+        <aside className="md:col-span-1 space-y-6">
+          {/* KPI CARDS */}
+          <div className="card p-4">
+            <h3 className="text-lg font-semibold mb-2">Vue d'ensemble</h3>
+
+            <div className="mt-2 grid grid-cols-1 gap-3">
+              <KpiCard title="Risques" value={riskCount} icon={<span>⚠️</span>} />
+              <KpiCard title="Équipements" value={equipmentCount} icon={<span>🔧</span>} />
+              <KpiCard title="Actions" value={actionsCount} icon={<span>📋</span>} />
+            </div>
+
+            <div className="text-sm mt-3" style={{ color: "var(--text)", fontWeight: 600 }}>
+              ⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques critiques
+            </div>
+          </div>
+
+          {/* ACTION PLAN (summary + quick add) */}
+          <div className="card p-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Plan d'actions</h3>
+              <button
+                onClick={() => {
+                  setEditingAction(null);
+                  setActionFormOpen(true);
+                }}
+                className="btn-sm"
+              >
+                Ajouter
+              </button>
+            </div>
+
+            <div className="mt-3">
+              <ActionList
+                items={actions}
+                onEdit={(a) => {
+                  setEditingAction(a);
+                  setActionFormOpen(true);
+                }}
+                onDelete={(id) => handleDeleteAction(id)}
+                onToggleStatus={(id) => toggleAction(id)}
+              />
+            </div>
+          </div>
+
+          {/* SYNTHESIS & EXPORT */}
+          <div className="card p-4">
+            <h3 className="text-lg font-semibold">Synthèse & Export</h3>
+
+            <div className="mt-2 text-sm" style={{ color: "var(--text)", fontWeight: 600 }}>
+              <div>⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques critiques</div>
+              <div>🔧 {equipments.filter((e) => e.state === "NON_CONFORME").length} équipements non conformes</div>
+              <div>📝 {actions.filter((a) => a.status === "OUVERTE").length} actions ouvertes</div>
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => {
+                  const rows = [
+                    ["audit", audit.title],
+                    [
+                      "risques_critique",
+                      risks
+                        .filter((r) => r.level === "CRITIQUE")
+                        .length.toString(),
+                    ],
+                    [
+                      "equipements_nc",
+                      equipments
+                        .filter((e) => e.state === "NON_CONFORME")
+                        .length.toString(),
+                    ],
+                  ];
+                  const csv = rows.map((r) => r.join(",")).join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "audit_summary.csv";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="px-3 py-2 rounded-md border"
+              >
+                Exporter Excel
+              </button>
+
+              <button onClick={() => alert("Synthèse IA (à implémenter)")} className="px-3 py-2 rounded-md border">
+                Synthèse IA
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
 
       {/* FOOT LINKS */}
       <div className="flex gap-2 mb-10">
