@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleSupabaseProxy } from "./routes/supabase-proxy";
-import { handleStorageUpload } from "./routes/storage-proxy";
+// storage upload handler will be imported dynamically inside createServer to avoid import-time failures
 import attachmentsRoute from "./routes/attachments";
 import rulesRoute from "./routes/rules";
 import actionsRoute from "./routes/actions";
@@ -15,15 +15,21 @@ export function createServer() {
   // Middleware
   app.use(cors());
 
-  // storage upload route (raw body) — mount only if handler is available
-  if (typeof handleStorageUpload === "function") {
-    app.put(
-      "/api/storage/upload",
-      express.raw({ type: "*/*", limit: "25mb" }),
-      handleStorageUpload,
-    );
-  } else {
-    console.warn("handleStorageUpload is not available; storage upload route not mounted");
+  // storage upload route (raw body) — import dynamically and mount only if available
+  try {
+    const storageModule = await import("./routes/storage-proxy");
+    const handler = storageModule?.handleStorageUpload || storageModule?.default;
+    if (typeof handler === "function") {
+      app.put(
+        "/api/storage/upload",
+        express.raw({ type: "*/*", limit: "25mb" }),
+        handler,
+      );
+    } else {
+      console.warn("handleStorageUpload is not a function; storage upload route not mounted");
+    }
+  } catch (err) {
+    console.warn("Failed to import storage-proxy module, storage upload route not mounted", err);
   }
 
   app.use(express.json());
