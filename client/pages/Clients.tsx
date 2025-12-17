@@ -42,6 +42,9 @@ export default function ClientsPage() {
         contactName: contactName || undefined,
         contactEmail: contactEmail || undefined,
         contactPhone: contactPhone || undefined,
+        address: address || undefined,
+        postalCode: postalCode || undefined,
+        confidentiality: confidentiality || undefined,
       };
       if (logoPreview) payload.logoUrl = logoPreview;
       await builder.createClient(payload);
@@ -53,6 +56,9 @@ export default function ClientsPage() {
       setContactName("");
       setContactEmail("");
       setContactPhone("");
+      setAddress("");
+      setPostalCode("");
+      setConfidentiality("Public");
       setLogoFile(null);
       setLogoPreview(null);
     } catch (e) {
