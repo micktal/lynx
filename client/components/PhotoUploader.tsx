@@ -35,6 +35,13 @@ export default function PhotoUploader({
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  // target selection state
+  const [targetType, setTargetType] = useState<EntityType>(entityType || "audit");
+  const [targetId, setTargetId] = useState<string | number | null>(entityId || null);
+  const [options, setOptions] = useState<Array<{ id: string | number; label: string }>>([]);
+  const [creatingNew, setCreatingNew] = useState(false);
+  const [newName, setNewName] = useState("");
+
   function reset() {
     setFile(null);
     if (preview) {
