@@ -223,7 +223,7 @@ export default function Synthese() {
               onAdd={() => { alert('Ajouter équipement (mock)'); }}
             />
             <div className="mt-3 flex items-center justify-between">
-              <div className="text-sm text-muted">Page {page} / {pageCount}</div>
+              <div className="text-sm" style={{ color: 'var(--text)', fontWeight: 600 }}>Page {page} / {pageCount}</div>
               <div className="flex items-center gap-2">
                 <button onClick={()=>setPage(p=>Math.max(1,p-1))} className="px-3 py-1 border border-border rounded">Préc</button>
                 <button onClick={()=>setPage(p=>Math.min(pageCount,p+1))} className="px-3 py-1 border border-border rounded">Suiv</button>
@@ -239,7 +239,7 @@ export default function Synthese() {
               onCreateAction={(riskId)=>{ alert('Créer action pour ' + riskId); }}
             />
             <div className="mt-3 flex items-center justify-between">
-              <div className="text-sm text-muted">Page {page} / {pageCount}</div>
+              <div className="text-sm" style={{ color: 'var(--text)', fontWeight: 600 }}>Page {page} / {pageCount}</div>
               <div className="flex items-center gap-2">
                 <button onClick={()=>setPage(p=>Math.max(1,p-1))} className="px-3 py-1 border border-border rounded">Préc</button>
                 <button onClick={()=>setPage(p=>Math.min(pageCount,p+1))} className="px-3 py-1 border border-border rounded">Suiv</button>
