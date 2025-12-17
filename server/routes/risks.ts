@@ -1,5 +1,5 @@
 import express from "express";
-import fetch from "node-fetch";
+import express from "express";
 import { enforceRules } from "../middleware/enforceRules";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
