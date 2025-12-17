@@ -44,8 +44,8 @@ export default function SyntheseFilters({
 
   return (
     <div className="card">
-      <div className="flex flex-col md:flex-row md:items-center md:gap-4">
-        <div className="flex items-center gap-3 flex-1">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between md:gap-4">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Recherche..." className="px-3 py-2 rounded-md border border-border bg-input w-full md:w-64" />
           <select value={selectedSite ?? ""} onChange={(e) => setSelectedSite(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input">
             <option value="">Tous les sites</option>
