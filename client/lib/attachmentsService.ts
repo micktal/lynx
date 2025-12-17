@@ -1,5 +1,5 @@
 export async function createAttachment(payload: {
-  entity_type: "site" | "audit" | "risk" | "equipment";
+  entity_type: "site" | "audit" | "risk" | "equipment" | "project" | "chantier" | "action";
   entity_id: number;
   // Either provide file_url (legacy) OR bucket + file_path
   file_url?: string;
