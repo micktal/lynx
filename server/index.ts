@@ -15,22 +15,8 @@ export async function createServer() {
   // Middleware
   app.use(cors());
 
-  // storage upload route (raw body) — import dynamically and mount only if available
-  try {
-    const storageModule = await import("./routes/storage-proxy");
-    const handler = storageModule?.handleStorageUpload || storageModule?.default;
-    if (typeof handler === "function") {
-      app.put(
-        "/api/storage/upload",
-        express.raw({ type: "*/*", limit: "25mb" }),
-        handler,
-      );
-    } else {
-      console.warn("handleStorageUpload is not a function; storage upload route not mounted");
-    }
-  } catch (err) {
-    console.warn("Failed to import storage-proxy module, storage upload route not mounted", err);
-  }
+  // storage upload route disabled in dev until storage handler loading issues are resolved
+  console.warn("Storage upload route is disabled in dev server");
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
