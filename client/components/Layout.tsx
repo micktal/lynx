@@ -204,7 +204,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   style={{ color: "var(--text)" }}
                 >
                   Carte France
-              </Link>
+                </Link>
                 <Link
                   to="/synthese"
                   className="text-sm"
