@@ -179,6 +179,39 @@ export default function ClientsPage() {
               </div>
 
               <div>
+                <label className="text-sm">Adresse</label>
+                <input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full input"
+                  placeholder="Rue, numéro, ville"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm">Code postal</label>
+                <input
+                  value={postalCode}
+                  onChange={(e) => setPostalCode(e.target.value)}
+                  className="w-full input"
+                  placeholder="Ex: 75001"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm">Niveau de confidentialité</label>
+                <select
+                  value={confidentiality}
+                  onChange={(e) => setConfidentiality(e.target.value)}
+                  className="w-full input"
+                >
+                  <option>Public</option>
+                  <option>Confidentiel</option>
+                  <option>Restreint</option>
+                </select>
+              </div>
+
+              <div>
                 <label className="text-sm">Logo</label>
                 <input
                   type="file"
