@@ -42,6 +42,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         style={{
           borderColor: "var(--border)",
           background: "var(--bg-card)",
+          backgroundColor: "var(--bg-card)",
+          backgroundImage: "none",
+          backdropFilter: "none",
+          opacity: 1,
           position: "sticky",
           top: 0,
           zIndex: 40,
