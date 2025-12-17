@@ -40,30 +40,53 @@ export default function SyntheseFilters({
   onReset: () => void;
   onExport: () => void;
 }) {
-  const buildingsForSite = selectedSite ? buildings.filter((b) => b.siteId === selectedSite) : buildings;
+  const buildingsForSite = selectedSite
+    ? buildings.filter((b) => b.siteId === selectedSite)
+    : buildings;
 
   return (
     <div className="card">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between md:gap-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Recherche..." className="px-3 py-2 rounded-md border border-border bg-input w-full md:w-64" />
-          <select value={selectedSite ?? ""} onChange={(e) => setSelectedSite(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Recherche..."
+            className="px-3 py-2 rounded-md border border-border bg-input w-full md:w-64"
+          />
+          <select
+            value={selectedSite ?? ""}
+            onChange={(e) => setSelectedSite(e.target.value || null)}
+            className="px-3 py-2 rounded-md border border-border bg-input"
+          >
             <option value="">Tous les sites</option>
             {sites.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
             ))}
           </select>
 
-          <select value={selectedBuilding ?? ""} onChange={(e) => setSelectedBuilding(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input">
+          <select
+            value={selectedBuilding ?? ""}
+            onChange={(e) => setSelectedBuilding(e.target.value || null)}
+            className="px-3 py-2 rounded-md border border-border bg-input"
+          >
             <option value="">Tous les bâtiments</option>
             {buildingsForSite.map((b) => (
-              <option key={b.id} value={b.id}>{b.name}</option>
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
             ))}
           </select>
         </div>
 
         <div className="flex items-center gap-3 mt-3 md:mt-0 flex-wrap md:flex-nowrap">
-          <select value={category ?? ""} onChange={(e) => setCategory(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input">
+          <select
+            value={category ?? ""}
+            onChange={(e) => setCategory(e.target.value || null)}
+            className="px-3 py-2 rounded-md border border-border bg-input"
+          >
             <option value="">Toutes catégories</option>
             <option value="alarme">Alarme</option>
             <option value="vidéo">Vidéo</option>
@@ -72,7 +95,11 @@ export default function SyntheseFilters({
             <option value="serrurerie">Serrurerie</option>
           </select>
 
-          <select value={stateFilter ?? ""} onChange={(e) => setStateFilter(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input">
+          <select
+            value={stateFilter ?? ""}
+            onChange={(e) => setStateFilter(e.target.value || null)}
+            className="px-3 py-2 rounded-md border border-border bg-input"
+          >
             <option value="">Tous états</option>
             <option value="OK">OK</option>
             <option value="A_CONTROLER">À contrôler</option>
@@ -81,7 +108,11 @@ export default function SyntheseFilters({
             <option value="ABSENT">Absent</option>
           </select>
 
-          <select value={levelFilter ?? ""} onChange={(e) => setLevelFilter(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input">
+          <select
+            value={levelFilter ?? ""}
+            onChange={(e) => setLevelFilter(e.target.value || null)}
+            className="px-3 py-2 rounded-md border border-border bg-input"
+          >
             <option value="">Tous niveaux</option>
             <option value="FAIBLE">FAIBLE</option>
             <option value="MOYEN">MOYEN</option>
@@ -89,7 +120,13 @@ export default function SyntheseFilters({
             <option value="CRITIQUE">CRITIQUE</option>
           </select>
 
-          <select value={importance ?? "" as any} onChange={(e) => setImportance(e.target.value ? Number(e.target.value) : null)} className="px-3 py-2 rounded-md border border-border bg-input">
+          <select
+            value={importance ?? ("" as any)}
+            onChange={(e) =>
+              setImportance(e.target.value ? Number(e.target.value) : null)
+            }
+            className="px-3 py-2 rounded-md border border-border bg-input"
+          >
             <option value="">Importance</option>
             <option value={1}>1</option>
             <option value={2}>2</option>
@@ -98,8 +135,15 @@ export default function SyntheseFilters({
             <option value={5}>5</option>
           </select>
 
-          <button onClick={onReset} className="px-3 py-2 rounded-md border border-border">Reset filtres</button>
-          <button onClick={onExport} className="brand-btn">Exporter Excel</button>
+          <button
+            onClick={onReset}
+            className="px-3 py-2 rounded-md border border-border"
+          >
+            Reset filtres
+          </button>
+          <button onClick={onExport} className="brand-btn">
+            Exporter Excel
+          </button>
         </div>
       </div>
     </div>
