@@ -101,6 +101,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 Synthèse
               </Link>
               <Link
+                to="/dashboard"
+                className="text-sm"
+                style={{ color: "var(--text)" }}
+              >
+                Dashboard
+              </Link>
+              <Link
                 to="/audit"
                 className="text-sm"
                 style={{ color: "var(--text)" }}
@@ -197,13 +204,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   style={{ color: "var(--text)" }}
                 >
                   Carte France
-                </Link>
+              </Link>
                 <Link
                   to="/synthese"
                   className="text-sm"
                   style={{ color: "var(--text)" }}
                 >
                   Synthèse
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="text-sm"
+                  style={{ color: "var(--text)" }}
+                >
+                  Dashboard
                 </Link>
                 <Link
                   to="/audit"
