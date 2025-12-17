@@ -29,7 +29,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+    <div className="min-h-screen" style={{ background: "#ffffff" }}>
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:block p-2"
