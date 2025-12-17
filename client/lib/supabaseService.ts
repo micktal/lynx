@@ -71,6 +71,15 @@ export async function supabaseFetch<T = any>(
     } catch (e) {
       // ignore read errors
     }
+
+    // If the server explicitly reports Supabase not configured, return null so callers can fallback to mocks
+    try {
+      if (response.status === 500 && typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('supabase not configured')) {
+        console.warn('Supabase proxy reports not configured; falling back to local mocks');
+        return null as any;
+      }
+    } catch (e) {}
+
     const err = new Error(
       `Supabase API error: ${response.status} - ${errorMessage}`,
     );
