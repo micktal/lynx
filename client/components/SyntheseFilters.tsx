@@ -62,7 +62,7 @@ export default function SyntheseFilters({
           </select>
         </div>
 
-        <div className="flex items-center gap-3 mt-3 md:mt-0">
+        <div className="flex items-center gap-3 mt-3 md:mt-0 flex-wrap md:flex-nowrap">
           <select value={category ?? ""} onChange={(e) => setCategory(e.target.value || null)} className="px-3 py-2 rounded-md border border-border bg-input">
             <option value="">Toutes catégories</option>
             <option value="alarme">Alarme</option>
