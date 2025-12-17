@@ -92,7 +92,13 @@ export default function MapOverview({
 
       <div
         className={`relative rounded-lg h-72 overflow-hidden transition-all duration-300 ${viewMode === "list" ? "bg-card" : "bg-gradient-to-br from-sky-50 to-white"}`}
+        style={{ minHeight: 288 }}
       >
+        {sites.length === 0 && (
+          <div className="flex items-center justify-center h-full text-sm text-muted">
+            Aucune donnée géographique disponible pour les sites.
+          </div>
+        )}
         {/* heat spots */}
         {viewMode === "heat" &&
           sites.map((s) => {
