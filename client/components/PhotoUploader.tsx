@@ -143,6 +143,108 @@ export default function PhotoUploader({
 
   return (
     <div className="card p-4 space-y-3">
+      {/* Target selection */}
+      <div className="flex gap-2 items-start">
+        <div className="w-48">
+          <label className="text-xs">Associer la photo à</label>
+          <select
+            className="input w-full"
+            value={targetType}
+            onChange={(e) => setTargetType(e.target.value as EntityType)}
+          >
+            <option value="audit">Audit</option>
+            <option value="equipment">Équipement</option>
+            <option value="site">Site</option>
+            <option value="project">Projet</option>
+            <option value="chantier">Chantier</option>
+            <option value="action">Action</option>
+            <option value="risk">Risque</option>
+          </select>
+        </div>
+
+        <div className="flex-1">
+          <label className="text-xs">Sélectionnez une entité (ou créez)</label>
+          <div className="flex gap-2 mt-1">
+            <select
+              className="input flex-1"
+              value={targetId ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === "__create__") {
+                  setCreatingNew(true);
+                } else {
+                  setTargetId(v || null);
+                }
+              }}
+            >
+              <option value="">-- Choisir --</option>
+              {options.map((o) => (
+                <option key={String(o.id)} value={String(o.id)}>
+                  {o.label}
+                </option>
+              ))}
+              <option value="__create__">+ Créer...</option>
+            </select>
+
+            <button
+              className="btn-sm"
+              onClick={() => setCreatingNew(true)}
+              type="button"
+            >
+              +
+            </button>
+          </div>
+
+          {creatingNew && (
+            <div className="mt-2 flex gap-2">
+              <input
+                className="input flex-1"
+                placeholder="Nom de la nouvelle entité"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
+              <button
+                className="btn"
+                onClick={async () => {
+                  if (!newName.trim()) return toast({ title: "Validation", description: "Nom requis" });
+                  try {
+                    let created: any = null;
+                    if (targetType === "project") {
+                      created = await projectService.createProject({ name: newName.trim() } as any);
+                    } else if (targetType === "chantier") {
+                      created = await projectService.createChantier({ name: newName.trim() } as any);
+                    } else if (targetType === "equipment") {
+                      created = await builder.createEquipment({ name: newName.trim() } as any);
+                    } else if (targetType === "site") {
+                      created = await builder.createSite({ name: newName.trim() } as any);
+                    } else if (targetType === "action") {
+                      created = await builder.createAction({ title: newName.trim() } as any);
+                    } else if (targetType === "risk") {
+                      created = await builder.createRisk({ title: newName.trim() } as any);
+                    } else if (targetType === "audit") {
+                      // audits require more fields; create a minimal one
+                      created = await builder.createAudit({ title: newName.trim(), siteId: null } as any);
+                    }
+                    if (created) {
+                      await loadOptions(targetType);
+                      setTargetId(created.id || created);
+                      setNewName("");
+                      setCreatingNew(false);
+                      toast({ title: "Succès", description: "Entité créée" });
+                    }
+                  } catch (e: any) {
+                    console.error(e);
+                    toast({ title: "Erreur", description: "Création échouée" });
+                  }
+                }}
+              >
+                Créer
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div
         className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 cursor-pointer transition
           ${dragOver ? "border-primary bg-primary/5" : "border-border"}
