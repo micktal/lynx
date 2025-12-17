@@ -163,7 +163,7 @@ export default function Synthese() {
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Synthèse Globale de la Sécurité</h1>
-          <p className="text-sm text-muted mt-1">Vue consolidée des équipements, risques et statuts pour l’ensemble du périmètre sélectionné.</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--text)', fontWeight: 600 }}>Vue consolidée des équipements, risques et statuts pour l’ensemble du périmètre sélectionné.</p>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={exportCsv} className="brand-btn">Exporter Excel</button>
