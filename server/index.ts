@@ -15,12 +15,16 @@ export function createServer() {
   // Middleware
   app.use(cors());
 
-  // storage upload route (raw body)
-  app.put(
-    "/api/storage/upload",
-    express.raw({ type: "*/*", limit: "25mb" }),
-    handleStorageUpload,
-  );
+  // storage upload route (raw body) — mount only if handler is available
+  if (typeof handleStorageUpload === "function") {
+    app.put(
+      "/api/storage/upload",
+      express.raw({ type: "*/*", limit: "25mb" }),
+      handleStorageUpload,
+    );
+  } else {
+    console.warn("handleStorageUpload is not available; storage upload route not mounted");
+  }
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
