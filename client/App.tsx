@@ -149,7 +149,6 @@ const App = () => {
             <Route path="/admin/rules" element={<AdminRulesPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
-            <Route path="/login" element={<LoginPage />} />
             <Route path="/map" element={<MapPage />} />
             <Route path="/map-france" element={<MapFrancePage />} />
             <Route path="/projects" element={<ProjectsPage />} />
