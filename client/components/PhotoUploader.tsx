@@ -36,9 +36,15 @@ export default function PhotoUploader({
   const [error, setError] = useState<string | null>(null);
 
   // target selection state
-  const [targetType, setTargetType] = useState<EntityType>(entityType || "audit");
-  const [targetId, setTargetId] = useState<string | number | null>(entityId != null ? String(entityId) : null);
-  const [options, setOptions] = useState<Array<{ id: string | number; label: string }>>([]);
+  const [targetType, setTargetType] = useState<EntityType>(
+    entityType || "audit",
+  );
+  const [targetId, setTargetId] = useState<string | number | null>(
+    entityId != null ? String(entityId) : null,
+  );
+  const [options, setOptions] = useState<
+    Array<{ id: string | number; label: string }>
+  >([]);
   const [creatingNew, setCreatingNew] = useState(false);
   const [newName, setNewName] = useState("");
 
@@ -70,7 +76,8 @@ export default function PhotoUploader({
 
   async function handleUpload() {
     if (!file) return;
-    if (!targetId) return setError("Sélectionnez une entité cible avant l'upload");
+    if (!targetId)
+      return setError("Sélectionnez une entité cible avant l'upload");
 
     try {
       setUploading(true);
@@ -102,7 +109,12 @@ export default function PhotoUploader({
       switch (type) {
         case "equipment":
           list = await builder.fetchEquipments();
-          setOptions(list.map((i: any) => ({ id: i.id, label: `${i.name} (${i.reference||i.id})` })));
+          setOptions(
+            list.map((i: any) => ({
+              id: i.id,
+              label: `${i.name} (${i.reference || i.id})`,
+            })),
+          );
           break;
         case "site":
           list = await builder.fetchSites();
@@ -118,15 +130,21 @@ export default function PhotoUploader({
           break;
         case "action":
           list = await builder.fetchActions();
-          setOptions(list.map((i: any) => ({ id: i.id, label: i.title || i.id })));
+          setOptions(
+            list.map((i: any) => ({ id: i.id, label: i.title || i.id })),
+          );
           break;
         case "risk":
           list = await builder.fetchRisks();
-          setOptions(list.map((i: any) => ({ id: i.id, label: i.title || i.id })));
+          setOptions(
+            list.map((i: any) => ({ id: i.id, label: i.title || i.id })),
+          );
           break;
         case "audit":
           list = await builder.fetchAudits();
-          setOptions(list.map((i: any) => ({ id: i.id, label: i.title || i.id })));
+          setOptions(
+            list.map((i: any) => ({ id: i.id, label: i.title || i.id })),
+          );
           break;
         default:
           setOptions([]);
@@ -206,24 +224,43 @@ export default function PhotoUploader({
               <button
                 className="btn"
                 onClick={async () => {
-                  if (!newName.trim()) return toast({ title: "Validation", description: "Nom requis" });
+                  if (!newName.trim())
+                    return toast({
+                      title: "Validation",
+                      description: "Nom requis",
+                    });
                   try {
                     let created: any = null;
                     if (targetType === "project") {
-                      created = await projectService.createProject({ name: newName.trim() } as any);
+                      created = await projectService.createProject({
+                        name: newName.trim(),
+                      } as any);
                     } else if (targetType === "chantier") {
-                      created = await projectService.createChantier({ name: newName.trim() } as any);
+                      created = await projectService.createChantier({
+                        name: newName.trim(),
+                      } as any);
                     } else if (targetType === "equipment") {
-                      created = await builder.createEquipment({ name: newName.trim() } as any);
+                      created = await builder.createEquipment({
+                        name: newName.trim(),
+                      } as any);
                     } else if (targetType === "site") {
-                      created = await builder.createSite({ name: newName.trim() } as any);
+                      created = await builder.createSite({
+                        name: newName.trim(),
+                      } as any);
                     } else if (targetType === "action") {
-                      created = await builder.createAction({ title: newName.trim() } as any);
+                      created = await builder.createAction({
+                        title: newName.trim(),
+                      } as any);
                     } else if (targetType === "risk") {
-                      created = await builder.createRisk({ title: newName.trim() } as any);
+                      created = await builder.createRisk({
+                        title: newName.trim(),
+                      } as any);
                     } else if (targetType === "audit") {
                       // audits require more fields; create a minimal one
-                      created = await builder.createAudit({ title: newName.trim(), siteId: null } as any);
+                      created = await builder.createAudit({
+                        title: newName.trim(),
+                        siteId: null,
+                      } as any);
                     }
                     if (created) {
                       await loadOptions(targetType);

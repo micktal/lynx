@@ -421,7 +421,8 @@ export default function AuditPage() {
             className="text-sm mt-2"
             style={{ color: "var(--text)", fontWeight: 600 }}
           >
-            {riskCount} risques • {equipmentCount} équipements • {actionsCount} actions
+            {riskCount} risques • {equipmentCount} équipements • {actionsCount}{" "}
+            actions
           </div>
         </div>
       </section>
@@ -432,7 +433,9 @@ export default function AuditPage() {
         <div className="md:col-span-2 space-y-6">
           {/* RISKS */}
           <section>
-            <h2 className="text-lg font-semibold mb-3">Risques liés à l'audit</h2>
+            <h2 className="text-lg font-semibold mb-3">
+              Risques liés à l'audit
+            </h2>
 
             <div className="mb-3 flex justify-end">
               <button
@@ -462,7 +465,9 @@ export default function AuditPage() {
 
           {/* EQUIPMENTS */}
           <section>
-            <h2 className="text-lg font-semibold mb-3">Équipements concernés</h2>
+            <h2 className="text-lg font-semibold mb-3">
+              Équipements concernés
+            </h2>
 
             <EquipmentTable
               items={equipments}
@@ -501,9 +506,12 @@ export default function AuditPage() {
                 </div>
               ) : (
                 <div>
-                  {React.createElement(require("../components/Timeline").default, {
-                    items: logs,
-                  })}
+                  {React.createElement(
+                    require("../components/Timeline").default,
+                    {
+                      items: logs,
+                    },
+                  )}
                 </div>
               )}
             </div>
@@ -517,13 +525,29 @@ export default function AuditPage() {
             <h3 className="text-lg font-semibold mb-2">Vue d'ensemble</h3>
 
             <div className="mt-2 grid grid-cols-1 gap-3">
-              <KpiCard title="Risques" value={riskCount} icon={<span>⚠️</span>} />
-              <KpiCard title="Équipements" value={equipmentCount} icon={<span>🔧</span>} />
-              <KpiCard title="Actions" value={actionsCount} icon={<span>📋</span>} />
+              <KpiCard
+                title="Risques"
+                value={riskCount}
+                icon={<span>⚠️</span>}
+              />
+              <KpiCard
+                title="Équipements"
+                value={equipmentCount}
+                icon={<span>🔧</span>}
+              />
+              <KpiCard
+                title="Actions"
+                value={actionsCount}
+                icon={<span>📋</span>}
+              />
             </div>
 
-            <div className="text-sm mt-3" style={{ color: "var(--text)", fontWeight: 600 }}>
-              ⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques critiques
+            <div
+              className="text-sm mt-3"
+              style={{ color: "var(--text)", fontWeight: 600 }}
+            >
+              ⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques
+              critiques
             </div>
           </div>
 
@@ -559,10 +583,22 @@ export default function AuditPage() {
           <div className="card p-4">
             <h3 className="text-lg font-semibold">Synthèse & Export</h3>
 
-            <div className="mt-2 text-sm" style={{ color: "var(--text)", fontWeight: 600 }}>
-              <div>⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques critiques</div>
-              <div>🔧 {equipments.filter((e) => e.state === "NON_CONFORME").length} équipements non conformes</div>
-              <div>📝 {actions.filter((a) => a.status === "OUVERTE").length} actions ouvertes</div>
+            <div
+              className="mt-2 text-sm"
+              style={{ color: "var(--text)", fontWeight: 600 }}
+            >
+              <div>
+                ⚠️ {risks.filter((r) => r.level === "CRITIQUE").length} risques
+                critiques
+              </div>
+              <div>
+                🔧 {equipments.filter((e) => e.state === "NON_CONFORME").length}{" "}
+                équipements non conformes
+              </div>
+              <div>
+                📝 {actions.filter((a) => a.status === "OUVERTE").length}{" "}
+                actions ouvertes
+              </div>
             </div>
 
             <div className="mt-4 flex gap-2">
@@ -597,7 +633,10 @@ export default function AuditPage() {
                 Exporter Excel
               </button>
 
-              <button onClick={() => alert("Synthèse IA (à implémenter)")} className="px-3 py-2 rounded-md border">
+              <button
+                onClick={() => alert("Synthèse IA (à implémenter)")}
+                className="px-3 py-2 rounded-md border"
+              >
                 Synthèse IA
               </button>
             </div>

@@ -1,5 +1,12 @@
 export async function createAttachment(payload: {
-  entity_type: "site" | "audit" | "risk" | "equipment" | "project" | "chantier" | "action";
+  entity_type:
+    | "site"
+    | "audit"
+    | "risk"
+    | "equipment"
+    | "project"
+    | "chantier"
+    | "action";
   entity_id: number;
   // Either provide file_url (legacy) OR bucket + file_path
   file_url?: string;
@@ -24,7 +31,14 @@ export async function createAttachment(payload: {
 
 export async function uploadAttachment(
   file: File,
-  entity_type: "site" | "audit" | "risk" | "equipment" | "project" | "chantier" | "action",
+  entity_type:
+    | "site"
+    | "audit"
+    | "risk"
+    | "equipment"
+    | "project"
+    | "chantier"
+    | "action",
   entity_id: number | string,
   onProgress?: (p: number) => void,
 ) {
