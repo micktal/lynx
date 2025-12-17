@@ -96,6 +96,51 @@ export default function PhotoUploader({
     }
   }
 
+  async function loadOptions(type: EntityType) {
+    try {
+      let list: Array<any> = [];
+      switch (type) {
+        case "equipment":
+          list = await builder.fetchEquipments();
+          setOptions(list.map((i: any) => ({ id: i.id, label: `${i.name} (${i.reference||i.id})` })));
+          break;
+        case "site":
+          list = await builder.fetchSites();
+          setOptions(list.map((i: any) => ({ id: i.id, label: i.name })));
+          break;
+        case "project":
+          list = await projectService.fetchProjects();
+          setOptions(list.map((i: any) => ({ id: i.id, label: i.name })));
+          break;
+        case "chantier":
+          list = await projectService.fetchChantiers();
+          setOptions(list.map((i: any) => ({ id: i.id, label: i.name })));
+          break;
+        case "action":
+          list = await builder.fetchActions();
+          setOptions(list.map((i: any) => ({ id: i.id, label: i.title || i.id })));
+          break;
+        case "risk":
+          list = await builder.fetchRisks();
+          setOptions(list.map((i: any) => ({ id: i.id, label: i.title || i.id })));
+          break;
+        case "audit":
+          list = await builder.fetchAudits();
+          setOptions(list.map((i: any) => ({ id: i.id, label: i.title || i.id })));
+          break;
+        default:
+          setOptions([]);
+      }
+    } catch (e) {
+      console.error("Failed to load options for", type, e);
+      setOptions([]);
+    }
+  }
+
+  useEffect(() => {
+    loadOptions(targetType);
+  }, [targetType]);
+
   return (
     <div className="card p-4 space-y-3">
       <div
