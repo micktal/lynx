@@ -256,10 +256,10 @@ export default function Synthese() {
             <h3 className="text-lg font-semibold">Alerte critiques</h3>
             <div className="mt-2 text-sm text-muted">
               {equipments.filter(e=>e.state==='NON_CONFORME').length > 0 && (
-                <div className="mb-2" style={{ color: 'var(--text)', fontWeight: 600 }}>⚠️ {equipments.filter(e=>e.state==='NON_CONFORME').length} équipements non conformes détectés</div>
+                <div className="mb-2" style={{ color: '#000', fontWeight: 700 }}>⚠️ {equipments.filter(e=>e.state==='NON_CONFORME').length} équipements non conformes détectés</div>
               )}
               {risks.filter(r=>r.level==='CRITIQUE').length > 0 && (
-                <div style={{ color: 'var(--text)', fontWeight: 600 }}>🔥 {risks.filter(r=>r.level==='CRITIQUE').length} risques critiques — Vérifier immédiatement les zones concernées.</div>
+                <div style={{ color: '#000', fontWeight: 700 }}>🔥 {risks.filter(r=>r.level==='CRITIQUE').length} risques critiques — Vérifier immédiatement les zones concernées.</div>
               )}
             </div>
           </div>
