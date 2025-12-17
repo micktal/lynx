@@ -115,6 +115,14 @@ export default function MobileDrawer({
             Synthèse
           </Link>
           <Link
+            to="/dashboard"
+            onClick={onClose}
+            className="py-2 px-2 rounded-md text-sm"
+            style={{ color: "var(--text)" }}
+          >
+            Dashboard
+          </Link>
+          <Link
             to="/audit"
             onClick={onClose}
             className="py-2 px-2 rounded-md text-sm"
