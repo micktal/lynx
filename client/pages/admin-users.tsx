@@ -99,7 +99,7 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-bold">
             Gestion des utilisateurs & rôles
           </h1>
-          <div className="text-sm text-muted">
+          <div className="text-sm" style={{ color: "var(--text)" }}>
             Attribuez des rôles aux utilisateurs afin de contrôler l'accès.
           </div>
         </div>
