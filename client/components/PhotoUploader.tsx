@@ -70,6 +70,7 @@ export default function PhotoUploader({
 
   async function handleUpload() {
     if (!file) return;
+    if (!targetId) return setError("Sélectionnez une entité cible avant l'upload");
 
     try {
       setUploading(true);
@@ -78,8 +79,8 @@ export default function PhotoUploader({
       // Upload via Netlify function which handles storage + DB insert
       const attachment = await uploadAttachment(
         file,
-        entityType,
-        entityId,
+        targetType,
+        targetId,
         (p) => setProgress(p),
       );
 
