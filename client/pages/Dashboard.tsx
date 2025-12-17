@@ -239,14 +239,14 @@ export default function Dashboard() {
           <h3 className="font-semibold mb-3">
             Répartition des risques par niveau
           </h3>
-          <div className="text-sm" style={{ color: '#000', fontWeight: 700 }}>
+          <div className="text-sm" style={{ color: "#000", fontWeight: 700 }}>
             Bar chart placeholder (data-ready)
           </div>
         </div>
 
         <div className="card">
           <h3 className="font-semibold mb-3">Tendance mensuelle des risques</h3>
-          <div className="text-sm" style={{ color: '#000', fontWeight: 700 }}>
+          <div className="text-sm" style={{ color: "#000", fontWeight: 700 }}>
             Line chart placeholder (data-ready)
           </div>
         </div>
@@ -256,12 +256,14 @@ export default function Dashboard() {
       <section className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="card">
           <h3 className="font-semibold mb-3">État global des équipements</h3>
-          <div className="text-sm" style={{ color: '#000', fontWeight: 700 }}>Donut chart placeholder</div>
+          <div className="text-sm" style={{ color: "#000", fontWeight: 700 }}>
+            Donut chart placeholder
+          </div>
         </div>
 
         <div className="card">
           <h3 className="font-semibold mb-3">Actions correctives globales</h3>
-          <div className="text-sm" style={{ color: '#000', fontWeight: 700 }}>
+          <div className="text-sm" style={{ color: "#000", fontWeight: 700 }}>
             Tableau synthétique placeholder
           </div>
         </div>
@@ -271,7 +273,7 @@ export default function Dashboard() {
       <section className="mb-6">
         <div className="card">
           <h3 className="font-semibold mb-3">Alertes Immédiates</h3>
-          <div className="text-sm" style={{ color: '#000', fontWeight: 700 }}>
+          <div className="text-sm" style={{ color: "#000", fontWeight: 700 }}>
             {totals.criticalRisks > 0 || totals.nonConform > 0 ? (
               <>
                 {totals.criticalRisks > 0 && (
